@@ -1,24 +1,27 @@
 "use client";
-import { supabase } from "@/lib/supabase";
+
+import { useState } from "react";
+import { supabase } from "../lib/supabase";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+    if (error) {
+      alert(error.message);
+      return;
+    }
 
-  alert("Login successful!");
-};
+    alert("Login successful!");
+  };
 
   return (
     <main className="login-page">
@@ -36,8 +39,10 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleLogin}>
-          <label>Email</label>
+          <label htmlFor="email">Email</label>
+
           <input
+            id="email"
             type="email"
             placeholder="Enter your email"
             value={email}
@@ -45,8 +50,10 @@ export default function LoginPage() {
             required
           />
 
-          <label>Password</label>
+          <label htmlFor="password">Password</label>
+
           <input
+            id="password"
             type="password"
             placeholder="Enter your password"
             value={password}
