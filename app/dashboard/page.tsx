@@ -21,7 +21,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <button className="logout-button" onClick={handleLogout}>
+        <button
+          className="logout-button"
+          onClick={handleLogout}
+        >
           LOGOUT
         </button>
       </header>
@@ -47,12 +50,16 @@ export default function DashboardPage() {
 
           <div className="status-card completed">
             <span className="status-number">0</span>
-            <span className="status-label">CLOSED — NO DELAY</span>
+            <span className="status-label">
+              CLOSED — NO DELAY
+            </span>
           </div>
 
           <div className="status-card delayed">
             <span className="status-number">0</span>
-            <span className="status-label">CLOSED — WITH DELAY</span>
+            <span className="status-label">
+              CLOSED — WITH DELAY
+            </span>
           </div>
         </div>
 
@@ -70,7 +77,9 @@ export default function DashboardPage() {
 
           <div className="empty-state">
             <div className="empty-icon">✈</div>
+
             <h3>No flights available</h3>
+
             <p>
               Flight records will appear here once they are created.
             </p>
@@ -79,7 +88,7 @@ export default function DashboardPage() {
       </section>
 
       <footer className="dashboard-footer">
-        TRANSOM Flight Service Capture
+        <p>TRANSOM Flight Service Capture</p>
         <span>Authorized Personnel Only</span>
       </footer>
     </main>
