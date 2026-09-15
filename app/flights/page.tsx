@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  Suspense,
+  useEffect,
+  useState,
+} from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 
@@ -21,11 +25,12 @@ const departmentNames: Record<string, string> = {
   cargo: "CARGO DEPARTMENT",
 };
 
-export default function FlightsPage() {
+function FlightsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const department = searchParams.get("department") || "";
+  const department =
+    searchParams.get("department") || "";
 
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +51,9 @@ export default function FlightsPage() {
         .select(
           "id, flight_number, aircraft, route, flight_date, status"
         )
-        .order("flight_date", { ascending: false });
+        .order("flight_date", {
+          ascending: false,
+        });
 
       if (error) {
         alert(error.message);
@@ -66,13 +73,17 @@ export default function FlightsPage() {
     router.push("/");
   };
 
-  const handleFlightSelect = (flightId: string) => {
+  const handleFlightSelect = (
+    flightId: string
+  ) => {
     router.push(
       `/flight/${flightId}?department=${department}`
     );
   };
 
-  const getStatusClass = (status: string) => {
+  const getStatusClass = (
+    status: string
+  ) => {
     switch (status) {
       case "Open":
         return "flight-status open-status";
@@ -93,6 +104,7 @@ export default function FlightsPage() {
 
   return (
     <main className="dashboard-page">
+
       <header className="dashboard-header">
         <div>
           <div className="dashboard-logo">
@@ -113,11 +125,17 @@ export default function FlightsPage() {
       </header>
 
       <section className="dashboard-content">
+
         <div className="welcome-section">
+
           <button
             className="logout-button"
-            onClick={() => router.push("/departments")}
-            style={{ marginBottom: "20px" }}
+            onClick={() =>
+              router.push("/departments")
+            }
+            style={{
+              marginBottom: "20px",
+            }}
           >
             ← BACK TO DEPARTMENTS
           </button>
@@ -129,40 +147,54 @@ export default function FlightsPage() {
               department ||
               "Flight Operations"}
           </p>
+
         </div>
 
         <section className="flights-section">
+
           <div className="section-header">
+
             <div>
-              <h2>Available Flights</h2>
+              <h2>
+                Available Flights
+              </h2>
 
               <p>
-                Select a flight to access the service
-                capture.
+                Select a flight to access
+                the service capture.
               </p>
             </div>
+
           </div>
 
           {loading ? (
             <div className="empty-state">
-              <h3>Loading flights...</h3>
+              <h3>
+                Loading flights...
+              </h3>
             </div>
           ) : flights.length === 0 ? (
             <div className="empty-state">
+
               <div className="empty-icon">
                 ✈
               </div>
 
-              <h3>No flights available</h3>
+              <h3>
+                No flights available
+              </h3>
 
               <p>
-                There are currently no flights
-                available.
+                There are currently no
+                flights available.
               </p>
+
             </div>
           ) : (
             <div className="flight-table-wrapper">
+
               <table className="flight-table">
+
                 <thead>
                   <tr>
                     <th>FLIGHT</th>
@@ -175,58 +207,75 @@ export default function FlightsPage() {
                 </thead>
 
                 <tbody>
-                  {flights.map((flight) => (
-                    <tr key={flight.id}>
-                      <td>
-                        <strong>
-                          {flight.flight_number}
-                        </strong>
-                      </td>
 
-                      <td>
-                        {flight.aircraft}
-                      </td>
+                  {flights.map(
+                    (flight) => (
+                      <tr
+                        key={flight.id}
+                      >
 
-                      <td>
-                        {flight.route}
-                      </td>
+                        <td>
+                          <strong>
+                            {
+                              flight.flight_number
+                            }
+                          </strong>
+                        </td>
 
-                      <td>
-                        {flight.flight_date}
-                      </td>
+                        <td>
+                          {flight.aircraft}
+                        </td>
 
-                      <td>
-                        <span
-                          className={getStatusClass(
-                            flight.status
-                          )}
-                        >
-                          {flight.status}
-                        </span>
-                      </td>
+                        <td>
+                          {flight.route}
+                        </td>
 
-                      <td>
-                        <button
-                          className="action-button view"
-                          onClick={() =>
-                            handleFlightSelect(
-                              flight.id
-                            )
-                          }
-                        >
-                          SELECT FLIGHT
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                        <td>
+                          {flight.flight_date}
+                        </td>
+
+                        <td>
+                          <span
+                            className={getStatusClass(
+                              flight.status
+                            )}
+                          >
+                            {flight.status}
+                          </span>
+                        </td>
+
+                        <td>
+
+                          <button
+                            className="action-button view"
+                            onClick={() =>
+                              handleFlightSelect(
+                                flight.id
+                              )
+                            }
+                          >
+                            SELECT FLIGHT
+                          </button>
+
+                        </td>
+
+                      </tr>
+                    )
+                  )}
+
                 </tbody>
+
               </table>
+
             </div>
           )}
+
         </section>
+
       </section>
 
       <footer className="dashboard-footer">
+
         <p>
           TRANSOM Flight Service Capture
         </p>
@@ -234,7 +283,27 @@ export default function FlightsPage() {
         <span>
           Authorized Personnel Only
         </span>
+
       </footer>
+
     </main>
+  );
+}
+
+export default function FlightsPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="dashboard-page">
+          <div className="empty-state">
+            <h3>
+              Loading flights...
+            </h3>
+          </div>
+        </main>
+      }
+    >
+      <FlightsContent />
+    </Suspense>
   );
 }
