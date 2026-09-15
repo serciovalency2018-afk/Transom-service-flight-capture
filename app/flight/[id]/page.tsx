@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 
 type Flight = {
@@ -11,17 +11,55 @@ type Flight = {
   route: string;
   flight_date: string;
   status: string;
-  created_at: string;
 };
 
 export default function FlightDetailsPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
 
   const flightId = params.id as string;
+  const department =
+    searchParams.get("department") || "";
 
-  const [flight, setFlight] = useState<Flight | null>(null);
+  const [flight, setFlight] = useState<Flight | null>(
+    null
+  );
+
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const [pax, setPax] = useState("");
+  const [baggages, setBaggages] = useState("");
+  const [cargo, setCargo] = useState("");
+
+  const [parkingBay, setParkingBay] = useState("");
+  const [loadRamp, setLoadRamp] = useState("");
+
+  const [stdEtd, setStdEtd] = useState("");
+  const [staEta, setStaEta] = useState("");
+
+  const [actualDeparture, setActualDeparture] =
+    useState("");
+
+  const [actualArrival, setActualArrival] =
+    useState("");
+
+  const [loadControlTrcName, setLoadControlTrcName] =
+    useState("");
+
+  const [salName, setSalName] = useState("");
+
+  const [delayReason, setDelayReason] =
+    useState("");
+
+  const [iataDelayCode, setIataDelayCode] =
+    useState("");
+
+  const [operationalRemarks, setOperationalRemarks] =
+    useState("");
+
+  const [comments, setComments] = useState("");
 
   useEffect(() => {
     const loadFlight = async () => {
@@ -42,7 +80,7 @@ export default function FlightDetailsPage() {
 
       if (error) {
         alert(error.message);
-        router.push("/dashboard");
+        router.push("/departments");
         return;
       }
 
@@ -58,6 +96,84 @@ export default function FlightDetailsPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
+  };
+
+  const handleSave = async (
+    e: React.FormEvent
+  ) => {
+    e.preventDefault();
+
+    setSaving(true);
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      alert(
+        "Your session has expired. Please login again."
+      );
+
+      router.push("/");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("flight_service_captures")
+      .insert({
+        flight_id: flightId,
+        department: department,
+        pax: pax ? Number(pax) : null,
+        baggages: baggages
+          ? Number(baggages)
+          : null,
+        cargo: cargo ? Number(cargo) : null,
+
+        parking_bay: parkingBay || null,
+        load_ramp: loadRamp || null,
+
+        std_etd: stdEtd || null,
+        sta_eta: staEta || null,
+
+        actual_departure:
+          actualDeparture || null,
+
+        actual_arrival:
+          actualArrival || null,
+
+        load_control_trc_name:
+          loadControlTrcName || null,
+
+        sal_name: salName || null,
+
+        delay_reason:
+          delayReason || null,
+
+        iata_delay_code:
+          iataDelayCode || null,
+
+        operational_remarks:
+          operationalRemarks || null,
+
+        comments: comments || null,
+
+        created_by: user.id,
+      });
+
+    setSaving(false);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert(
+      "Load Control / OPS service capture saved successfully!"
+    );
+
+    router.push(
+      `/flights?department=${department}`
+    );
   };
 
   if (loading) {
@@ -78,9 +194,11 @@ export default function FlightDetailsPage() {
 
           <button
             className="new-flight-button"
-            onClick={() => router.push("/dashboard")}
+            onClick={() =>
+              router.push("/departments")
+            }
           >
-            BACK TO DASHBOARD
+            BACK TO DEPARTMENTS
           </button>
         </div>
       </main>
@@ -112,18 +230,27 @@ export default function FlightDetailsPage() {
         <div className="welcome-section">
           <button
             className="logout-button"
-            onClick={() => router.push("/dashboard")}
-            style={{ marginBottom: "20px" }}
+            onClick={() =>
+              router.push(
+                `/flights?department=${department}`
+              )
+            }
+            style={{
+              marginBottom: "20px",
+            }}
           >
-            ← BACK TO DASHBOARD
+            ← BACK TO FLIGHTS
           </button>
 
           <h1>
-            Flight {flight.flight_number}
+            {flight.flight_number}
           </h1>
 
           <p>
-            Flight details and service capture
+            {department ===
+            "load_control_ops"
+              ? "LOAD CONTROL / OPS"
+              : department}
           </p>
         </div>
 
@@ -131,13 +258,23 @@ export default function FlightDetailsPage() {
           <div
             style={{
               padding: "30px",
+              background: "#ffffff",
             }}
           >
+            <h2
+              style={{
+                marginBottom: "20px",
+                color: "#071d41",
+              }}
+            >
+              Flight Information
+            </h2>
+
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns:
-                  "repeat(auto-fit, minmax(220px, 1fr))",
+                  "repeat(auto-fit, minmax(200px, 1fr))",
                 gap: "20px",
               }}
             >
@@ -165,69 +302,47 @@ export default function FlightDetailsPage() {
                 <strong>Status</strong>
                 <p>{flight.status}</p>
               </div>
+            </div>
+          </div>
+        </section>
 
+        {department ===
+        "load_control_ops" ? (
+          <section className="flights-section">
+            <div
+              className="section-header"
+              style={{
+                padding: "25px 30px",
+              }}
+            >
               <div>
-                <strong>Created</strong>
+                <h2>
+                  Load Control / OPS
+                </h2>
+
                 <p>
-                  {new Date(
-                    flight.created_at
-                  ).toLocaleString()}
+                  Flight service capture
                 </p>
               </div>
             </div>
-          </div>
-        </section>
 
-        <section className="flights-section">
-          <div
-            className="section-header"
-            style={{ padding: "20px 30px" }}
-          >
-            <div>
-              <h2>Service Capture</h2>
-
-              <p>
-                Record flight service information
-              </p>
-            </div>
-          </div>
-
-          <div
-            style={{
-              padding: "30px",
-              textAlign: "center",
-            }}
-          >
-            <div
+            <form
+              onSubmit={handleSave}
               style={{
-                fontSize: "50px",
-                marginBottom: "15px",
+                padding: "30px",
+                display: "grid",
+                gap: "22px",
               }}
             >
-              ✈
-            </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: "20px",
+                }}
+              >
+                <div>
+                  <label>PAX</label>
 
-            <h3>
-              Service Capture Ready
-            </h3>
-
-            <p>
-              The flight has been created successfully.
-              Service capture fields will be added here.
-            </p>
-          </div>
-        </section>
-      </section>
-
-      <footer className="dashboard-footer">
-        <p>
-          TRANSOM Flight Service Capture
-        </p>
-
-        <span>
-          Authorized Personnel Only
-        </span>
-      </footer>
-    </main>
-  );
-}
+                  <
