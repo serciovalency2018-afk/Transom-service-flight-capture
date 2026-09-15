@@ -72,10 +72,11 @@ export default function LoginPage() {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
     setLoading(false);
 
@@ -87,8 +88,11 @@ export default function LoginPage() {
     await loadProfile();
   };
 
-  const handleDepartmentSelect = (department: string) => {
-    router.push(`/flights?department=${department}`);
+  const handleDepartmentSelect = (
+    department: string
+  ) => {
+    window.location.href =
+      `/flights?department=${department}`;
   };
 
   const handleLogout = async () => {
@@ -107,7 +111,9 @@ export default function LoginPage() {
 
         <section className="login-card">
           <div className="logo-area">
-            <div className="logo">TRANSOM</div>
+            <div className="logo">
+              TRANSOM
+            </div>
 
             <div className="subtitle">
               FLIGHT SERVICE CAPTURE
@@ -153,22 +159,30 @@ export default function LoginPage() {
 
         <section className="dashboard-content">
           <div className="welcome-section">
-            <h1>Select Department</h1>
+            <h1>
+              Select Department
+            </h1>
 
             <p>
-              Choose the department you want to
-              access.
+              Choose the department you want
+              to access.
             </p>
           </div>
 
           <section className="flights-section">
-            <div style={{ padding: "30px" }}>
+            <div
+              style={{
+                padding: "30px",
+              }}
+            >
               <div
                 style={{
                   marginBottom: "30px",
                 }}
               >
-                <strong>Logged in as:</strong>
+                <strong>
+                  Logged in as:
+                </strong>
 
                 <p
                   style={{
@@ -210,31 +224,40 @@ export default function LoginPage() {
                   >
                     {Object.entries(
                       departmentNames
-                    ).map(([key, name]) => (
-                      <button
-                        key={key}
-                        onClick={() =>
-                          handleDepartmentSelect(
-                            key
-                          )
-                        }
-                        style={{
-                          padding: "30px 20px",
-                          borderRadius: "12px",
-                          border:
-                            "1px solid #d9e0ea",
-                          background:
-                            "#ffffff",
-                          color: "#071d41",
-                          fontSize: "17px",
-                          fontWeight: 700,
-                          cursor: "pointer",
-                          minHeight: "120px",
-                        }}
-                      >
-                        {name}
-                      </button>
-                    ))}
+                    ).map(
+                      ([key, name]) => (
+                        <button
+                          key={key}
+                          onClick={() =>
+                            handleDepartmentSelect(
+                              key
+                            )
+                          }
+                          style={{
+                            padding:
+                              "30px 20px",
+                            borderRadius:
+                              "12px",
+                            border:
+                              "1px solid #d9e0ea",
+                            background:
+                              "#ffffff",
+                            color:
+                              "#071d41",
+                            fontSize:
+                              "17px",
+                            fontWeight:
+                              700,
+                            cursor:
+                              "pointer",
+                            minHeight:
+                              "120px",
+                          }}
+                        >
+                          {name}
+                        </button>
+                      )
+                    )}
                   </div>
                 </>
               ) : (
@@ -257,20 +280,29 @@ export default function LoginPage() {
                     style={{
                       width: "100%",
                       maxWidth: "500px",
-                      padding: "35px 20px",
-                      borderRadius: "12px",
+                      padding:
+                        "35px 20px",
+                      borderRadius:
+                        "12px",
                       border: "none",
-                      background: "#071d41",
-                      color: "#ffffff",
-                      fontSize: "18px",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                      minHeight: "140px",
+                      background:
+                        "#071d41",
+                      color:
+                        "#ffffff",
+                      fontSize:
+                        "18px",
+                      fontWeight:
+                        700,
+                      cursor:
+                        "pointer",
+                      minHeight:
+                        "140px",
                     }}
                   >
                     {departmentNames[
                       profile.department
-                    ] || profile.department}
+                    ] ||
+                      profile.department}
                   </button>
                 </>
               )}
