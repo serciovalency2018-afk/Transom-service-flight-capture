@@ -1,34 +1,48 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setLoading(true);
+    setMessage("Connecting to Supabase...");
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    setLoading(false);
+      if (error) {
+        setMessage(`SUPABASE ERROR: ${error.message}`);
+        setLoading(false);
+        return;
+      }
 
-    if (error) {
-      alert(error.message);
-      return;
+      if (data.user) {
+        setMessage("LOGIN SUCCESSFUL");
+      } else {
+        setMessage("No user returned.");
+      }
+    } catch (error) {
+      console.error(error);
+
+      setMessage(
+        `CONNECTION ERROR: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
     }
 
-    router.push("/dashboard");
+    setLoading(false);
   };
 
   return (
@@ -38,11 +52,15 @@ export default function LoginPage() {
       <section className="login-card">
         <div className="logo-area">
           <div className="logo">TRANSOM</div>
-          <div className="subtitle">FLIGHT SERVICE CAPTURE</div>
+
+          <div className="subtitle">
+            FLIGHT SERVICE CAPTURE
+          </div>
         </div>
 
         <div className="welcome">
           <h1>Welcome Back</h1>
+
           <p>Sign in to access TRANSOM</p>
         </div>
 
@@ -69,21 +87,34 @@ export default function LoginPage() {
             required
           />
 
-          <div className="forgot">
-            <button type="button">Forgot Password?</button>
-          </div>
-
           <button
             className="login-button"
             type="submit"
             disabled={loading}
           >
-            {loading ? "LOGGING IN..." : "LOGIN"}
+            {loading ? "TESTING..." : "LOGIN"}
           </button>
         </form>
 
+        {message && (
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "15px",
+              borderRadius: "8px",
+              background: "#f1f1f1",
+              color: "#071d41",
+              fontWeight: "600",
+              wordBreak: "break-word",
+            }}
+          >
+            {message}
+          </div>
+        )}
+
         <div className="footer">
           <p>TRANSOM Flight Service Capture</p>
+
           <span>Authorized Personnel Only</span>
         </div>
       </section>
