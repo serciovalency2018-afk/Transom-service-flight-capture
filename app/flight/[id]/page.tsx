@@ -31,12 +31,12 @@ export default function FlightDetailsPage() {
   const searchParams = useSearchParams();
 
   const flightId = params.id as string;
+
   const department =
     searchParams.get("department") || "";
 
-  const [flight, setFlight] = useState<Flight | null>(
-    null
-  );
+  const [flight, setFlight] =
+    useState<Flight | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -115,53 +115,62 @@ export default function FlightDetailsPage() {
       alert(
         "Your session has expired. Please login again."
       );
+
       setSaving(false);
       router.push("/");
       return;
     }
 
+    const serviceCapture: any = {
+      flight_id: flightId,
+      department: department,
+
+      pax: pax ? Number(pax) : null,
+
+      baggages: baggages
+        ? Number(baggages)
+        : null,
+
+      cargo: cargo
+        ? Number(cargo)
+        : null,
+
+      parking_bay: parkingBay || null,
+
+      load_ramp: loadRamp || null,
+
+      std_etd: stdEtd || null,
+
+      sta_eta: staEta || null,
+
+      actual_departure:
+        actualDeparture || null,
+
+      actual_arrival:
+        actualArrival || null,
+
+      load_control_trc_name:
+        loadControlTrcName || null,
+
+      sal_name: salName || null,
+
+      delay_reason:
+        delayReason || null,
+
+      iata_delay_code:
+        iataDelayCode || null,
+
+      operational_remarks:
+        operationalRemarks || null,
+
+      comments: comments || null,
+
+      created_by: user.id,
+    };
+
     const { error } = await supabase
       .from("flight_service_captures")
-      .insert({
-        flight_id: flightId,
-        department: department,
-
-        pax: pax ? Number(pax) : null,
-        baggages: baggages
-          ? Number(baggages)
-          : null,
-        cargo: cargo ? Number(cargo) : null,
-
-        parking_bay: parkingBay || null,
-        load_ramp: loadRamp || null,
-
-        std_etd: stdEtd || null,
-        sta_eta: staEta || null,
-
-        actual_departure:
-          actualDeparture || null,
-
-        actual_arrival:
-          actualArrival || null,
-
-        load_control_trc_name:
-          loadControlTrcName || null,
-
-        sal_name: salName || null,
-
-        delay_reason:
-          delayReason || null,
-
-        iata_delay_code:
-          iataDelayCode || null,
-
-        operational_remarks:
-          operationalRemarks || null,
-
-        comments: comments || null,
-
-        created_by: user.id,
-      });
+      .insert(serviceCapture);
 
     setSaving(false);
 
@@ -469,3 +478,174 @@ export default function FlightDetailsPage() {
                       setActualArrival(
                         e.target.value
                       )
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Load Control / TRC Name
+                  </label>
+
+                  <input
+                    type="text"
+                    value={loadControlTrcName}
+                    onChange={(e) =>
+                      setLoadControlTrcName(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Name"
+                  />
+                </div>
+
+                <div>
+                  <label>SAL Name</label>
+
+                  <input
+                    type="text"
+                    value={salName}
+                    onChange={(e) =>
+                      setSalName(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Name"
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    IATA Delay Code
+                  </label>
+
+                  <input
+                    type="text"
+                    value={iataDelayCode}
+                    onChange={(e) =>
+                      setIataDelayCode(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Enter IATA delay code"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label>Delay Reason</label>
+
+                <textarea
+                  value={delayReason}
+                  onChange={(e) =>
+                    setDelayReason(
+                      e.target.value
+                    )
+                  }
+                  placeholder="Enter delay reason"
+                  rows={4}
+                />
+              </div>
+
+              <div>
+                <label>
+                  Operational Remarks
+                </label>
+
+                <textarea
+                  value={operationalRemarks}
+                  onChange={(e) =>
+                    setOperationalRemarks(
+                      e.target.value
+                    )
+                  }
+                  placeholder="Enter operational remarks"
+                  rows={4}
+                />
+              </div>
+
+              <div>
+                <label>Comments</label>
+
+                <textarea
+                  value={comments}
+                  onChange={(e) =>
+                    setComments(
+                      e.target.value
+                    )
+                  }
+                  placeholder="Additional comments"
+                  rows={4}
+                />
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  flexWrap: "wrap",
+                  marginTop: "10px",
+                }}
+              >
+                <button
+                  type="button"
+                  className="logout-button"
+                  onClick={() =>
+                    router.push(
+                      `/flights?department=${department}`
+                    )
+                  }
+                >
+                  CANCEL
+                </button>
+
+                <button
+                  type="submit"
+                  className="new-flight-button"
+                  disabled={saving}
+                >
+                  {saving
+                    ? "SAVING..."
+                    : "SAVE SERVICE CAPTURE"}
+                </button>
+              </div>
+            </form>
+          </section>
+        ) : (
+          <section className="flights-section">
+            <div
+              style={{
+                padding: "40px",
+                textAlign: "center",
+              }}
+            >
+              <h2>
+                {departmentNames[department] ||
+                  department}
+              </h2>
+
+              <p
+                style={{
+                  marginTop: "10px",
+                }}
+              >
+                Service capture for this
+                department will be added next.
+              </p>
+            </div>
+          </section>
+        )}
+      </section>
+
+      <footer className="dashboard-footer">
+        <p>
+          TRANSOM Flight Service Capture
+        </p>
+
+        <span>
+          Authorized Personnel Only
+        </span>
+      </footer>
+    </main>
+  );
+}
