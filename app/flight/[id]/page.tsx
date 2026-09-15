@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 
 type Flight = {
@@ -11,6 +15,14 @@ type Flight = {
   route: string;
   flight_date: string;
   status: string;
+};
+
+const departmentNames: Record<string, string> = {
+  ramp: "RAMP DEPARTMENT",
+  sorting: "SORTING DEPARTMENT",
+  load_control_ops: "LOAD CONTROL / OPS",
+  passenger_services: "PASSENGER SERVICES",
+  cargo: "CARGO DEPARTMENT",
 };
 
 export default function FlightDetailsPage() {
@@ -32,33 +44,23 @@ export default function FlightDetailsPage() {
   const [pax, setPax] = useState("");
   const [baggages, setBaggages] = useState("");
   const [cargo, setCargo] = useState("");
-
   const [parkingBay, setParkingBay] = useState("");
   const [loadRamp, setLoadRamp] = useState("");
-
   const [stdEtd, setStdEtd] = useState("");
   const [staEta, setStaEta] = useState("");
-
   const [actualDeparture, setActualDeparture] =
     useState("");
-
   const [actualArrival, setActualArrival] =
     useState("");
-
   const [loadControlTrcName, setLoadControlTrcName] =
     useState("");
-
   const [salName, setSalName] = useState("");
-
   const [delayReason, setDelayReason] =
     useState("");
-
   const [iataDelayCode, setIataDelayCode] =
     useState("");
-
   const [operationalRemarks, setOperationalRemarks] =
     useState("");
-
   const [comments, setComments] = useState("");
 
   useEffect(() => {
@@ -99,7 +101,7 @@ export default function FlightDetailsPage() {
   };
 
   const handleSave = async (
-    e: React.FormEvent
+    e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
 
@@ -113,7 +115,7 @@ export default function FlightDetailsPage() {
       alert(
         "Your session has expired. Please login again."
       );
-
+      setSaving(false);
       router.push("/");
       return;
     }
@@ -123,6 +125,7 @@ export default function FlightDetailsPage() {
       .insert({
         flight_id: flightId,
         department: department,
+
         pax: pax ? Number(pax) : null,
         baggages: baggages
           ? Number(baggages)
@@ -242,15 +245,11 @@ export default function FlightDetailsPage() {
             ← BACK TO FLIGHTS
           </button>
 
-          <h1>
-            {flight.flight_number}
-          </h1>
+          <h1>{flight.flight_number}</h1>
 
           <p>
-            {department ===
-            "load_control_ops"
-              ? "LOAD CONTROL / OPS"
-              : department}
+            {departmentNames[department] ||
+              department}
           </p>
         </div>
 
@@ -306,8 +305,7 @@ export default function FlightDetailsPage() {
           </div>
         </section>
 
-        {department ===
-        "load_control_ops" ? (
+        {department === "load_control_ops" ? (
           <section className="flights-section">
             <div
               className="section-header"
@@ -316,9 +314,7 @@ export default function FlightDetailsPage() {
               }}
             >
               <div>
-                <h2>
-                  Load Control / OPS
-                </h2>
+                <h2>Load Control / OPS</h2>
 
                 <p>
                   Flight service capture
@@ -345,4 +341,131 @@ export default function FlightDetailsPage() {
                 <div>
                   <label>PAX</label>
 
-                  <
+                  <input
+                    type="number"
+                    min="0"
+                    value={pax}
+                    onChange={(e) =>
+                      setPax(e.target.value)
+                    }
+                    placeholder="Passenger count"
+                  />
+                </div>
+
+                <div>
+                  <label>Baggages</label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={baggages}
+                    onChange={(e) =>
+                      setBaggages(e.target.value)
+                    }
+                    placeholder="Baggage count"
+                  />
+                </div>
+
+                <div>
+                  <label>Cargo</label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={cargo}
+                    onChange={(e) =>
+                      setCargo(e.target.value)
+                    }
+                    placeholder="Cargo"
+                  />
+                </div>
+
+                <div>
+                  <label>Parking Bay</label>
+
+                  <input
+                    type="text"
+                    value={parkingBay}
+                    onChange={(e) =>
+                      setParkingBay(
+                        e.target.value
+                      )
+                    }
+                    placeholder="e.g. Bay 04"
+                  />
+                </div>
+
+                <div>
+                  <label>Load / Ramp</label>
+
+                  <input
+                    type="text"
+                    value={loadRamp}
+                    onChange={(e) =>
+                      setLoadRamp(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Load / Ramp"
+                  />
+                </div>
+
+                <div>
+                  <label>STD / ETD</label>
+
+                  <input
+                    type="text"
+                    value={stdEtd}
+                    onChange={(e) =>
+                      setStdEtd(
+                        e.target.value
+                      )
+                    }
+                    placeholder="e.g. 15:00 / 15:20"
+                  />
+                </div>
+
+                <div>
+                  <label>STA / ETA</label>
+
+                  <input
+                    type="text"
+                    value={staEta}
+                    onChange={(e) =>
+                      setStaEta(
+                        e.target.value
+                      )
+                    }
+                    placeholder="e.g. 16:00 / 16:15"
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Actual Departure
+                  </label>
+
+                  <input
+                    type="datetime-local"
+                    value={actualDeparture}
+                    onChange={(e) =>
+                      setActualDeparture(
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Actual Arrival
+                  </label>
+
+                  <input
+                    type="datetime-local"
+                    value={actualArrival}
+                    onChange={(e) =>
+                      setActualArrival(
+                        e.target.value
+                      )
