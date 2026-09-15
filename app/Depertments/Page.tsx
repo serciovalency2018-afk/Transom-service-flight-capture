@@ -13,7 +13,9 @@ export default function DepartmentsPage() {
     >
       <div style={{ textAlign: "center" }}>
         <h1>TRANSOM</h1>
+
         <h2>Select Department</h2>
+
         <p>Departments page is working.</p>
       </div>
     </main>
