@@ -42,8 +42,11 @@ export default function LoginPage() {
         alignItems: "center",
         justifyContent: "center",
         padding: "20px",
-        background:
-          "linear-gradient(135deg, #071d41 0%, #0b2d5c 100%)",
+        backgroundImage:
+          "linear-gradient(rgba(7,29,65,0.55), rgba(7,29,65,0.65)), url('/transom-airport.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         fontFamily: "Arial, sans-serif",
       }}
     >
@@ -51,11 +54,11 @@ export default function LoginPage() {
         style={{
           width: "100%",
           maxWidth: "440px",
-          background: "#ffffff",
+          background: "rgba(255,255,255,0.97)",
           borderRadius: "16px",
           padding: "40px",
           boxShadow:
-            "0 20px 50px rgba(0,0,0,0.25)",
+            "0 20px 50px rgba(0,0,0,0.35)",
         }}
       >
         <div
@@ -125,7 +128,6 @@ export default function LoginPage() {
                 border:
                   "1px solid #d0d5dd",
                 fontSize: "15px",
-                outline: "none",
               }}
             />
           </div>
@@ -158,7 +160,6 @@ export default function LoginPage() {
                 border:
                   "1px solid #d0d5dd",
                 fontSize: "15px",
-                outline: "none",
               }}
             />
           </div>
