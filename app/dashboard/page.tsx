@@ -83,22 +83,6 @@ export default function DashboardPage() {
     router.push("/");
   };
 
-  const openCount = flights.filter(
-    (flight) => flight.status === "Open"
-  ).length;
-
-  const progressCount = flights.filter(
-    (flight) => flight.status === "In Progress"
-  ).length;
-
-  const noDelayCount = flights.filter(
-    (flight) => flight.status === "Closed - No Delay"
-  ).length;
-
-  const delayCount = flights.filter(
-    (flight) => flight.status === "Closed - With Delay"
-  ).length;
-
   const getStatusClass = (status: string) => {
     switch (status) {
       case "Open":
@@ -118,11 +102,29 @@ export default function DashboardPage() {
     }
   };
 
+  const openCount = flights.filter(
+    (flight) => flight.status === "Open"
+  ).length;
+
+  const progressCount = flights.filter(
+    (flight) => flight.status === "In Progress"
+  ).length;
+
+  const noDelayCount = flights.filter(
+    (flight) => flight.status === "Closed - No Delay"
+  ).length;
+
+  const delayCount = flights.filter(
+    (flight) => flight.status === "Closed - With Delay"
+  ).length;
+
   return (
     <main className="dashboard-page">
       <header className="dashboard-header">
         <div>
-          <div className="dashboard-logo">TRANSOM</div>
+          <div className="dashboard-logo">
+            TRANSOM
+          </div>
 
           <div className="dashboard-subtitle">
             FLIGHT SERVICE CAPTURE
@@ -139,10 +141,13 @@ export default function DashboardPage() {
 
       <section className="dashboard-content">
         <div className="welcome-section">
-          <h1>Flight Operations Dashboard</h1>
+          <h1>
+            Flight Operations Dashboard
+          </h1>
 
           <p>
-            Manage and monitor flight service capture operations.
+            Manage and monitor flight service
+            capture operations.
           </p>
         </div>
 
@@ -200,7 +205,9 @@ export default function DashboardPage() {
 
             <button
               className="new-flight-button"
-              onClick={() => router.push("/new-flight")}
+              onClick={() =>
+                router.push("/new-flight")
+              }
             >
               + NEW FLIGHT
             </button>
@@ -208,16 +215,23 @@ export default function DashboardPage() {
 
           {loading ? (
             <div className="empty-state">
-              <h3>Loading flights...</h3>
+              <h3>
+                Loading flights...
+              </h3>
             </div>
           ) : flights.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon">✈</div>
+              <div className="empty-icon">
+                ✈
+              </div>
 
-              <h3>No flights available</h3>
+              <h3>
+                No flights available
+              </h3>
 
               <p>
-                Click + NEW FLIGHT to create your first flight.
+                Click + NEW FLIGHT to create
+                your first flight.
               </p>
             </div>
           ) : (
@@ -267,6 +281,17 @@ export default function DashboardPage() {
 
                       <td>
                         <div className="flight-actions">
+                          <button
+                            className="action-button view"
+                            onClick={() =>
+                              router.push(
+                                `/flight/${flight.id}`
+                              )
+                            }
+                          >
+                            VIEW DETAILS
+                          </button>
+
                           {flight.status === "Open" && (
                             <button
                               className="action-button start"
@@ -286,7 +311,8 @@ export default function DashboardPage() {
                             </button>
                           )}
 
-                          {flight.status === "In Progress" && (
+                          {flight.status ===
+                            "In Progress" && (
                             <>
                               <button
                                 className="action-button close-green"
@@ -320,26 +346,10 @@ export default function DashboardPage() {
                             </>
                           )}
 
-                          {flight.status ===
-                            "Closed - No Delay" && (
-                            <button
-                              className="action-button reopen"
-                              disabled={
-                                updating === flight.id
-                              }
-                              onClick={() =>
-                                updateStatus(
-                                  flight.id,
-                                  "Open"
-                                )
-                              }
-                            >
-                              REOPEN
-                            </button>
-                          )}
-
-                          {flight.status ===
-                            "Closed - With Delay" && (
+                          {(flight.status ===
+                            "Closed - No Delay" ||
+                            flight.status ===
+                              "Closed - With Delay") && (
                             <button
                               className="action-button reopen"
                               disabled={
