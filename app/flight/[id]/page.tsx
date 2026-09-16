@@ -227,3 +227,109 @@ function FormSection({
   children: ReactNode;
 }) {
   return (
+    <section
+      style={{
+        marginTop: "10px",
+      }}
+    >
+      <h3
+        style={{
+          color: "#071d41",
+          marginBottom: "18px",
+          borderBottom: "1px solid #eaecf0",
+          paddingBottom: "10px",
+        }}
+      >
+        {title}
+      </h3>
+
+      {children}
+    </section>
+  );
+}
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+function FlightDetailsContent() {
+  const router = useRouter();
+  const params = useParams();
+  const searchParams = useSearchParams();
+
+  const flightId = params.id as string;
+
+  const department =
+    searchParams.get("department") || "";
+
+  const [flight, setFlight] =
+    useState<Flight | null>(null);
+
+  const [captures, setCaptures] =
+    useState<Capture[]>([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [saving, setSaving] =
+    useState(false);
+
+  const [isManagement, setIsManagement] =
+    useState(false);
+
+  /* =======================================================
+     LOAD CONTROL / OPS
+  ======================================================= */
+
+  const [pax, setPax] = useState("");
+  const [baggages, setBaggages] =
+    useState("");
+  const [cargo, setCargo] =
+    useState("");
+
+  const [parkingBay, setParkingBay] =
+    useState("");
+  const [loadRamp, setLoadRamp] =
+    useState("");
+
+  const [stdEtd, setStdEtd] =
+    useState("");
+  const [staEta, setStaEta] =
+    useState("");
+
+  const [actualDeparture, setActualDeparture] =
+    useState("");
+
+  const [actualArrival, setActualArrival] =
+    useState("");
+
+  const [
+    loadControlTrcName,
+    setLoadControlTrcName,
+  ] = useState("");
+
+  const [salName, setSalName] =
+    useState("");
+
+  const [delayReason, setDelayReason] =
+    useState("");
+
+  const [iataDelayCode, setIataDelayCode] =
+    useState("");
+
+  const [
+    operationalRemarks,
+    setOperationalRemarks,
+  ] = useState("");
+
+  const [comments, setComments] =
+    useState("");
+
+  /* =======================================================
+     RAMP
+  ======================================================= */
+
+  const [gpuTime, setGpuTime] =
+    useState("");
+
+  const [acu, setAcu
