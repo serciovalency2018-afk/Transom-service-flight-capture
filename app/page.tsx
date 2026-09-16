@@ -18,20 +18,65 @@ export default function LoginPage() {
 
     setLoading(true);
 
-    const { error } =
+    // LOGIN
+    const { data, error } =
       await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-    setLoading(false);
-
     if (error) {
+      setLoading(false);
       alert(error.message);
       return;
     }
 
-    router.push("/departments");
+    const user = data.user;
+
+    if (!user) {
+      setLoading(false);
+      alert("Login failed. User not found.");
+      return;
+    }
+
+    // GET USER PROFILE
+    const { data: profile, error: profileError } =
+      await supabase
+        .from("profiles")
+        .select("full_name, role, department")
+        .eq("id", user.id)
+        .single();
+
+    if (profileError) {
+      setLoading(false);
+
+      await supabase.auth.signOut();
+
+      alert(
+        "Your account profile was not found. Please contact Management."
+      );
+
+      return;
+    }
+
+    setLoading(false);
+
+    // MANAGEMENT
+    if (profile.role === "management") {
+      router.push("/management");
+      return;
+    }
+
+    // REGULAR USER
+    if (profile.role === "user") {
+      router.push("/departments");
+      return;
+    }
+
+    // UNKNOWN ROLE
+    await supabase.auth.signOut();
+
+    alert("Your account role is not configured correctly.");
   };
 
   return (
