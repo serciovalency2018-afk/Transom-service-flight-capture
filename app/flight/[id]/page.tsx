@@ -103,6 +103,44 @@ function FlightDetailsContent() {
   const [sortingComments, setSortingComments] =
     useState("");
 
+  // PASSENGER SERVICES
+  const [checkInStartTime, setCheckInStartTime] =
+    useState("");
+  const [checkInEndTime, setCheckInEndTime] =
+    useState("");
+  const [checkInAgents, setCheckInAgents] =
+    useState("");
+  const [boardingStartTime, setBoardingStartTime] =
+    useState("");
+  const [boardingEndTime, setBoardingEndTime] =
+    useState("");
+  const [boardingAgents, setBoardingAgents] =
+    useState("");
+  const [gateNumber, setGateNumber] =
+    useState("");
+  const [gateOpenTime, setGateOpenTime] =
+    useState("");
+  const [gateCloseTime, setGateCloseTime] =
+    useState("");
+  const [wheelchairAssistance, setWheelchairAssistance] =
+    useState("");
+  const [specialAssistance, setSpecialAssistance] =
+    useState("");
+  const [noShowPax, setNoShowPax] =
+    useState("");
+  const [deniedBoardingPax, setDeniedBoardingPax] =
+    useState("");
+  const [transferPax, setTransferPax] =
+    useState("");
+  const [
+    passengerServicesRemarks,
+    setPassengerServicesRemarks,
+  ] = useState("");
+  const [
+    passengerServicesComments,
+    setPassengerServicesComments,
+  ] = useState("");
+
   useEffect(() => {
     const loadFlight = async () => {
       const {
@@ -240,6 +278,52 @@ function FlightDetailsContent() {
       sorting_comments:
         sortingComments || null,
 
+      // PASSENGER SERVICES
+      check_in_start_time:
+        checkInStartTime || null,
+      check_in_end_time:
+        checkInEndTime || null,
+      check_in_agents:
+        checkInAgents
+          ? Number(checkInAgents)
+          : null,
+      boarding_start_time:
+        boardingStartTime || null,
+      boarding_end_time:
+        boardingEndTime || null,
+      boarding_agents:
+        boardingAgents
+          ? Number(boardingAgents)
+          : null,
+      gate_number:
+        gateNumber || null,
+      gate_open_time:
+        gateOpenTime || null,
+      gate_close_time:
+        gateCloseTime || null,
+      wheelchair_assistance:
+        wheelchairAssistance
+          ? Number(wheelchairAssistance)
+          : null,
+      special_assistance:
+        specialAssistance || null,
+      no_show_pax:
+        noShowPax
+          ? Number(noShowPax)
+          : null,
+      denied_boarding_pax:
+        deniedBoardingPax
+          ? Number(deniedBoardingPax)
+          : null,
+      transfer_pax:
+        transferPax
+          ? Number(transferPax)
+          : null,
+      passenger_services_remarks:
+        passengerServicesRemarks || null,
+      passenger_services_comments:
+        passengerServicesComments || null,
+
       created_by: user.id,
     };
 
@@ -280,7 +364,6 @@ function FlightDetailsContent() {
       <main className="dashboard-page">
         <div className="empty-state">
           <h3>Flight not found</h3>
-
           <button
             className="new-flight-button"
             onClick={() =>
@@ -419,17 +502,12 @@ function FlightDetailsContent() {
                 padding: "25px 30px",
               }}
             >
-
               <div>
-                <h2>
-                  RAMP DEPARTMENT
-                </h2>
-
+                <h2>RAMP DEPARTMENT</h2>
                 <p>
                   Ramp & Ground Service Capture
                 </p>
               </div>
-
             </div>
 
             <form
@@ -653,10 +731,7 @@ function FlightDetailsContent() {
               </div>
 
               <div>
-
-                <label>
-                  Ramp Comments
-                </label>
+                <label>Ramp Comments</label>
 
                 <textarea
                   value={rampComments}
@@ -668,7 +743,6 @@ function FlightDetailsContent() {
                   placeholder="Enter ramp comments"
                   rows={4}
                 />
-
               </div>
 
               <div
@@ -721,7 +795,6 @@ function FlightDetailsContent() {
                 padding: "25px 30px",
               }}
             >
-
               <div>
                 <h2>
                   SORTING DEPARTMENT
@@ -731,7 +804,6 @@ function FlightDetailsContent() {
                   Baggage & ULD Sorting Service Capture
                 </p>
               </div>
-
             </div>
 
             <form
@@ -928,7 +1000,6 @@ function FlightDetailsContent() {
               </div>
 
               <div>
-
                 <label>
                   Sorting Remarks
                 </label>
@@ -943,11 +1014,9 @@ function FlightDetailsContent() {
                   placeholder="Enter sorting remarks"
                   rows={4}
                 />
-
               </div>
 
               <div>
-
                 <label>
                   Comments
                 </label>
@@ -962,7 +1031,6 @@ function FlightDetailsContent() {
                   placeholder="Additional comments"
                   rows={4}
                 />
-
               </div>
 
               <div
@@ -993,6 +1061,418 @@ function FlightDetailsContent() {
                   {saving
                     ? "SAVING..."
                     : "SAVE SORTING CAPTURE"}
+                </button>
+
+              </div>
+
+            </form>
+
+          </section>
+
+        )}
+
+        {/* PASSENGER SERVICES */}
+
+        {department === "passenger_services" && (
+
+          <section className="flights-section">
+
+            <div
+              className="section-header"
+              style={{
+                padding: "25px 30px",
+              }}
+            >
+
+              <div>
+                <h2>
+                  PASSENGER SERVICES
+                </h2>
+
+                <p>
+                  Passenger & Gate Services Capture
+                </p>
+              </div>
+
+            </div>
+
+            <form
+              onSubmit={handleSave}
+              style={{
+                padding: "30px",
+                display: "grid",
+                gap: "22px",
+              }}
+            >
+
+              <h3
+                style={{
+                  color: "#071d41",
+                  marginBottom: "0",
+                }}
+              >
+                Check-in
+              </h3>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: "20px",
+                }}
+              >
+
+                <div>
+                  <label>
+                    Check-in Start Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={checkInStartTime}
+                    onChange={(e) =>
+                      setCheckInStartTime(
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Check-in End Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={checkInEndTime}
+                    onChange={(e) =>
+                      setCheckInEndTime(
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Check-in Agents
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={checkInAgents}
+                    onChange={(e) =>
+                      setCheckInAgents(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Number of agents"
+                  />
+                </div>
+
+              </div>
+
+              <h3
+                style={{
+                  color: "#071d41",
+                  marginBottom: "0",
+                  marginTop: "10px",
+                }}
+              >
+                Boarding
+              </h3>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: "20px",
+                }}
+              >
+
+                <div>
+                  <label>
+                    Boarding Start Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={boardingStartTime}
+                    onChange={(e) =>
+                      setBoardingStartTime(
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Boarding End Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={boardingEndTime}
+                    onChange={(e) =>
+                      setBoardingEndTime(
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Boarding Agents
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={boardingAgents}
+                    onChange={(e) =>
+                      setBoardingAgents(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Number of agents"
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Gate Number
+                  </label>
+
+                  <input
+                    type="text"
+                    value={gateNumber}
+                    onChange={(e) =>
+                      setGateNumber(
+                        e.target.value
+                      )
+                    }
+                    placeholder="e.g. Gate 4"
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Gate Open Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={gateOpenTime}
+                    onChange={(e) =>
+                      setGateOpenTime(
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Gate Close Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={gateCloseTime}
+                    onChange={(e) =>
+                      setGateCloseTime(
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+              </div>
+
+              <h3
+                style={{
+                  color: "#071d41",
+                  marginBottom: "0",
+                  marginTop: "10px",
+                }}
+              >
+                Passenger Assistance
+              </h3>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: "20px",
+                }}
+              >
+
+                <div>
+                  <label>
+                    Wheelchair Assistance
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={
+                      wheelchairAssistance
+                    }
+                    onChange={(e) =>
+                      setWheelchairAssistance(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Number assisted"
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Special Assistance
+                  </label>
+
+                  <input
+                    type="text"
+                    value={specialAssistance}
+                    onChange={(e) =>
+                      setSpecialAssistance(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Special assistance details"
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    No-show PAX
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={noShowPax}
+                    onChange={(e) =>
+                      setNoShowPax(
+                        e.target.value
+                      )
+                    }
+                    placeholder="No-show passengers"
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Denied Boarding PAX
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={deniedBoardingPax}
+                    onChange={(e) =>
+                      setDeniedBoardingPax(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Denied boarding"
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Transfer PAX
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={transferPax}
+                    onChange={(e) =>
+                      setTransferPax(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Transfer passengers"
+                  />
+                </div>
+
+              </div>
+
+              <div>
+                <label>
+                  Passenger Services Remarks
+                </label>
+
+                <textarea
+                  value={
+                    passengerServicesRemarks
+                  }
+                  onChange={(e) =>
+                    setPassengerServicesRemarks(
+                      e.target.value
+                    )
+                  }
+                  placeholder="Enter passenger services remarks"
+                  rows={4}
+                />
+              </div>
+
+              <div>
+                <label>
+                  Passenger Services Comments
+                </label>
+
+                <textarea
+                  value={
+                    passengerServicesComments
+                  }
+                  onChange={(e) =>
+                    setPassengerServicesComments(
+                      e.target.value
+                    )
+                  }
+                  placeholder="Additional comments"
+                  rows={4}
+                />
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  flexWrap: "wrap",
+                }}
+              >
+
+                <button
+                  type="button"
+                  className="logout-button"
+                  onClick={() =>
+                    router.push(
+                      `/flights?department=${department}`
+                    )
+                  }
+                >
+                  CANCEL
+                </button>
+
+                <button
+                  type="submit"
+                  className="new-flight-button"
+                  disabled={saving}
+                >
+                  {saving
+                    ? "SAVING..."
+                    : "SAVE PASSENGER SERVICES"}
                 </button>
 
               </div>
@@ -1237,9 +1717,7 @@ function FlightDetailsContent() {
               </div>
 
               <div>
-                <label>
-                  Delay Reason
-                </label>
+                <label>Delay Reason</label>
 
                 <textarea
                   value={delayReason}
@@ -1323,11 +1801,9 @@ function FlightDetailsContent() {
 
         )}
 
-        {/* PASSENGER SERVICES / CARGO */}
+        {/* CARGO */}
 
-        {department !== "ramp" &&
-          department !== "sorting" &&
-          department !== "load_control_ops" && (
+        {department === "cargo" && (
 
           <section className="flights-section">
 
@@ -1338,18 +1814,15 @@ function FlightDetailsContent() {
               }}
             >
 
-              <h2>
-                {departmentNames[department] ||
-                  department}
-              </h2>
+              <h2>CARGO DEPARTMENT</h2>
 
               <p
                 style={{
                   marginTop: "10px",
                 }}
               >
-                Service capture for this
-                department will be added next.
+                Cargo service capture will be
+                added next.
               </p>
 
             </div>
@@ -1396,4 +1869,4 @@ export default function FlightDetailsPage() {
       <FlightDetailsContent />
     </Suspense>
   );
-              }
+      }
