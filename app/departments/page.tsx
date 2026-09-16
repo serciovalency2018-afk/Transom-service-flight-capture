@@ -49,7 +49,7 @@ export default function DepartmentsPage() {
     useState(true);
 
   useEffect(() => {
-    const loadProfile = async () => {
+    async function loadProfile() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -76,33 +76,31 @@ export default function DepartmentsPage() {
 
       setProfile(data);
       setLoading(false);
-    };
+    }
 
     loadProfile();
   }, [router]);
 
-  const handleDepartmentSelect = (
+  function selectDepartment(
     departmentKey: string
-  ) => {
+  ) {
     router.push(
       `/flights?department=${encodeURIComponent(
         departmentKey
       )}`
     );
-  };
+  }
 
-  const handleLogout = async () => {
+  async function logout() {
     await supabase.auth.signOut();
     router.push("/");
-  };
+  }
 
   if (loading) {
     return (
       <main className="dashboard-page">
         <div className="empty-state">
-          <h3>
-            Loading departments...
-          </h3>
+          <h3>Loading departments...</h3>
         </div>
       </main>
     );
@@ -129,7 +127,7 @@ export default function DepartmentsPage() {
 
         <button
           className="logout-button"
-          onClick={handleLogout}
+          onClick={logout}
         >
           LOGOUT
         </button>
@@ -140,9 +138,7 @@ export default function DepartmentsPage() {
 
         <div className="welcome-section">
 
-          <h1>
-            Select Department
-          </h1>
+          <h1>Select Department</h1>
 
           <p>
             Choose the department you want
@@ -153,11 +149,7 @@ export default function DepartmentsPage() {
 
         <section className="flights-section">
 
-          <div
-            style={{
-              padding: "30px",
-            }}
-          >
+          <div style={{ padding: "30px" }}>
 
             <div
               style={{
@@ -197,7 +189,7 @@ export default function DepartmentsPage() {
                     key={department.key}
                     type="button"
                     onClick={() =>
-                      handleDepartmentSelect(
+                      selectDepartment(
                         department.key
                       )
                     }
@@ -257,4 +249,20 @@ export default function DepartmentsPage() {
 
         </section>
 
-      </
+      </section>
+
+      <footer className="dashboard-footer">
+
+        <p>
+          TRANSOM Flight Service Capture
+        </p>
+
+        <span>
+          Authorized Personnel Only
+        </span>
+
+      </footer>
+
+    </main>
+  );
+}
