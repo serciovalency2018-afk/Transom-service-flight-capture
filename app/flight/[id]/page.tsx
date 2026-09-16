@@ -37,7 +37,10 @@ function FlightDetailsContent() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // =========================
   // LOAD CONTROL / OPS
+  // =========================
+
   const [pax, setPax] = useState("");
   const [baggages, setBaggages] = useState("");
   const [cargo, setCargo] = useState("");
@@ -56,7 +59,10 @@ function FlightDetailsContent() {
     useState("");
   const [comments, setComments] = useState("");
 
+  // =========================
   // RAMP
+  // =========================
+
   const [gpuTime, setGpuTime] = useState("");
   const [acu, setAcu] = useState("");
   const [cobus, setCobus] = useState("");
@@ -77,7 +83,10 @@ function FlightDetailsContent() {
   const [rampComments, setRampComments] =
     useState("");
 
+  // =========================
   // SORTING
+  // =========================
+
   const [uldBagSorting, setUldBagSorting] =
     useState("");
   const [numberOfBags, setNumberOfBags] =
@@ -103,7 +112,10 @@ function FlightDetailsContent() {
   const [sortingComments, setSortingComments] =
     useState("");
 
+  // =========================
   // PASSENGER SERVICES
+  // =========================
+
   const [checkInStartTime, setCheckInStartTime] =
     useState("");
   const [checkInEndTime, setCheckInEndTime] =
@@ -141,6 +153,61 @@ function FlightDetailsContent() {
     setPassengerServicesComments,
   ] = useState("");
 
+  // =========================
+  // CARGO
+  // =========================
+
+  const [
+    cargoAcceptanceStartTime,
+    setCargoAcceptanceStartTime,
+  ] = useState("");
+
+  const [
+    cargoAcceptanceEndTime,
+    setCargoAcceptanceEndTime,
+  ] = useState("");
+
+  const [cargoWeight, setCargoWeight] =
+    useState("");
+
+  const [cargoPieces, setCargoPieces] =
+    useState("");
+
+  const [awbNumber, setAwbNumber] =
+    useState("");
+
+  const [cargoUldNumber, setCargoUldNumber] =
+    useState("");
+
+  const [dangerousGoods, setDangerousGoods] =
+    useState("");
+
+  const [specialCargo, setSpecialCargo] =
+    useState("");
+
+  const [warehouseLocation, setWarehouseLocation] =
+    useState("");
+
+  const [
+    cargoLoadingStartTime,
+    setCargoLoadingStartTime,
+  ] = useState("");
+
+  const [
+    cargoLoadingEndTime,
+    setCargoLoadingEndTime,
+  ] = useState("");
+
+  const [cargoRemarks, setCargoRemarks] =
+    useState("");
+
+  const [cargoComments, setCargoComments] =
+    useState("");
+
+  // =========================
+  // LOAD FLIGHT
+  // =========================
+
   useEffect(() => {
     const loadFlight = async () => {
       const {
@@ -173,10 +240,18 @@ function FlightDetailsContent() {
     }
   }, [flightId, router]);
 
+  // =========================
+  // LOGOUT
+  // =========================
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
   };
+
+  // =========================
+  // SAVE SERVICE CAPTURE
+  // =========================
 
   const handleSave = async (
     e: React.FormEvent<HTMLFormElement>
@@ -191,9 +266,11 @@ function FlightDetailsContent() {
 
     if (!user) {
       setSaving(false);
+
       alert(
         "Your session has expired. Please login again."
       );
+
       router.push("/");
       return;
     }
@@ -202,127 +279,268 @@ function FlightDetailsContent() {
       flight_id: flightId,
       department: department,
 
+      // =========================
       // LOAD CONTROL / OPS
+      // =========================
+
       pax: pax ? Number(pax) : null,
-      baggages: baggages ? Number(baggages) : null,
-      cargo: cargo ? Number(cargo) : null,
-      parking_bay: parkingBay || null,
-      load_ramp: loadRamp || null,
-      std_etd: stdEtd || null,
-      sta_eta: staEta || null,
-      actual_departure: actualDeparture || null,
-      actual_arrival: actualArrival || null,
+
+      baggages: baggages
+        ? Number(baggages)
+        : null,
+
+      cargo: cargo
+        ? Number(cargo)
+        : null,
+
+      parking_bay:
+        parkingBay || null,
+
+      load_ramp:
+        loadRamp || null,
+
+      std_etd:
+        stdEtd || null,
+
+      sta_eta:
+        staEta || null,
+
+      actual_departure:
+        actualDeparture || null,
+
+      actual_arrival:
+        actualArrival || null,
+
       load_control_trc_name:
         loadControlTrcName || null,
-      sal_name: salName || null,
-      delay_reason: delayReason || null,
-      iata_delay_code: iataDelayCode || null,
+
+      sal_name:
+        salName || null,
+
+      delay_reason:
+        delayReason || null,
+
+      iata_delay_code:
+        iataDelayCode || null,
+
       operational_remarks:
         operationalRemarks || null,
-      comments: comments || null,
 
+      comments:
+        comments || null,
+
+      // =========================
       // RAMP
-      gpu_time: gpuTime || null,
-      acu: acu || null,
-      cobus: cobus || null,
-      towing: towing || null,
-      cleaning: cleaning || null,
-      pushback: pushback || null,
+      // =========================
+
+      gpu_time:
+        gpuTime || null,
+
+      acu:
+        acu || null,
+
+      cobus:
+        cobus || null,
+
+      towing:
+        towing || null,
+
+      cleaning:
+        cleaning || null,
+
+      pushback:
+        pushback || null,
+
       lavatory_service:
         lavatoryService || null,
+
       portable_water:
         portableWater || null,
-      pax_stairs: paxStairs || null,
-      ambulift: ambulift || null,
-      asu: asu || null,
-      pax_step: paxStep || null,
-      chocks_in: chocksIn || null,
-      chocks_out: chocksOut || null,
-      vomiting: vomiting || null,
+
+      pax_stairs:
+        paxStairs || null,
+
+      ambulift:
+        ambulift || null,
+
+      asu:
+        asu || null,
+
+      pax_step:
+        paxStep || null,
+
+      chocks_in:
+        chocksIn || null,
+
+      chocks_out:
+        chocksOut || null,
+
+      vomiting:
+        vomiting || null,
+
       ramp_comments:
         rampComments || null,
 
+      // =========================
       // SORTING
+      // =========================
+
       uld_bag_sorting:
         uldBagSorting || null,
+
       number_of_bags:
         numberOfBags
           ? Number(numberOfBags)
           : null,
+
       uld_number:
         uldNumber || null,
+
       sorting_start_time:
         sortingStartTime || null,
+
       sorting_end_time:
         sortingEndTime || null,
+
       bag_transfer:
         bagTransfer || null,
+
       rush_priority_bags:
         rushPriorityBags
           ? Number(rushPriorityBags)
           : null,
+
       misrouted_bags:
         misroutedBags
           ? Number(misroutedBags)
           : null,
+
       damaged_bags:
         damagedBags
           ? Number(damagedBags)
           : null,
+
       missing_bags:
         missingBags
           ? Number(missingBags)
           : null,
+
       sorting_remarks:
         sortingRemarks || null,
+
       sorting_comments:
         sortingComments || null,
 
+      // =========================
       // PASSENGER SERVICES
+      // =========================
+
       check_in_start_time:
         checkInStartTime || null,
+
       check_in_end_time:
         checkInEndTime || null,
+
       check_in_agents:
         checkInAgents
           ? Number(checkInAgents)
           : null,
+
       boarding_start_time:
         boardingStartTime || null,
+
       boarding_end_time:
         boardingEndTime || null,
+
       boarding_agents:
         boardingAgents
           ? Number(boardingAgents)
           : null,
+
       gate_number:
         gateNumber || null,
+
       gate_open_time:
         gateOpenTime || null,
+
       gate_close_time:
         gateCloseTime || null,
+
       wheelchair_assistance:
         wheelchairAssistance
           ? Number(wheelchairAssistance)
           : null,
+
       special_assistance:
         specialAssistance || null,
+
       no_show_pax:
         noShowPax
           ? Number(noShowPax)
           : null,
+
       denied_boarding_pax:
         deniedBoardingPax
           ? Number(deniedBoardingPax)
           : null,
+
       transfer_pax:
         transferPax
           ? Number(transferPax)
           : null,
+
       passenger_services_remarks:
         passengerServicesRemarks || null,
+
       passenger_services_comments:
         passengerServicesComments || null,
+
+      // =========================
+      // CARGO
+      // =========================
+
+      cargo_acceptance_start_time:
+        cargoAcceptanceStartTime || null,
+
+      cargo_acceptance_end_time:
+        cargoAcceptanceEndTime || null,
+
+      cargo_weight:
+        cargoWeight
+          ? Number(cargoWeight)
+          : null,
+
+      cargo_pieces:
+        cargoPieces
+          ? Number(cargoPieces)
+          : null,
+
+      awb_number:
+        awbNumber || null,
+
+      cargo_uld_number:
+        cargoUldNumber || null,
+
+      dangerous_goods:
+        dangerousGoods || null,
+
+      special_cargo:
+        specialCargo || null,
+
+      warehouse_location:
+        warehouseLocation || null,
+
+      cargo_loading_start_time:
+        cargoLoadingStartTime || null,
+
+      cargo_loading_end_time:
+        cargoLoadingEndTime || null,
+
+      cargo_remarks:
+        cargoRemarks || null,
+
+      cargo_comments:
+        cargoComments || null,
 
       created_by: user.id,
     };
@@ -349,6 +567,10 @@ function FlightDetailsContent() {
     );
   };
 
+  // =========================
+  // LOADING
+  // =========================
+
   if (loading) {
     return (
       <main className="dashboard-page">
@@ -364,6 +586,7 @@ function FlightDetailsContent() {
       <main className="dashboard-page">
         <div className="empty-state">
           <h3>Flight not found</h3>
+
           <button
             className="new-flight-button"
             onClick={() =>
@@ -380,9 +603,14 @@ function FlightDetailsContent() {
   return (
     <main className="dashboard-page">
 
+      {/* =========================
+          HEADER
+      ========================= */}
+
       <header className="dashboard-header">
 
         <div>
+
           <div className="dashboard-logo">
             TRANSOM
           </div>
@@ -390,6 +618,7 @@ function FlightDetailsContent() {
           <div className="dashboard-subtitle">
             FLIGHT SERVICE CAPTURE
           </div>
+
         </div>
 
         <button
@@ -402,6 +631,10 @@ function FlightDetailsContent() {
       </header>
 
       <section className="dashboard-content">
+
+        {/* =========================
+            BACK + TITLE
+        ========================= */}
 
         <div className="welcome-section">
 
@@ -419,7 +652,9 @@ function FlightDetailsContent() {
             ← BACK TO FLIGHTS
           </button>
 
-          <h1>{flight.flight_number}</h1>
+          <h1>
+            {flight.flight_number}
+          </h1>
 
           <p>
             {departmentNames[department] ||
@@ -428,7 +663,9 @@ function FlightDetailsContent() {
 
         </div>
 
-        {/* FLIGHT INFORMATION */}
+        {/* =========================
+            FLIGHT INFORMATION
+        ========================= */}
 
         <section className="flights-section">
 
@@ -461,27 +698,50 @@ function FlightDetailsContent() {
                 <strong>
                   Flight Number
                 </strong>
-                <p>{flight.flight_number}</p>
+
+                <p>
+                  {flight.flight_number}
+                </p>
               </div>
 
               <div>
-                <strong>Aircraft</strong>
-                <p>{flight.aircraft}</p>
+                <strong>
+                  Aircraft
+                </strong>
+
+                <p>
+                  {flight.aircraft}
+                </p>
               </div>
 
               <div>
-                <strong>Route</strong>
-                <p>{flight.route}</p>
+                <strong>
+                  Route
+                </strong>
+
+                <p>
+                  {flight.route}
+                </p>
               </div>
 
               <div>
-                <strong>Flight Date</strong>
-                <p>{flight.flight_date}</p>
+                <strong>
+                  Flight Date
+                </strong>
+
+                <p>
+                  {flight.flight_date}
+                </p>
               </div>
 
               <div>
-                <strong>Status</strong>
-                <p>{flight.status}</p>
+                <strong>
+                  Status
+                </strong>
+
+                <p>
+                  {flight.status}
+                </p>
               </div>
 
             </div>
@@ -490,7 +750,9 @@ function FlightDetailsContent() {
 
         </section>
 
-        {/* RAMP */}
+        {/* ==================================================
+            RAMP
+        ================================================== */}
 
         {department === "ramp" && (
 
@@ -502,12 +764,19 @@ function FlightDetailsContent() {
                 padding: "25px 30px",
               }}
             >
+
               <div>
-                <h2>RAMP DEPARTMENT</h2>
+
+                <h2>
+                  RAMP DEPARTMENT
+                </h2>
+
                 <p>
                   Ramp & Ground Service Capture
                 </p>
+
               </div>
+
             </div>
 
             <form
@@ -529,72 +798,102 @@ function FlightDetailsContent() {
               >
 
                 <div>
-                  <label>GPU Time</label>
+                  <label>
+                    GPU Time
+                  </label>
+
                   <input
                     type="text"
                     value={gpuTime}
                     onChange={(e) =>
-                      setGpuTime(e.target.value)
+                      setGpuTime(
+                        e.target.value
+                      )
                     }
                     placeholder="GPU time"
                   />
                 </div>
 
                 <div>
-                  <label>ACU</label>
+                  <label>
+                    ACU
+                  </label>
+
                   <input
                     type="text"
                     value={acu}
                     onChange={(e) =>
-                      setAcu(e.target.value)
+                      setAcu(
+                        e.target.value
+                      )
                     }
                     placeholder="ACU"
                   />
                 </div>
 
                 <div>
-                  <label>COBUS</label>
+                  <label>
+                    COBUS
+                  </label>
+
                   <input
                     type="text"
                     value={cobus}
                     onChange={(e) =>
-                      setCobus(e.target.value)
+                      setCobus(
+                        e.target.value
+                      )
                     }
                     placeholder="COBUS"
                   />
                 </div>
 
                 <div>
-                  <label>Towing</label>
+                  <label>
+                    Towing
+                  </label>
+
                   <input
                     type="text"
                     value={towing}
                     onChange={(e) =>
-                      setTowing(e.target.value)
+                      setTowing(
+                        e.target.value
+                      )
                     }
                     placeholder="Towing"
                   />
                 </div>
 
                 <div>
-                  <label>Cleaning</label>
+                  <label>
+                    Cleaning
+                  </label>
+
                   <input
                     type="text"
                     value={cleaning}
                     onChange={(e) =>
-                      setCleaning(e.target.value)
+                      setCleaning(
+                        e.target.value
+                      )
                     }
                     placeholder="Cleaning"
                   />
                 </div>
 
                 <div>
-                  <label>Pushback</label>
+                  <label>
+                    Pushback
+                  </label>
+
                   <input
                     type="text"
                     value={pushback}
                     onChange={(e) =>
-                      setPushback(e.target.value)
+                      setPushback(
+                        e.target.value
+                      )
                     }
                     placeholder="Pushback"
                   />
@@ -604,6 +903,7 @@ function FlightDetailsContent() {
                   <label>
                     Lavatory Service
                   </label>
+
                   <input
                     type="text"
                     value={lavatoryService}
@@ -620,6 +920,7 @@ function FlightDetailsContent() {
                   <label>
                     Portable Water
                   </label>
+
                   <input
                     type="text"
                     value={portableWater}
@@ -633,7 +934,10 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>PAX Stairs</label>
+                  <label>
+                    PAX Stairs
+                  </label>
+
                   <input
                     type="text"
                     value={paxStairs}
@@ -647,7 +951,10 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>Ambulift</label>
+                  <label>
+                    Ambulift
+                  </label>
+
                   <input
                     type="text"
                     value={ambulift}
@@ -661,19 +968,27 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>ASU</label>
+                  <label>
+                    ASU
+                  </label>
+
                   <input
                     type="text"
                     value={asu}
                     onChange={(e) =>
-                      setAsu(e.target.value)
+                      setAsu(
+                        e.target.value
+                      )
                     }
                     placeholder="ASU"
                   />
                 </div>
 
                 <div>
-                  <label>PAX Step</label>
+                  <label>
+                    PAX Step
+                  </label>
+
                   <input
                     type="text"
                     value={paxStep}
@@ -687,7 +1002,10 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>Chocks In</label>
+                  <label>
+                    Chocks In
+                  </label>
+
                   <input
                     type="text"
                     value={chocksIn}
@@ -701,7 +1019,10 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>Chocks Out</label>
+                  <label>
+                    Chocks Out
+                  </label>
+
                   <input
                     type="text"
                     value={chocksOut}
@@ -715,7 +1036,10 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>Vomiting</label>
+                  <label>
+                    Vomiting
+                  </label>
+
                   <input
                     type="text"
                     value={vomiting}
@@ -731,7 +1055,10 @@ function FlightDetailsContent() {
               </div>
 
               <div>
-                <label>Ramp Comments</label>
+
+                <label>
+                  Ramp Comments
+                </label>
 
                 <textarea
                   value={rampComments}
@@ -743,6 +1070,7 @@ function FlightDetailsContent() {
                   placeholder="Enter ramp comments"
                   rows={4}
                 />
+
               </div>
 
               <div
@@ -783,7 +1111,9 @@ function FlightDetailsContent() {
 
         )}
 
-        {/* SORTING */}
+        {/* ==================================================
+            SORTING
+        ================================================== */}
 
         {department === "sorting" && (
 
@@ -795,7 +1125,9 @@ function FlightDetailsContent() {
                 padding: "25px 30px",
               }}
             >
+
               <div>
+
                 <h2>
                   SORTING DEPARTMENT
                 </h2>
@@ -803,7 +1135,9 @@ function FlightDetailsContent() {
                 <p>
                   Baggage & ULD Sorting Service Capture
                 </p>
+
               </div>
+
             </div>
 
             <form
@@ -1000,6 +1334,7 @@ function FlightDetailsContent() {
               </div>
 
               <div>
+
                 <label>
                   Sorting Remarks
                 </label>
@@ -1014,9 +1349,11 @@ function FlightDetailsContent() {
                   placeholder="Enter sorting remarks"
                   rows={4}
                 />
+
               </div>
 
               <div>
+
                 <label>
                   Comments
                 </label>
@@ -1031,6 +1368,7 @@ function FlightDetailsContent() {
                   placeholder="Additional comments"
                   rows={4}
                 />
+
               </div>
 
               <div
@@ -1071,7 +1409,9 @@ function FlightDetailsContent() {
 
         )}
 
-        {/* PASSENGER SERVICES */}
+        {/* ==================================================
+            PASSENGER SERVICES
+        ================================================== */}
 
         {department === "passenger_services" && (
 
@@ -1085,6 +1425,7 @@ function FlightDetailsContent() {
             >
 
               <div>
+
                 <h2>
                   PASSENGER SERVICES
                 </h2>
@@ -1092,6 +1433,7 @@ function FlightDetailsContent() {
                 <p>
                   Passenger & Gate Services Capture
                 </p>
+
               </div>
 
             </div>
@@ -1408,6 +1750,7 @@ function FlightDetailsContent() {
               </div>
 
               <div>
+
                 <label>
                   Passenger Services Remarks
                 </label>
@@ -1424,9 +1767,11 @@ function FlightDetailsContent() {
                   placeholder="Enter passenger services remarks"
                   rows={4}
                 />
+
               </div>
 
               <div>
+
                 <label>
                   Passenger Services Comments
                 </label>
@@ -1443,6 +1788,7 @@ function FlightDetailsContent() {
                   placeholder="Additional comments"
                   rows={4}
                 />
+
               </div>
 
               <div
@@ -1483,7 +1829,9 @@ function FlightDetailsContent() {
 
         )}
 
-        {/* LOAD CONTROL / OPS */}
+        {/* ==================================================
+            LOAD CONTROL / OPS
+        ================================================== */}
 
         {department === "load_control_ops" && (
 
@@ -1497,6 +1845,7 @@ function FlightDetailsContent() {
             >
 
               <div>
+
                 <h2>
                   LOAD CONTROL / OPS
                 </h2>
@@ -1504,6 +1853,7 @@ function FlightDetailsContent() {
                 <p>
                   Flight Service Capture
                 </p>
+
               </div>
 
             </div>
@@ -1527,21 +1877,27 @@ function FlightDetailsContent() {
               >
 
                 <div>
-                  <label>PAX</label>
+                  <label>
+                    PAX
+                  </label>
 
                   <input
                     type="number"
                     min="0"
                     value={pax}
                     onChange={(e) =>
-                      setPax(e.target.value)
+                      setPax(
+                        e.target.value
+                      )
                     }
                     placeholder="Passenger count"
                   />
                 </div>
 
                 <div>
-                  <label>Baggages</label>
+                  <label>
+                    Baggages
+                  </label>
 
                   <input
                     type="number"
@@ -1557,7 +1913,9 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>Cargo</label>
+                  <label>
+                    Cargo
+                  </label>
 
                   <input
                     type="number"
@@ -1574,7 +1932,9 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>Parking Bay</label>
+                  <label>
+                    Parking Bay
+                  </label>
 
                   <input
                     type="text"
@@ -1589,7 +1949,9 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>Load / Ramp</label>
+                  <label>
+                    Load / Ramp
+                  </label>
 
                   <input
                     type="text"
@@ -1604,7 +1966,9 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>STD / ETD</label>
+                  <label>
+                    STD / ETD
+                  </label>
 
                   <input
                     type="text"
@@ -1619,7 +1983,9 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>STA / ETA</label>
+                  <label>
+                    STA / ETA
+                  </label>
 
                   <input
                     type="text"
@@ -1683,7 +2049,9 @@ function FlightDetailsContent() {
                 </div>
 
                 <div>
-                  <label>SAL Name</label>
+                  <label>
+                    SAL Name
+                  </label>
 
                   <input
                     type="text"
@@ -1717,7 +2085,10 @@ function FlightDetailsContent() {
               </div>
 
               <div>
-                <label>Delay Reason</label>
+
+                <label>
+                  Delay Reason
+                </label>
 
                 <textarea
                   value={delayReason}
@@ -1729,9 +2100,11 @@ function FlightDetailsContent() {
                   placeholder="Enter delay reason"
                   rows={4}
                 />
+
               </div>
 
               <div>
+
                 <label>
                   Operational Remarks
                 </label>
@@ -1746,10 +2119,14 @@ function FlightDetailsContent() {
                   placeholder="Enter operational remarks"
                   rows={4}
                 />
+
               </div>
 
               <div>
-                <label>Comments</label>
+
+                <label>
+                  Comments
+                </label>
 
                 <textarea
                   value={comments}
@@ -1761,6 +2138,7 @@ function FlightDetailsContent() {
                   placeholder="Additional comments"
                   rows={4}
                 />
+
               </div>
 
               <div
@@ -1801,37 +2179,413 @@ function FlightDetailsContent() {
 
         )}
 
-        {/* CARGO */}
+        {/* ==================================================
+            CARGO
+        ================================================== */}
 
         {department === "cargo" && (
 
           <section className="flights-section">
 
             <div
+              className="section-header"
               style={{
-                padding: "40px",
-                textAlign: "center",
+                padding: "25px 30px",
               }}
             >
 
-              <h2>CARGO DEPARTMENT</h2>
+              <div>
 
-              <p
+                <h2>
+                  CARGO DEPARTMENT
+                </h2>
+
+                <p>
+                  Cargo Operations Service Capture
+                </p>
+
+              </div>
+
+            </div>
+
+            <form
+              onSubmit={handleSave}
+              style={{
+                padding: "30px",
+                display: "grid",
+                gap: "22px",
+              }}
+            >
+
+              {/* CARGO ACCEPTANCE */}
+
+              <h3
                 style={{
+                  color: "#071d41",
+                  marginBottom: "0",
+                }}
+              >
+                Cargo Acceptance
+              </h3>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: "20px",
+                }}
+              >
+
+                <div>
+
+                  <label>
+                    Cargo Acceptance Start Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={
+                      cargoAcceptanceStartTime
+                    }
+                    onChange={(e) =>
+                      setCargoAcceptanceStartTime(
+                        e.target.value
+                      )
+                    }
+                  />
+
+                </div>
+
+                <div>
+
+                  <label>
+                    Cargo Acceptance End Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={
+                      cargoAcceptanceEndTime
+                    }
+                    onChange={(e) =>
+                      setCargoAcceptanceEndTime(
+                        e.target.value
+                      )
+                    }
+                  />
+
+                </div>
+
+                <div>
+
+                  <label>
+                    Cargo Weight
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={cargoWeight}
+                    onChange={(e) =>
+                      setCargoWeight(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Weight"
+                  />
+
+                </div>
+
+                <div>
+
+                  <label>
+                    Cargo Pieces
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={cargoPieces}
+                    onChange={(e) =>
+                      setCargoPieces(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Number of pieces"
+                  />
+
+                </div>
+
+                <div>
+
+                  <label>
+                    AWB Number
+                  </label>
+
+                  <input
+                    type="text"
+                    value={awbNumber}
+                    onChange={(e) =>
+                      setAwbNumber(
+                        e.target.value
+                      )
+                    }
+                    placeholder="AWB number"
+                  />
+
+                </div>
+
+                <div>
+
+                  <label>
+                    Cargo ULD Number
+                  </label>
+
+                  <input
+                    type="text"
+                    value={cargoUldNumber}
+                    onChange={(e) =>
+                      setCargoUldNumber(
+                        e.target.value
+                      )
+                    }
+                    placeholder="ULD number"
+                  />
+
+                </div>
+
+              </div>
+
+              {/* SPECIAL CARGO */}
+
+              <h3
+                style={{
+                  color: "#071d41",
+                  marginBottom: "0",
                   marginTop: "10px",
                 }}
               >
-                Cargo service capture will be
-                added next.
-              </p>
+                Special Cargo
+              </h3>
 
-            </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: "20px",
+                }}
+              >
+
+                <div>
+
+                  <label>
+                    Dangerous Goods
+                  </label>
+
+                  <input
+                    type="text"
+                    value={dangerousGoods}
+                    onChange={(e) =>
+                      setDangerousGoods(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Dangerous goods details"
+                  />
+
+                </div>
+
+                <div>
+
+                  <label>
+                    Special Cargo
+                  </label>
+
+                  <input
+                    type="text"
+                    value={specialCargo}
+                    onChange={(e) =>
+                      setSpecialCargo(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Special cargo details"
+                  />
+
+                </div>
+
+                <div>
+
+                  <label>
+                    Warehouse Location
+                  </label>
+
+                  <input
+                    type="text"
+                    value={warehouseLocation}
+                    onChange={(e) =>
+                      setWarehouseLocation(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Warehouse location"
+                  />
+
+                </div>
+
+              </div>
+
+              {/* CARGO LOADING */}
+
+              <h3
+                style={{
+                  color: "#071d41",
+                  marginBottom: "0",
+                  marginTop: "10px",
+                }}
+              >
+                Cargo Loading
+              </h3>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: "20px",
+                }}
+              >
+
+                <div>
+
+                  <label>
+                    Cargo Loading Start Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={
+                      cargoLoadingStartTime
+                    }
+                    onChange={(e) =>
+                      setCargoLoadingStartTime(
+                        e.target.value
+                      )
+                    }
+                  />
+
+                </div>
+
+                <div>
+
+                  <label>
+                    Cargo Loading End Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={
+                      cargoLoadingEndTime
+                    }
+                    onChange={(e) =>
+                      setCargoLoadingEndTime(
+                        e.target.value
+                      )
+                    }
+                  />
+
+                </div>
+
+              </div>
+
+              {/* REMARKS */}
+
+              <div>
+
+                <label>
+                  Cargo Remarks
+                </label>
+
+                <textarea
+                  value={cargoRemarks}
+                  onChange={(e) =>
+                    setCargoRemarks(
+                      e.target.value
+                    )
+                  }
+                  placeholder="Enter cargo remarks"
+                  rows={4}
+                />
+
+              </div>
+
+              <div>
+
+                <label>
+                  Cargo Comments
+                </label>
+
+                <textarea
+                  value={cargoComments}
+                  onChange={(e) =>
+                    setCargoComments(
+                      e.target.value
+                    )
+                  }
+                  placeholder="Additional cargo comments"
+                  rows={4}
+                />
+
+              </div>
+
+              {/* BUTTONS */}
+
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  flexWrap: "wrap",
+                }}
+              >
+
+                <button
+                  type="button"
+                  className="logout-button"
+                  onClick={() =>
+                    router.push(
+                      `/flights?department=${department}`
+                    )
+                  }
+                >
+                  CANCEL
+                </button>
+
+                <button
+                  type="submit"
+                  className="new-flight-button"
+                  disabled={saving}
+                >
+                  {saving
+                    ? "SAVING..."
+                    : "SAVE CARGO CAPTURE"}
+                </button>
+
+              </div>
+
+            </form>
 
           </section>
 
         )}
 
       </section>
+
+      {/* =========================
+          FOOTER
+      ========================= */}
 
       <footer className="dashboard-footer">
 
@@ -1850,7 +2604,9 @@ function FlightDetailsContent() {
 }
 
 export default function FlightDetailsPage() {
+
   return (
+
     <Suspense
       fallback={
         <main className="dashboard-page">
@@ -1866,7 +2622,9 @@ export default function FlightDetailsPage() {
         </main>
       }
     >
+
       <FlightDetailsContent />
+
     </Suspense>
   );
-      }
+            }
