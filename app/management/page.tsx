@@ -48,7 +48,6 @@ export default function ManagementPage() {
         return;
       }
 
-      // Check current user's profile
       const { data: profile, error: profileError } =
         await supabase
           .from("profiles")
@@ -62,7 +61,6 @@ export default function ManagementPage() {
         return;
       }
 
-      // Only management should access this page
       if (profile.role !== "management") {
         alert("Management access only.");
         router.push("/departments");
@@ -71,7 +69,6 @@ export default function ManagementPage() {
 
       setUserName(profile.full_name || "Management");
 
-      // Load all flights
       const { data: flightData, error: flightError } =
         await supabase
           .from("flights")
@@ -88,7 +85,6 @@ export default function ManagementPage() {
         return;
       }
 
-      // Load all service captures
       const {
         data: captureData,
         error: captureError,
@@ -445,4 +441,4 @@ export default function ManagementPage() {
       </footer>
     </main>
   );
-    }
+          }
