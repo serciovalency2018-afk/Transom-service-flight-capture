@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  Suspense,
+  useEffect,
+  useState,
+} from "react";
 import {
   useParams,
   useRouter,
@@ -25,7 +29,7 @@ const departmentNames: Record<string, string> = {
   cargo: "CARGO DEPARTMENT",
 };
 
-export default function FlightDetailsPage() {
+function FlightDetailsContent() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
@@ -38,30 +42,82 @@ export default function FlightDetailsPage() {
   const [flight, setFlight] =
     useState<Flight | null>(null);
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] =
+    useState(true);
 
+  const [saving, setSaving] =
+    useState(false);
+
+  // LOAD CONTROL / OPS
   const [pax, setPax] = useState("");
   const [baggages, setBaggages] = useState("");
   const [cargo, setCargo] = useState("");
-  const [parkingBay, setParkingBay] = useState("");
-  const [loadRamp, setLoadRamp] = useState("");
-  const [stdEtd, setStdEtd] = useState("");
-  const [staEta, setStaEta] = useState("");
+  const [parkingBay, setParkingBay] =
+    useState("");
+  const [loadRamp, setLoadRamp] =
+    useState("");
+  const [stdEtd, setStdEtd] =
+    useState("");
+  const [staEta, setStaEta] =
+    useState("");
   const [actualDeparture, setActualDeparture] =
     useState("");
   const [actualArrival, setActualArrival] =
     useState("");
-  const [loadControlTrcName, setLoadControlTrcName] =
+  const [
+    loadControlTrcName,
+    setLoadControlTrcName,
+  ] = useState("");
+  const [salName, setSalName] =
     useState("");
-  const [salName, setSalName] = useState("");
   const [delayReason, setDelayReason] =
     useState("");
   const [iataDelayCode, setIataDelayCode] =
     useState("");
-  const [operationalRemarks, setOperationalRemarks] =
+  const [
+    operationalRemarks,
+    setOperationalRemarks,
+  ] = useState("");
+  const [comments, setComments] =
     useState("");
-  const [comments, setComments] = useState("");
+
+  // RAMP
+  const [gpuTime, setGpuTime] =
+    useState("");
+  const [acu, setAcu] =
+    useState("");
+  const [cobus, setCobus] =
+    useState("");
+  const [towing, setTowing] =
+    useState("");
+  const [cleaning, setCleaning] =
+    useState("");
+  const [pushback, setPushback] =
+    useState("");
+  const [
+    lavatoryService,
+    setLavatoryService,
+  ] = useState("");
+  const [
+    portableWater,
+    setPortableWater,
+  ] = useState("");
+  const [paxStairs, setPaxStairs] =
+    useState("");
+  const [ambulift, setAmbulift] =
+    useState("");
+  const [asu, setAsu] =
+    useState("");
+  const [paxStep, setPaxStep] =
+    useState("");
+  const [chocksIn, setChocksIn] =
+    useState("");
+  const [chocksOut, setChocksOut] =
+    useState("");
+  const [vomiting, setVomiting] =
+    useState("");
+  const [rampComments, setRampComments] =
+    useState("");
 
   useEffect(() => {
     const loadFlight = async () => {
@@ -74,11 +130,12 @@ export default function FlightDetailsPage() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("flights")
-        .select("*")
-        .eq("id", flightId)
-        .single();
+      const { data, error } =
+        await supabase
+          .from("flights")
+          .select("*")
+          .eq("id", flightId)
+          .single();
 
       if (error) {
         alert(error.message);
@@ -121,27 +178,33 @@ export default function FlightDetailsPage() {
       return;
     }
 
-    const serviceCapture: any = {
+    const serviceCapture: Record<
+      string,
+      string | number | null
+    > = {
       flight_id: flightId,
       department: department,
 
+      // LOAD CONTROL / OPS
       pax: pax ? Number(pax) : null,
-
       baggages: baggages
         ? Number(baggages)
         : null,
-
       cargo: cargo
         ? Number(cargo)
         : null,
 
-      parking_bay: parkingBay || null,
+      parking_bay:
+        parkingBay || null,
 
-      load_ramp: loadRamp || null,
+      load_ramp:
+        loadRamp || null,
 
-      std_etd: stdEtd || null,
+      std_etd:
+        stdEtd || null,
 
-      sta_eta: staEta || null,
+      sta_eta:
+        staEta || null,
 
       actual_departure:
         actualDeparture || null,
@@ -152,7 +215,8 @@ export default function FlightDetailsPage() {
       load_control_trc_name:
         loadControlTrcName || null,
 
-      sal_name: salName || null,
+      sal_name:
+        salName || null,
 
       delay_reason:
         delayReason || null,
@@ -163,14 +227,65 @@ export default function FlightDetailsPage() {
       operational_remarks:
         operationalRemarks || null,
 
-      comments: comments || null,
+      comments:
+        comments || null,
+
+      // RAMP
+      gpu_time:
+        gpuTime || null,
+
+      acu:
+        acu || null,
+
+      cobus:
+        cobus || null,
+
+      towing:
+        towing || null,
+
+      cleaning:
+        cleaning || null,
+
+      pushback:
+        pushback || null,
+
+      lavatory_service:
+        lavatoryService || null,
+
+      portable_water:
+        portableWater || null,
+
+      pax_stairs:
+        paxStairs || null,
+
+      ambulift:
+        ambulift || null,
+
+      asu:
+        asu || null,
+
+      pax_step:
+        paxStep || null,
+
+      chocks_in:
+        chocksIn || null,
+
+      chocks_out:
+        chocksOut || null,
+
+      vomiting:
+        vomiting || null,
+
+      ramp_comments:
+        rampComments || null,
 
       created_by: user.id,
     };
 
-    const { error } = await supabase
-      .from("flight_service_captures")
-      .insert(serviceCapture);
+    const { error } =
+      await supabase
+        .from("flight_service_captures")
+        .insert(serviceCapture);
 
     setSaving(false);
 
@@ -180,7 +295,10 @@ export default function FlightDetailsPage() {
     }
 
     alert(
-      "Load Control / OPS service capture saved successfully!"
+      `${
+        departmentNames[department] ||
+        department
+      } service capture saved successfully!`
     );
 
     router.push(
@@ -192,7 +310,9 @@ export default function FlightDetailsPage() {
     return (
       <main className="dashboard-page">
         <div className="empty-state">
-          <h3>Loading flight...</h3>
+          <h3>
+            Loading flight...
+          </h3>
         </div>
       </main>
     );
@@ -202,7 +322,9 @@ export default function FlightDetailsPage() {
     return (
       <main className="dashboard-page">
         <div className="empty-state">
-          <h3>Flight not found</h3>
+          <h3>
+            Flight not found
+          </h3>
 
           <button
             className="new-flight-button"
@@ -219,433 +341,3 @@ export default function FlightDetailsPage() {
 
   return (
     <main className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <div className="dashboard-logo">
-            TRANSOM
-          </div>
-
-          <div className="dashboard-subtitle">
-            FLIGHT SERVICE CAPTURE
-          </div>
-        </div>
-
-        <button
-          className="logout-button"
-          onClick={handleLogout}
-        >
-          LOGOUT
-        </button>
-      </header>
-
-      <section className="dashboard-content">
-        <div className="welcome-section">
-          <button
-            className="logout-button"
-            onClick={() =>
-              router.push(
-                `/flights?department=${department}`
-              )
-            }
-            style={{
-              marginBottom: "20px",
-            }}
-          >
-            ← BACK TO FLIGHTS
-          </button>
-
-          <h1>{flight.flight_number}</h1>
-
-          <p>
-            {departmentNames[department] ||
-              department}
-          </p>
-        </div>
-
-        <section className="flights-section">
-          <div
-            style={{
-              padding: "30px",
-              background: "#ffffff",
-            }}
-          >
-            <h2
-              style={{
-                marginBottom: "20px",
-                color: "#071d41",
-              }}
-            >
-              Flight Information
-            </h2>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "20px",
-              }}
-            >
-              <div>
-                <strong>Flight Number</strong>
-                <p>{flight.flight_number}</p>
-              </div>
-
-              <div>
-                <strong>Aircraft</strong>
-                <p>{flight.aircraft}</p>
-              </div>
-
-              <div>
-                <strong>Route</strong>
-                <p>{flight.route}</p>
-              </div>
-
-              <div>
-                <strong>Flight Date</strong>
-                <p>{flight.flight_date}</p>
-              </div>
-
-              <div>
-                <strong>Status</strong>
-                <p>{flight.status}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {department === "load_control_ops" ? (
-          <section className="flights-section">
-            <div
-              className="section-header"
-              style={{
-                padding: "25px 30px",
-              }}
-            >
-              <div>
-                <h2>Load Control / OPS</h2>
-
-                <p>
-                  Flight service capture
-                </p>
-              </div>
-            </div>
-
-            <form
-              onSubmit={handleSave}
-              style={{
-                padding: "30px",
-                display: "grid",
-                gap: "22px",
-              }}
-            >
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns:
-                    "repeat(auto-fit, minmax(220px, 1fr))",
-                  gap: "20px",
-                }}
-              >
-                <div>
-                  <label>PAX</label>
-
-                  <input
-                    type="number"
-                    min="0"
-                    value={pax}
-                    onChange={(e) =>
-                      setPax(e.target.value)
-                    }
-                    placeholder="Passenger count"
-                  />
-                </div>
-
-                <div>
-                  <label>Baggages</label>
-
-                  <input
-                    type="number"
-                    min="0"
-                    value={baggages}
-                    onChange={(e) =>
-                      setBaggages(e.target.value)
-                    }
-                    placeholder="Baggage count"
-                  />
-                </div>
-
-                <div>
-                  <label>Cargo</label>
-
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={cargo}
-                    onChange={(e) =>
-                      setCargo(e.target.value)
-                    }
-                    placeholder="Cargo"
-                  />
-                </div>
-
-                <div>
-                  <label>Parking Bay</label>
-
-                  <input
-                    type="text"
-                    value={parkingBay}
-                    onChange={(e) =>
-                      setParkingBay(
-                        e.target.value
-                      )
-                    }
-                    placeholder="e.g. Bay 04"
-                  />
-                </div>
-
-                <div>
-                  <label>Load / Ramp</label>
-
-                  <input
-                    type="text"
-                    value={loadRamp}
-                    onChange={(e) =>
-                      setLoadRamp(
-                        e.target.value
-                      )
-                    }
-                    placeholder="Load / Ramp"
-                  />
-                </div>
-
-                <div>
-                  <label>STD / ETD</label>
-
-                  <input
-                    type="text"
-                    value={stdEtd}
-                    onChange={(e) =>
-                      setStdEtd(
-                        e.target.value
-                      )
-                    }
-                    placeholder="e.g. 15:00 / 15:20"
-                  />
-                </div>
-
-                <div>
-                  <label>STA / ETA</label>
-
-                  <input
-                    type="text"
-                    value={staEta}
-                    onChange={(e) =>
-                      setStaEta(
-                        e.target.value
-                      )
-                    }
-                    placeholder="e.g. 16:00 / 16:15"
-                  />
-                </div>
-
-                <div>
-                  <label>
-                    Actual Departure
-                  </label>
-
-                  <input
-                    type="datetime-local"
-                    value={actualDeparture}
-                    onChange={(e) =>
-                      setActualDeparture(
-                        e.target.value
-                      )
-                    }
-                  />
-                </div>
-
-                <div>
-                  <label>
-                    Actual Arrival
-                  </label>
-
-                  <input
-                    type="datetime-local"
-                    value={actualArrival}
-                    onChange={(e) =>
-                      setActualArrival(
-                        e.target.value
-                      )
-                    }
-                  />
-                </div>
-
-                <div>
-                  <label>
-                    Load Control / TRC Name
-                  </label>
-
-                  <input
-                    type="text"
-                    value={loadControlTrcName}
-                    onChange={(e) =>
-                      setLoadControlTrcName(
-                        e.target.value
-                      )
-                    }
-                    placeholder="Name"
-                  />
-                </div>
-
-                <div>
-                  <label>SAL Name</label>
-
-                  <input
-                    type="text"
-                    value={salName}
-                    onChange={(e) =>
-                      setSalName(
-                        e.target.value
-                      )
-                    }
-                    placeholder="Name"
-                  />
-                </div>
-
-                <div>
-                  <label>
-                    IATA Delay Code
-                  </label>
-
-                  <input
-                    type="text"
-                    value={iataDelayCode}
-                    onChange={(e) =>
-                      setIataDelayCode(
-                        e.target.value
-                      )
-                    }
-                    placeholder="Enter IATA delay code"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label>Delay Reason</label>
-
-                <textarea
-                  value={delayReason}
-                  onChange={(e) =>
-                    setDelayReason(
-                      e.target.value
-                    )
-                  }
-                  placeholder="Enter delay reason"
-                  rows={4}
-                />
-              </div>
-
-              <div>
-                <label>
-                  Operational Remarks
-                </label>
-
-                <textarea
-                  value={operationalRemarks}
-                  onChange={(e) =>
-                    setOperationalRemarks(
-                      e.target.value
-                    )
-                  }
-                  placeholder="Enter operational remarks"
-                  rows={4}
-                />
-              </div>
-
-              <div>
-                <label>Comments</label>
-
-                <textarea
-                  value={comments}
-                  onChange={(e) =>
-                    setComments(
-                      e.target.value
-                    )
-                  }
-                  placeholder="Additional comments"
-                  rows={4}
-                />
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  gap: "12px",
-                  flexWrap: "wrap",
-                  marginTop: "10px",
-                }}
-              >
-                <button
-                  type="button"
-                  className="logout-button"
-                  onClick={() =>
-                    router.push(
-                      `/flights?department=${department}`
-                    )
-                  }
-                >
-                  CANCEL
-                </button>
-
-                <button
-                  type="submit"
-                  className="new-flight-button"
-                  disabled={saving}
-                >
-                  {saving
-                    ? "SAVING..."
-                    : "SAVE SERVICE CAPTURE"}
-                </button>
-              </div>
-            </form>
-          </section>
-        ) : (
-          <section className="flights-section">
-            <div
-              style={{
-                padding: "40px",
-                textAlign: "center",
-              }}
-            >
-              <h2>
-                {departmentNames[department] ||
-                  department}
-              </h2>
-
-              <p
-                style={{
-                  marginTop: "10px",
-                }}
-              >
-                Service capture for this
-                department will be added next.
-              </p>
-            </div>
-          </section>
-        )}
-      </section>
-
-      <footer className="dashboard-footer">
-        <p>
-          TRANSOM Flight Service Capture
-        </p>
-
-        <span>
-          Authorized Personnel Only
-        </span>
-      </footer>
-    </main>
-  );
-}
