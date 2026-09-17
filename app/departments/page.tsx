@@ -16,26 +16,31 @@ const departments = [
     key: "ramp",
     name: "RAMP",
     description: "Ramp & Ground Services",
+    icon: "✈",
   },
   {
     key: "sorting",
     name: "SORTING",
     description: "Baggage & ULD Sorting",
+    icon: "▣",
   },
   {
     key: "load_control_ops",
     name: "LOAD CONTROL / OPS",
     description: "Load Control & Operations",
+    icon: "▤",
   },
   {
     key: "passenger_services",
     name: "PASSENGER SERVICES",
     description: "Passenger & Gate Services",
+    icon: "♙",
   },
   {
     key: "cargo",
     name: "CARGO",
     description: "Cargo Operations",
+    icon: "▰",
   },
 ];
 
@@ -59,14 +64,16 @@ export default function DepartmentsPage() {
         return;
       }
 
-      const { data, error } =
-        await supabase
-          .from("profiles")
-          .select(
-            "id, full_name, role, department"
-          )
-          .eq("id", user.id)
-          .single();
+      const {
+        data,
+        error,
+      } = await supabase
+        .from("profiles")
+        .select(
+          "id, full_name, role, department"
+        )
+        .eq("id", user.id)
+        .single();
 
       if (error) {
         alert(error.message);
@@ -100,7 +107,9 @@ export default function DepartmentsPage() {
     return (
       <main className="dashboard-page">
         <div className="empty-state">
-          <h3>Loading departments...</h3>
+          <h3>
+            Loading departments...
+          </h3>
         </div>
       </main>
     );
@@ -138,7 +147,9 @@ export default function DepartmentsPage() {
 
         <div className="welcome-section">
 
-          <h1>Select Department</h1>
+          <h1>
+            Select Department
+          </h1>
 
           <p>
             Choose the department you want
@@ -149,93 +160,77 @@ export default function DepartmentsPage() {
 
         <section className="flights-section">
 
-          <div style={{ padding: "30px" }}>
+          <div
+            style={{
+              padding: "30px",
+            }}
+          >
 
             <div
               style={{
-                marginBottom: "30px",
+                marginBottom: "28px",
               }}
             >
 
-              <strong>
-                Logged in as:
-              </strong>
-
-              <p
+              <div
                 style={{
-                  marginTop: "6px",
+                  color: "#667085",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.7px",
+                }}
+              >
+                Logged in as
+              </div>
+
+              <div
+                style={{
+                  marginTop: "5px",
                   color: "#071d41",
-                  fontWeight: 600,
+                  fontSize: "20px",
+                  fontWeight: 900,
                 }}
               >
                 {profile.full_name}
-              </p>
+              </div>
 
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fit, minmax(240px, 1fr))",
-                gap: "20px",
-              }}
-            >
+            <div className="department-grid">
 
               {departments.map(
                 (department) => (
 
                   <button
-                    key={department.key}
+                    key={
+                      department.key
+                    }
                     type="button"
+                    className="department-card"
                     onClick={() =>
                       selectDepartment(
                         department.key
                       )
                     }
-                    style={{
-                      padding:
-                        "30px 20px",
-                      borderRadius: "12px",
-                      border:
-                        "1px solid #d9e0ea",
-                      background:
-                        "#ffffff",
-                      color:
-                        "#071d41",
-                      cursor:
-                        "pointer",
-                      minHeight:
-                        "140px",
-                      textAlign:
-                        "left",
-                    }}
                   >
 
-                    <div
-                      style={{
-                        fontSize:
-                          "18px",
-                        fontWeight:
-                          800,
-                        marginBottom:
-                          "10px",
-                      }}
-                    >
+                    <div className="department-icon">
+                      {department.icon}
+                    </div>
+
+                    <div className="department-name">
                       {department.name}
                     </div>
 
-                    <div
-                      style={{
-                        fontSize:
-                          "14px",
-                        color:
-                          "#667085",
-                      }}
-                    >
+                    <div className="department-description">
                       {
                         department.description
                       }
+                    </div>
+
+                    <div className="department-arrow">
+                      →
                     </div>
 
                   </button>
