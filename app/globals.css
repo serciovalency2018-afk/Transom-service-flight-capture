@@ -1,434 +1,835 @@
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html,
 body {
+  margin: 0;
+  padding: 0;
   min-height: 100%;
   font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
-  background: #f4f6f9;
-  color: #172033;
-}
-
-/* =========================
-   LOGIN PAGE
-========================= */
-
-.login-page {
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 30px 20px;
-  background-image: url("/transom-airport.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(5, 20, 45, 0.72);
-}
-
-.login-card {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 440px;
-  background: rgba(255, 255, 255, 0.97);
-  border-radius: 14px;
-  padding: 42px 38px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.logo-area {
-  text-align: center;
-  margin-bottom: 35px;
-}
-
-.logo {
-  font-size: 34px;
-  font-weight: 900;
-  letter-spacing: 4px;
   color: #071d41;
-}
-
-.subtitle {
-  margin-top: 5px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #c7192e;
-}
-
-.welcome {
-  margin-bottom: 25px;
-}
-
-.welcome h1 {
-  font-size: 26px;
-  color: #071d41;
-  margin-bottom: 7px;
-}
-
-.welcome p {
-  font-size: 14px;
-  color: #687386;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-form label {
-  margin-bottom: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  color: #27344a;
-}
-
-form input {
-  width: 100%;
-  height: 48px;
-  border: 1px solid #d7dce5;
-  border-radius: 7px;
-  padding: 0 14px;
-  margin-bottom: 18px;
-  font-size: 14px;
-  outline: none;
-  background: #fff;
-}
-
-form input:focus {
-  border-color: #071d41;
-  box-shadow: 0 0 0 3px rgba(7, 29, 65, 0.08);
-}
-
-.forgot {
-  text-align: right;
-  margin-top: -5px;
-  margin-bottom: 20px;
-}
-
-.forgot button {
-  border: none;
-  background: transparent;
-  color: #c7192e;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.login-button {
-  height: 50px;
-  border: none;
-  border-radius: 7px;
   background: #071d41;
-  color: white;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: 0.2s ease;
 }
 
-.login-button:hover {
-  background: #c7192e;
-}
-
-.login-button:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-.footer {
-  text-align: center;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #e4e7ec;
-}
-
-.footer p {
-  font-size: 12px;
-  font-weight: 700;
-  color: #071d41;
-}
-
-.footer span {
-  display: block;
-  margin-top: 5px;
-  font-size: 11px;
-  color: #8a93a3;
-}
-
-
-/* =========================
-   DASHBOARD
-========================= */
+/* =========================================
+   MAIN APPLICATION BACKGROUND
+========================================= */
 
 .dashboard-page {
   min-height: 100vh;
-  background: #f3f5f8;
+  position: relative;
+  overflow-x: hidden;
+
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(4, 25, 58, 0.94) 0%,
+      rgba(7, 29, 65, 0.82) 32%,
+      rgba(7, 29, 65, 0.48) 62%,
+      rgba(7, 29, 65, 0.38) 100%
+    ),
+    url("/transom-airport.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
+/* Red / navy decorative bottom edge */
+
+.dashboard-page::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 7px;
+  z-index: 20;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ed1b2f 0%,
+      #ed1b2f 48%,
+      #071d41 48%,
+      #071d41 100%
+    );
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
 .dashboard-header {
-  min-height: 76px;
-  background: #071d41;
-  color: white;
+  width: 100%;
+  min-height: 92px;
+
+  padding: 22px 5%;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 35px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+
+  background: rgba(3, 20, 48, 0.72);
+  backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+
+  position: relative;
+  z-index: 5;
 }
 
 .dashboard-logo {
-  font-size: 24px;
+  color: #ffffff;
+  font-size: 30px;
   font-weight: 900;
   letter-spacing: 3px;
+  line-height: 1;
+}
+
+.dashboard-logo::before {
+  content: "✈";
+  color: #ed1b2f;
+  margin-right: 10px;
+  font-size: 25px;
 }
 
 .dashboard-subtitle {
-  margin-top: 3px;
-  font-size: 9px;
-  letter-spacing: 1.5px;
-  color: #d9dfea;
+  margin-top: 6px;
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  opacity: 0.9;
 }
 
+/* =========================================
+   LOGOUT
+========================================= */
+
 .logout-button {
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  background: transparent;
-  color: white;
-  border-radius: 6px;
-  padding: 10px 18px;
+  border: none;
+  border-radius: 22px;
+
+  padding: 11px 22px;
+
+  background: #071d41;
+  color: #ffffff;
+
   font-size: 12px;
   font-weight: 800;
+  letter-spacing: 0.7px;
+
   cursor: pointer;
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.22);
+
+  transition: 0.2s ease;
 }
 
 .logout-button:hover {
-  background: #c7192e;
-  border-color: #c7192e;
+  background: #ed1b2f;
+  transform: translateY(-1px);
 }
 
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
 .dashboard-content {
-  max-width: 1400px;
+  width: min(1400px, 92%);
   margin: 0 auto;
-  padding: 35px;
+
+  padding: 45px 0 90px;
+
+  position: relative;
+  z-index: 2;
 }
+
+/* =========================================
+   PAGE TITLE
+========================================= */
 
 .welcome-section {
   margin-bottom: 30px;
 }
 
 .welcome-section h1 {
-  color: #071d41;
-  font-size: 28px;
-  margin-bottom: 7px;
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 900;
+
+  letter-spacing: -1px;
+
+  text-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.welcome-section h1::before {
+  content: "✈";
+  color: #ed1b2f;
+  font-size: 30px;
+  margin-right: 12px;
 }
 
 .welcome-section p {
-  color: #707b8d;
-  font-size: 14px;
+  margin: 10px 0 0;
+
+  color: rgba(255, 255, 255, 0.86);
+
+  font-size: 15px;
 }
+
+.welcome-section::after {
+  content: "";
+  display: block;
+
+  width: 80px;
+  height: 4px;
+
+  margin-top: 15px;
+
+  background: #ed1b2f;
+
+  border-radius: 10px;
+}
+
+/* =========================================
+   SECTIONS / GLASS PANELS
+========================================= */
+
+.flights-section {
+  margin-bottom: 28px;
+
+  background: rgba(255, 255, 255, 0.93);
+
+  border: 1px solid rgba(255, 255, 255, 0.65);
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.22);
+
+  overflow: hidden;
+
+  backdrop-filter: blur(10px);
+}
+
+/* =========================================
+   SECTION HEADER
+========================================= */
+
+.section-header {
+  padding: 25px 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-bottom: 1px solid #e4e7ec;
+}
+
+.section-header h2 {
+  margin: 0;
+
+  color: #071d41;
+
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.section-header p {
+  margin: 6px 0 0;
+
+  color: #667085;
+
+  font-size: 13px;
+}
+
+/* =========================================
+   FLIGHT TABLE
+========================================= */
+
+.flight-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.flight-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  background: rgba(255, 255, 255, 0.97);
+}
+
+.flight-table th {
+  padding: 15px 14px;
+
+  background: #071d41;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 0.8px;
+
+  text-align: left;
+  white-space: nowrap;
+}
+
+.flight-table td {
+  padding: 16px 14px;
+
+  border-bottom: 1px solid #eaecf0;
+
+  color: #344054;
+
+  font-size: 13px;
+
+  white-space: nowrap;
+}
+
+.flight-table tbody tr:hover {
+  background: #f5f8fc;
+}
+
+.flight-table td strong {
+  color: #071d41;
+}
+
+/* =========================================
+   STATUS
+========================================= */
+
+.flight-status {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 7px 12px;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.open-status {
+  background: #ffffff;
+  color: #071d41;
+  border: 1px solid #98a2b3;
+}
+
+.progress-status {
+  background: #071d41;
+  color: #ffffff;
+}
+
+.no-delay-status {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.delay-status {
+  background: #ed1b2f;
+  color: #ffffff;
+}
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.flight-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.action-button {
+  border: none;
+
+  border-radius: 7px;
+
+  padding: 9px 13px;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+
+  white-space: nowrap;
+}
+
+.action-button:hover {
+  transform: translateY(-1px);
+}
+
+.action-button.view {
+  background: #071d41;
+  color: #ffffff;
+}
+
+.action-button.start {
+  background: #071d41;
+  color: #ffffff;
+}
+
+.action-button.close-green {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.action-button.close-red {
+  background: #ed1b2f;
+  color: #ffffff;
+}
+
+.action-button.reopen {
+  background: #ffffff;
+  color: #071d41;
+
+  border: 1px solid #071d41;
+}
+
+/* =========================================
+   NEW FLIGHT BUTTON
+========================================= */
+
+.new-flight-button {
+  border: none;
+
+  border-radius: 8px;
+
+  padding: 12px 20px;
+
+  background: #ed1b2f;
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 15px rgba(237, 27, 47, 0.22);
+
+  transition: 0.2s ease;
+}
+
+.new-flight-button:hover {
+  background: #c91427;
+  transform: translateY(-1px);
+}
+
+.new-flight-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   STATUS CARDS
+========================================= */
 
 .status-cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
   gap: 18px;
-  margin-bottom: 30px;
+
+  margin-bottom: 28px;
 }
 
 .status-card {
-  min-height: 125px;
-  border-radius: 10px;
+  min-height: 120px;
+
   padding: 22px;
+
+  border-radius: 15px;
+
+  background: rgba(255, 255, 255, 0.94);
+
+  border-left: 6px solid #071d41;
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.18);
+
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border: 1px solid #dfe3e9;
-  background: white;
 }
 
 .status-card.open {
-  border-left: 6px solid #ffffff;
+  border-left-color: #98a2b3;
 }
 
 .status-card.progress {
-  background: #071d41;
-  color: white;
-  border-color: #071d41;
+  border-left-color: #071d41;
 }
 
 .status-card.completed {
-  background: #eaf7ef;
-  border-left: 6px solid #168447;
+  border-left-color: #16a34a;
 }
 
 .status-card.delayed {
-  background: #fff0f1;
-  border-left: 6px solid #c7192e;
+  border-left-color: #ed1b2f;
 }
 
 .status-number {
+  color: #071d41;
+
   font-size: 32px;
   font-weight: 900;
-  margin-bottom: 7px;
 }
 
 .status-label {
+  margin-top: 5px;
+
+  color: #667085;
+
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.5px;
 }
 
-.flights-section {
-  background: white;
-  border-radius: 10px;
-  border: 1px solid #e0e4ea;
-  overflow: hidden;
-}
-
-.section-header {
-  min-height: 85px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 25px;
-  border-bottom: 1px solid #e5e8ed;
-}
-
-.section-header h2 {
-  color: #071d41;
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-
-.section-header p {
-  color: #7b8494;
-  font-size: 12px;
-}
-
-.new-flight-button {
-  border: none;
-  background: #c7192e;
-  color: white;
-  padding: 12px 18px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.new-flight-button:hover {
-  background: #071d41;
-}
+/* =========================================
+   EMPTY STATE
+========================================= */
 
 .empty-state {
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 30px;
-}
+  padding: 55px 25px;
 
-.empty-icon {
-  font-size: 45px;
-  margin-bottom: 15px;
-  opacity: 0.5;
+  text-align: center;
+
+  color: #667085;
 }
 
 .empty-state h3 {
-  color: #27344a;
-  font-size: 18px;
-  margin-bottom: 7px;
+  margin: 10px 0;
+
+  color: #071d41;
 }
 
 .empty-state p {
-  color: #8992a1;
+  margin: 0;
+}
+
+.empty-icon {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+/* =========================================
+   FORMS
+========================================= */
+
+.flights-section form {
+  color: #071d41;
+}
+
+.flights-section label {
+  color: #071d41;
   font-size: 13px;
-}
-
-.dashboard-footer {
-  text-align: center;
-  padding: 25px;
-  color: #8992a1;
-  font-size: 11px;
-}
-
-.dashboard-footer span {
-  margin-left: 8px;
-  color: #c7192e;
   font-weight: 700;
 }
 
+.flights-section input,
+.flights-section select,
+.flights-section textarea {
+  font-family: inherit;
+}
 
-/* =========================
-   MOBILE / TABLET
-========================= */
+.flights-section input:focus,
+.flights-section select:focus,
+.flights-section textarea:focus {
+  outline: none;
 
-@media (max-width: 900px) {
+  border-color: #071d41 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(7, 29, 65, 0.08);
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.dashboard-footer {
+  position: relative;
+  z-index: 3;
+
+  width: 100%;
+
+  padding: 25px;
+
+  text-align: center;
+
+  background: rgba(3, 20, 48, 0.82);
+
+  color: rgba(255, 255, 255, 0.85);
+
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.dashboard-footer p {
+  margin: 0;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dashboard-footer span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #ed1b2f;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* =========================================
+   DEPARTMENT GRID
+========================================= */
+
+.department-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+/* =========================================
+   DEPARTMENT CARD
+========================================= */
+
+.department-card {
+  position: relative;
+
+  min-height: 145px;
+
+  padding: 25px 22px;
+
+  border: 1px solid #d9e0ea;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  color: #071d41;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 8px 20px rgba(7, 29, 65, 0.08);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Red + navy diagonal frame */
+
+.department-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 72px;
+  height: 72px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ed1b2f 0%,
+      #ed1b2f 48%,
+      #071d41 49%,
+      #071d41 100%
+    );
+
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    0 100%
+  );
+}
+
+/* Bottom red accent */
+
+.department-card::after {
+  content: "";
+
+  position: absolute;
+
+  right: -25px;
+  bottom: -25px;
+
+  width: 90px;
+  height: 90px;
+
+  border-radius: 50%;
+
+  background: rgba(237, 27, 47, 0.08);
+}
+
+.department-card:hover {
+  transform: translateY(-5px);
+
+  border-color: #ed1b2f;
+
+  box-shadow:
+    0 16px 30px rgba(7, 29, 65, 0.16);
+}
+
+.department-icon {
+  position: relative;
+  z-index: 2;
+
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 17px;
+
+  border-radius: 10px;
+
+  background: #ed1b2f;
+
+  color: #ffffff;
+
+  font-size: 21px;
+
+  box-shadow:
+    0 6px 14px rgba(237, 27, 47, 0.25);
+}
+
+.department-name {
+  position: relative;
+  z-index: 2;
+
+  font-size: 17px;
+  font-weight: 900;
+
+  letter-spacing: 0.3px;
+
+  color: #071d41;
+}
+
+.department-description {
+  position: relative;
+  z-index: 2;
+
+  margin-top: 7px;
+
+  color: #667085;
+
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.department-arrow {
+  position: absolute;
+
+  right: 18px;
+  bottom: 18px;
+
+  z-index: 3;
+
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #071d41;
+  color: #ffffff;
+
+  font-size: 17px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
   .status-cards {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 
-  .dashboard-content {
-    padding: 25px;
+  .department-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 600px) {
-  .login-card {
-    padding: 32px 24px;
-  }
-
-  .logo {
-    font-size: 28px;
-  }
-
+@media (max-width: 700px) {
   .dashboard-header {
-    padding: 0 18px;
+    padding: 18px 20px;
   }
 
   .dashboard-logo {
-    font-size: 20px;
+    font-size: 23px;
   }
 
   .dashboard-content {
-    padding: 20px 15px;
+    width: 94%;
+    padding-top: 30px;
   }
 
   .welcome-section h1 {
-    font-size: 23px;
+    font-size: 30px;
   }
 
   .status-cards {
     grid-template-columns: 1fr;
   }
 
+  .department-grid {
+    grid-template-columns: 1fr;
+  }
+
   .section-header {
     align-items: flex-start;
-    gap: 15px;
     flex-direction: column;
   }
 
-  .new-flight-button {
-    width: 100%;
+  .flight-table {
+    min-width: 900px;
   }
-
-  .dashboard-footer span {
-    display: block;
-    margin: 5px 0 0;
-  }
-  }
+}
