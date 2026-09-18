@@ -4,90 +4,6 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 
-type Capture = {
-  id: string;
-  flight_id: string;
-  department: string;
-  created_at: string;
-
-  pax: number | null;
-  baggages: number | null;
-  cargo: number | null;
-  parking_bay: string | null;
-  load_ramp: string | null;
-  std_etd: string | null;
-  sta_eta: string | null;
-  actual_departure: string | null;
-  actual_arrival: string | null;
-  load_control_trc_name: string | null;
-  sal_name: string | null;
-  delay_reason: string | null;
-  iata_delay_code: string | null;
-  operational_remarks: string | null;
-  comments: string | null;
-
-  gpu_time: string | null;
-  acu: string | null;
-  cobus: string | null;
-  towing: string | null;
-  cleaning: string | null;
-  pushback: string | null;
-  lavatory_service: string | null;
-  portable_water: string | null;
-  pax_stairs: string | null;
-  ambulift: string | null;
-  asu: string | null;
-  pax_step: string | null;
-  chocks_in: string | null;
-  chocks_out: string | null;
-  vomiting: string | null;
-  ramp_comments: string | null;
-
-  uld_bag_sorting: string | null;
-  number_of_bags: number | null;
-  uld_number: string | null;
-  sorting_start_time: string | null;
-  sorting_end_time: string | null;
-  bag_transfer: string | null;
-  rush_priority_bags: number | null;
-  misrouted_bags: number | null;
-  damaged_bags: number | null;
-  missing_bags: number | null;
-  sorting_remarks: string | null;
-  sorting_comments: string | null;
-
-  check_in_start_time: string | null;
-  check_in_end_time: string | null;
-  check_in_agents: number | null;
-  boarding_start_time: string | null;
-  boarding_end_time: string | null;
-  boarding_agents: number | null;
-  gate_number: string | null;
-  gate_open_time: string | null;
-  gate_close_time: string | null;
-  wheelchair_assistance: number | null;
-  special_assistance: string | null;
-  no_show_pax: number | null;
-  denied_boarding_pax: number | null;
-  transfer_pax: number | null;
-  passenger_services_remarks: string | null;
-  passenger_services_comments: string | null;
-
-  cargo_acceptance_start_time: string | null;
-  cargo_acceptance_end_time: string | null;
-  cargo_weight: number | null;
-  cargo_pieces: number | null;
-  awb_number: string | null;
-  cargo_uld_number: string | null;
-  dangerous_goods: string | null;
-  special_cargo: string | null;
-  warehouse_location: string | null;
-  cargo_loading_start_time: string | null;
-  cargo_loading_end_time: string | null;
-  cargo_remarks: string | null;
-  cargo_comments: string | null;
-};
-
 type Flight = {
   id: string;
   flight_number: string;
@@ -95,6 +11,10 @@ type Flight = {
   route: string;
   flight_date: string;
   status: string;
+};
+
+type Capture = {
+  [key: string]: any;
 };
 
 const departmentNames: Record<string, string> = {
@@ -110,7 +30,7 @@ function Field({
   value,
 }: {
   label: string;
-  value: string | number | null | undefined;
+  value: any;
 }) {
   if (
     value === null ||
@@ -123,19 +43,20 @@ function Field({
   return (
     <div
       style={{
+        background: "#f8fafc",
+        border: "1px solid #e2e8f0",
+        borderRadius: "10px",
         padding: "15px",
-        border: "1px solid #e4e7ec",
-        borderRadius: "8px",
-        background: "#f9fafb",
       }}
     >
       <div
         style={{
-          fontSize: "12px",
-          fontWeight: 700,
-          color: "#667085",
-          marginBottom: "6px",
+          fontSize: "11px",
+          fontWeight: 800,
+          color: "#64748b",
           textTransform: "uppercase",
+          letterSpacing: "0.5px",
+          marginBottom: "6px",
         }}
       >
         {label}
@@ -144,7 +65,7 @@ function Field({
       <div
         style={{
           fontSize: "15px",
-          fontWeight: 600,
+          fontWeight: 700,
           color: "#071d41",
           wordBreak: "break-word",
         }}
@@ -155,51 +76,735 @@ function Field({
   );
 }
 
-function Section({
-  title,
+function SectionTitle({
   children,
 }: {
-  title: string;
   children: React.ReactNode;
 }) {
   return (
-    <section
-      className="flights-section"
+    <div
       style={{
-        marginBottom: "25px",
+        marginTop: "30px",
+        marginBottom: "15px",
+        paddingBottom: "10px",
+        borderBottom: "2px solid #d71920",
       }}
     >
-      <div
-        className="section-header"
+      <h2
         style={{
-          padding: "22px 30px",
-        }}
-      >
-        <div>
-          <h2>{title}</h2>
-        </div>
-      </div>
-
-      <div
-        style={{
-          padding: "30px",
-          display: "grid",
-          gridTemplateColumns:
-            "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: "15px",
+          margin: 0,
+          color: "#071d41",
+          fontSize: "20px",
+          fontWeight: 900,
         }}
       >
         {children}
-      </div>
-    </section>
+      </h2>
+    </div>
   );
 }
 
-export default function CaptureDetailsPage() {
+function CaptureContent({
+  capture,
+}: {
+  capture: Capture;
+}) {
+  const department = capture.department;
+
+  if (department === "ramp") {
+    return (
+      <>
+        <SectionTitle>
+          Ramp Operation Status
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="Opening Status"
+            value={capture.ramp_opening_status}
+          />
+
+          <Field
+            label="Closing Status"
+            value={capture.ramp_closing_status}
+          />
+
+          <Field
+            label="Supervisor Name"
+            value={capture.supervisor_name}
+          />
+        </div>
+
+        <SectionTitle>
+          GPU
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="GPU Start Time"
+            value={capture.gpu_start_time}
+          />
+
+          <Field
+            label="GPU End Time"
+            value={capture.gpu_end_time}
+          />
+
+          <Field
+            label="GPU Duration"
+            value={capture.gpu_duration}
+          />
+        </div>
+
+        <SectionTitle>
+          ACU
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="ACU Start Time"
+            value={capture.acu_start_time}
+          />
+
+          <Field
+            label="ACU End Time"
+            value={capture.acu_end_time}
+          />
+
+          <Field
+            label="ACU Duration"
+            value={capture.acu_duration}
+          />
+        </div>
+
+        <SectionTitle>
+          Cleaning
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="Cleaning Start Time"
+            value={capture.cleaning_start_time}
+          />
+
+          <Field
+            label="Cleaning End Time"
+            value={capture.cleaning_end_time}
+          />
+
+          <Field
+            label="Cleaning Duration"
+            value={capture.cleaning_duration}
+          />
+        </div>
+
+        <SectionTitle>
+          Conveyor
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="Conveyor Start Time"
+            value={capture.conveyor_start_time}
+          />
+
+          <Field
+            label="Conveyor End Time"
+            value={capture.conveyor_end_time}
+          />
+
+          <Field
+            label="Conveyor Duration"
+            value={capture.conveyor_duration}
+          />
+        </div>
+
+        <SectionTitle>
+          Vomiting Service
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="Vomiting Start Time"
+            value={capture.vomiting_start_time}
+          />
+
+          <Field
+            label="Vomiting End Time"
+            value={capture.vomiting_end_time}
+          />
+
+          <Field
+            label="Vomiting Duration"
+            value={capture.vomiting_duration}
+          />
+        </div>
+
+        <SectionTitle>
+          Ground Services
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="COBUS Trip Number"
+            value={capture.cobus_trip_number}
+          />
+
+          <Field
+            label="Towing"
+            value={capture.towing_status}
+          />
+
+          <Field
+            label="ASU"
+            value={capture.asu_status}
+          />
+
+          <Field
+            label="Pax Stairs"
+            value={capture.pax_stairs}
+          />
+
+          <Field
+            label="Pax Step"
+            value={capture.pax_step}
+          />
+
+          <Field
+            label="Pushback"
+            value={capture.pushback}
+          />
+
+          <Field
+            label="Lavatory Service"
+            value={capture.lavatory_service}
+          />
+
+          <Field
+            label="Portable Water"
+            value={capture.portable_water}
+          />
+
+          <Field
+            label="Ambulift"
+            value={capture.ambulift}
+          />
+        </div>
+
+        <SectionTitle>
+          Ramp Comments
+        </SectionTitle>
+
+        <Field
+          label="Comments"
+          value={capture.ramp_comments}
+        />
+      </>
+    );
+  }
+
+  if (department === "sorting") {
+    return (
+      <>
+        <SectionTitle>
+          Sorting Operation
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="ULD / Bag Sorting"
+            value={capture.uld_bag_sorting}
+          />
+
+          <Field
+            label="Number of Bags"
+            value={capture.number_of_bags}
+          />
+
+          <Field
+            label="ULD Number"
+            value={capture.uld_number}
+          />
+
+          <Field
+            label="Sorting Start Time"
+            value={capture.sorting_start_time}
+          />
+
+          <Field
+            label="Sorting End Time"
+            value={capture.sorting_end_time}
+          />
+
+          <Field
+            label="Bag Transfer"
+            value={capture.bag_transfer}
+          />
+
+          <Field
+            label="Rush / Priority Bags"
+            value={capture.rush_priority_bags}
+          />
+
+          <Field
+            label="Misrouted Bags"
+            value={capture.misrouted_bags}
+          />
+
+          <Field
+            label="Damaged Bags"
+            value={capture.damaged_bags}
+          />
+
+          <Field
+            label="Missing Bags"
+            value={capture.missing_bags}
+          />
+        </div>
+
+        <SectionTitle>
+          Sorting Remarks
+        </SectionTitle>
+
+        <Field
+          label="Remarks"
+          value={capture.sorting_remarks}
+        />
+
+        <Field
+          label="Comments"
+          value={capture.sorting_comments}
+        />
+      </>
+    );
+  }
+
+  if (department === "load_control_ops") {
+    return (
+      <>
+        <SectionTitle>
+          Load Control / Operations
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="PAX"
+            value={capture.pax}
+          />
+
+          <Field
+            label="Baggages"
+            value={capture.baggages}
+          />
+
+          <Field
+            label="Cargo"
+            value={capture.cargo}
+          />
+
+          <Field
+            label="Parking Bay"
+            value={capture.parking_bay}
+          />
+
+          <Field
+            label="Load Ramp"
+            value={capture.load_ramp}
+          />
+
+          <Field
+            label="STD / ETD"
+            value={capture.std_etd}
+          />
+
+          <Field
+            label="STA / ETA"
+            value={capture.sta_eta}
+          />
+
+          <Field
+            label="Actual Departure"
+            value={capture.actual_departure}
+          />
+
+          <Field
+            label="Actual Arrival"
+            value={capture.actual_arrival}
+          />
+
+          <Field
+            label="Load Control / TRC Name"
+            value={capture.load_control_trc_name}
+          />
+
+          <Field
+            label="SAL Name"
+            value={capture.sal_name}
+          />
+
+          <Field
+            label="IATA Delay Code"
+            value={capture.iata_delay_code}
+          />
+        </div>
+
+        <SectionTitle>
+          Delay & Remarks
+        </SectionTitle>
+
+        <Field
+          label="Delay Reason"
+          value={capture.delay_reason}
+        />
+
+        <Field
+          label="Operational Remarks"
+          value={capture.operational_remarks}
+        />
+
+        <Field
+          label="Comments"
+          value={capture.comments}
+        />
+      </>
+    );
+  }
+
+  if (department === "passenger_services") {
+    return (
+      <>
+        <SectionTitle>
+          Check-in
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="Check-in Start Time"
+            value={capture.check_in_start_time}
+          />
+
+          <Field
+            label="Check-in End Time"
+            value={capture.check_in_end_time}
+          />
+
+          <Field
+            label="Check-in Agents"
+            value={capture.check_in_agents}
+          />
+        </div>
+
+        <SectionTitle>
+          Boarding
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="Boarding Start Time"
+            value={capture.boarding_start_time}
+          />
+
+          <Field
+            label="Boarding End Time"
+            value={capture.boarding_end_time}
+          />
+
+          <Field
+            label="Boarding Agents"
+            value={capture.boarding_agents}
+          />
+        </div>
+
+        <SectionTitle>
+          Gate
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="Gate Number"
+            value={capture.gate_number}
+          />
+
+          <Field
+            label="Gate Open Time"
+            value={capture.gate_open_time}
+          />
+
+          <Field
+            label="Gate Close Time"
+            value={capture.gate_close_time}
+          />
+        </div>
+
+        <SectionTitle>
+          Passenger Assistance
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="Wheelchair Assistance"
+            value={capture.wheelchair_assistance}
+          />
+
+          <Field
+            label="Special Assistance"
+            value={capture.special_assistance}
+          />
+
+          <Field
+            label="No-show PAX"
+            value={capture.no_show_pax}
+          />
+
+          <Field
+            label="Denied Boarding PAX"
+            value={capture.denied_boarding_pax}
+          />
+
+          <Field
+            label="Transfer PAX"
+            value={capture.transfer_pax}
+          />
+        </div>
+
+        <SectionTitle>
+          Passenger Services Remarks
+        </SectionTitle>
+
+        <Field
+          label="Remarks"
+          value={
+            capture.passenger_services_remarks
+          }
+        />
+
+        <Field
+          label="Comments"
+          value={
+            capture.passenger_services_comments
+          }
+        />
+      </>
+    );
+  }
+
+  if (department === "cargo") {
+    return (
+      <>
+        <SectionTitle>
+          Cargo Acceptance
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="Acceptance Start Time"
+            value={
+              capture.cargo_acceptance_start_time
+            }
+          />
+
+          <Field
+            label="Acceptance End Time"
+            value={
+              capture.cargo_acceptance_end_time
+            }
+          />
+
+          <Field
+            label="Cargo Weight"
+            value={capture.cargo_weight}
+          />
+
+          <Field
+            label="Cargo Pieces"
+            value={capture.cargo_pieces}
+          />
+
+          <Field
+            label="AWB Number"
+            value={capture.awb_number}
+          />
+
+          <Field
+            label="Cargo ULD Number"
+            value={capture.cargo_uld_number}
+          />
+
+          <Field
+            label="Dangerous Goods"
+            value={capture.dangerous_goods}
+          />
+
+          <Field
+            label="Special Cargo"
+            value={capture.special_cargo}
+          />
+
+          <Field
+            label="Warehouse Location"
+            value={
+              capture.warehouse_location
+            }
+          />
+        </div>
+
+        <SectionTitle>
+          Cargo Loading
+        </SectionTitle>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <Field
+            label="Loading Start Time"
+            value={
+              capture.cargo_loading_start_time
+            }
+          />
+
+          <Field
+            label="Loading End Time"
+            value={
+              capture.cargo_loading_end_time
+            }
+          />
+        </div>
+
+        <SectionTitle>
+          Cargo Remarks
+        </SectionTitle>
+
+        <Field
+          label="Remarks"
+          value={capture.cargo_remarks}
+        />
+
+        <Field
+          label="Comments"
+          value={capture.cargo_comments}
+        />
+      </>
+    );
+  }
+
+  return (
+    <div className="empty-state">
+      <h3>Unknown department</h3>
+    </div>
+  );
+}
+
+export default function CapturePage() {
   const router = useRouter();
   const params = useParams();
 
-  const captureId = params.id as string;
+  const captureId =
+    typeof params.id === "string"
+      ? params.id
+      : "";
 
   const [capture, setCapture] =
     useState<Capture | null>(null);
@@ -221,17 +826,22 @@ export default function CaptureDetailsPage() {
         return;
       }
 
-      const { data: profile, error: profileError } =
-        await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single();
+      const {
+        data: profile,
+        error: profileError,
+      } = await supabase
+        .from("profiles")
+        .select("full_name, role")
+        .eq("id", user.id)
+        .single();
 
-      if (
-        profileError ||
-        profile?.role !== "management"
-      ) {
+      if (profileError) {
+        alert(profileError.message);
+        router.push("/");
+        return;
+      }
+
+      if (profile.role !== "management") {
         alert("Management access only.");
         router.push("/departments");
         return;
@@ -248,7 +858,7 @@ export default function CaptureDetailsPage() {
 
       if (captureError) {
         alert(captureError.message);
-        router.push("/management");
+        setLoading(false);
         return;
       }
 
@@ -265,13 +875,10 @@ export default function CaptureDetailsPage() {
         .eq("id", captureData.flight_id)
         .single();
 
-      if (flightError) {
-        alert(flightError.message);
-        setLoading(false);
-        return;
+      if (!flightError) {
+        setFlight(flightData);
       }
 
-      setFlight(flightData);
       setLoading(false);
     }
 
@@ -300,6 +907,15 @@ export default function CaptureDetailsPage() {
       <main className="dashboard-page">
         <div className="empty-state">
           <h3>Capture not found</h3>
+
+          <button
+            className="action-button view"
+            onClick={() =>
+              router.push("/management")
+            }
+          >
+            BACK TO MANAGEMENT
+          </button>
         </div>
       </main>
     );
@@ -307,9 +923,6 @@ export default function CaptureDetailsPage() {
 
   return (
     <main className="dashboard-page">
-
-      {/* HEADER */}
-
       <header className="dashboard-header">
         <div>
           <div className="dashboard-logo">
@@ -330,25 +943,17 @@ export default function CaptureDetailsPage() {
       </header>
 
       <section className="dashboard-content">
-
-        {/* TITLE */}
-
         <div className="welcome-section">
-
           <button
             className="logout-button"
             onClick={() =>
-              router.push(
-                flight
-                  ? `/flight/${flight.id}`
-                  : "/management"
-              )
+              router.push("/management")
             }
             style={{
               marginBottom: "20px",
             }}
           >
-            ← BACK TO FLIGHT
+            ← BACK TO MANAGEMENT
           </button>
 
           <h1>
@@ -356,41 +961,67 @@ export default function CaptureDetailsPage() {
           </h1>
 
           <p>
-            Management view — full service
-            capture record
+            {departmentNames[
+              capture.department
+            ] || capture.department}
           </p>
-
         </div>
 
-        {/* FLIGHT INFORMATION */}
+        <section className="flights-section">
+          <div
+            style={{
+              padding: "30px",
+            }}
+          >
+            <SectionTitle>
+              Flight Information
+            </SectionTitle>
 
-        {flight && (
-          <Section title="Flight Information">
+            {flight ? (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(200px, 1fr))",
+                  gap: "12px",
+                }}
+              >
+                <Field
+                  label="Flight Number"
+                  value={
+                    flight.flight_number
+                  }
+                />
 
-            <Field
-              label="Flight Number"
-              value={flight.flight_number}
-            />
+                <Field
+                  label="Aircraft"
+                  value={flight.aircraft}
+                />
 
-            <Field
-              label="Aircraft"
-              value={flight.aircraft}
-            />
+                <Field
+                  label="Route"
+                  value={flight.route}
+                />
 
-            <Field
-              label="Route"
-              value={flight.route}
-            />
+                <Field
+                  label="Flight Date"
+                  value={flight.flight_date}
+                />
 
-            <Field
-              label="Flight Date"
-              value={flight.flight_date}
-            />
+                <Field
+                  label="Flight Status"
+                  value={flight.status}
+                />
+              </div>
+            ) : (
+              <p>
+                Flight information unavailable.
+              </p>
+            )}
 
-            <Field
-              label="Flight Status"
-              value={flight.status}
-            />
+            <SectionTitle>
+              Department
+            </SectionTitle>
 
             <Field
               label="Department"
@@ -401,509 +1032,95 @@ export default function CaptureDetailsPage() {
               }
             />
 
-            <Field
-              label="Capture ID"
-              value={capture.id}
+            <SectionTitle>
+              Service Capture
+            </SectionTitle>
+
+            <CaptureContent
+              capture={capture}
             />
 
-            <Field
-              label="Created"
-              value={new Date(
-                capture.created_at
-              ).toLocaleString()}
-            />
+            <SectionTitle>
+              Record Information
+            </SectionTitle>
 
-          </Section>
-        )}
-
-        {/* LOAD CONTROL / OPS */}
-
-        {capture.department ===
-          "load_control_ops" && (
-          <>
-            <Section title="LOAD CONTROL / OPS">
-
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "12px",
+              }}
+            >
               <Field
-                label="PAX"
-                value={capture.pax}
+                label="Capture ID"
+                value={capture.id}
               />
 
               <Field
-                label="Baggages"
-                value={capture.baggages}
+                label="Created By"
+                value={capture.created_by}
               />
 
               <Field
-                label="Cargo"
-                value={capture.cargo}
-              />
-
-              <Field
-                label="Parking Bay"
-                value={capture.parking_bay}
-              />
-
-              <Field
-                label="Load / Ramp"
-                value={capture.load_ramp}
-              />
-
-              <Field
-                label="STD / ETD"
-                value={capture.std_etd}
-              />
-
-              <Field
-                label="STA / ETA"
-                value={capture.sta_eta}
-              />
-
-              <Field
-                label="Actual Departure"
-                value={capture.actual_departure}
-              />
-
-              <Field
-                label="Actual Arrival"
-                value={capture.actual_arrival}
-              />
-
-              <Field
-                label="Load Control / TRC Name"
+                label="Created At"
                 value={
-                  capture.load_control_trc_name
+                  capture.created_at
+                    ? new Date(
+                        capture.created_at
+                      ).toLocaleString()
+                    : ""
                 }
               />
 
               <Field
-                label="SAL Name"
-                value={capture.sal_name}
-              />
-
-              <Field
-                label="IATA Delay Code"
+                label="Updated At"
                 value={
-                  capture.iata_delay_code
+                  capture.updated_at
+                    ? new Date(
+                        capture.updated_at
+                      ).toLocaleString()
+                    : ""
                 }
               />
+            </div>
 
-              <Field
-                label="Delay Reason"
-                value={capture.delay_reason}
-              />
-
-              <Field
-                label="Operational Remarks"
-                value={
-                  capture.operational_remarks
+            <div
+              style={{
+                marginTop: "35px",
+                display: "flex",
+                gap: "12px",
+                flexWrap: "wrap",
+              }}
+            >
+              <button
+                className="logout-button"
+                style={{
+                  background: "#071d41",
+                  color: "#fff",
+                }}
+                onClick={() =>
+                  router.push("/management")
                 }
-              />
-
-              <Field
-                label="Comments"
-                value={capture.comments}
-              />
-
-            </Section>
-          </>
-        )}
-
-        {/* RAMP */}
-
-        {capture.department === "ramp" && (
-          <Section title="RAMP">
-
-            <Field
-              label="GPU Time"
-              value={capture.gpu_time}
-            />
-
-            <Field
-              label="ACU"
-              value={capture.acu}
-            />
-
-            <Field
-              label="COBUS"
-              value={capture.cobus}
-            />
-
-            <Field
-              label="Towing"
-              value={capture.towing}
-            />
-
-            <Field
-              label="Cleaning"
-              value={capture.cleaning}
-            />
-
-            <Field
-              label="Pushback"
-              value={capture.pushback}
-            />
-
-            <Field
-              label="Lavatory Service"
-              value={
-                capture.lavatory_service
-              }
-            />
-
-            <Field
-              label="Portable Water"
-              value={
-                capture.portable_water
-              }
-            />
-
-            <Field
-              label="PAX Stairs"
-              value={capture.pax_stairs}
-            />
-
-            <Field
-              label="Ambulift"
-              value={capture.ambulift}
-            />
-
-            <Field
-              label="ASU"
-              value={capture.asu}
-            />
-
-            <Field
-              label="PAX Step"
-              value={capture.pax_step}
-            />
-
-            <Field
-              label="Chocks In"
-              value={capture.chocks_in}
-            />
-
-            <Field
-              label="Chocks Out"
-              value={capture.chocks_out}
-            />
-
-            <Field
-              label="Vomiting"
-              value={capture.vomiting}
-            />
-
-            <Field
-              label="Ramp Comments"
-              value={
-                capture.ramp_comments
-              }
-            />
-
-          </Section>
-        )}
-
-        {/* SORTING */}
-
-        {capture.department === "sorting" && (
-          <Section title="SORTING">
-
-            <Field
-              label="ULD / Bag Sorting"
-              value={
-                capture.uld_bag_sorting
-              }
-            />
-
-            <Field
-              label="Number of Bags"
-              value={
-                capture.number_of_bags
-              }
-            />
-
-            <Field
-              label="ULD Number"
-              value={capture.uld_number}
-            />
-
-            <Field
-              label="Sorting Start Time"
-              value={
-                capture.sorting_start_time
-              }
-            />
-
-            <Field
-              label="Sorting End Time"
-              value={
-                capture.sorting_end_time
-              }
-            />
-
-            <Field
-              label="Bag Transfer"
-              value={
-                capture.bag_transfer
-              }
-            />
-
-            <Field
-              label="Rush / Priority Bags"
-              value={
-                capture.rush_priority_bags
-              }
-            />
-
-            <Field
-              label="Misrouted Bags"
-              value={
-                capture.misrouted_bags
-              }
-            />
-
-            <Field
-              label="Damaged Bags"
-              value={
-                capture.damaged_bags
-              }
-            />
-
-            <Field
-              label="Missing Bags"
-              value={
-                capture.missing_bags
-              }
-            />
-
-            <Field
-              label="Sorting Remarks"
-              value={
-                capture.sorting_remarks
-              }
-            />
-
-            <Field
-              label="Sorting Comments"
-              value={
-                capture.sorting_comments
-              }
-            />
-
-          </Section>
-        )}
-
-        {/* PASSENGER SERVICES */}
-
-        {capture.department ===
-          "passenger_services" && (
-          <Section title="PASSENGER SERVICES">
-
-            <Field
-              label="Check-in Start Time"
-              value={
-                capture.check_in_start_time
-              }
-            />
-
-            <Field
-              label="Check-in End Time"
-              value={
-                capture.check_in_end_time
-              }
-            />
-
-            <Field
-              label="Check-in Agents"
-              value={
-                capture.check_in_agents
-              }
-            />
-
-            <Field
-              label="Boarding Start Time"
-              value={
-                capture.boarding_start_time
-              }
-            />
-
-            <Field
-              label="Boarding End Time"
-              value={
-                capture.boarding_end_time
-              }
-            />
-
-            <Field
-              label="Boarding Agents"
-              value={
-                capture.boarding_agents
-              }
-            />
-
-            <Field
-              label="Gate Number"
-              value={capture.gate_number}
-            />
-
-            <Field
-              label="Gate Open Time"
-              value={
-                capture.gate_open_time
-              }
-            />
-
-            <Field
-              label="Gate Close Time"
-              value={
-                capture.gate_close_time
-              }
-            />
-
-            <Field
-              label="Wheelchair Assistance"
-              value={
-                capture.wheelchair_assistance
-              }
-            />
-
-            <Field
-              label="Special Assistance"
-              value={
-                capture.special_assistance
-              }
-            />
-
-            <Field
-              label="No-show PAX"
-              value={
-                capture.no_show_pax
-              }
-            />
-
-            <Field
-              label="Denied Boarding PAX"
-              value={
-                capture.denied_boarding_pax
-              }
-            />
-
-            <Field
-              label="Transfer PAX"
-              value={
-                capture.transfer_pax
-              }
-            />
-
-            <Field
-              label="Passenger Services Remarks"
-              value={
-                capture.passenger_services_remarks
-              }
-            />
-
-            <Field
-              label="Passenger Services Comments"
-              value={
-                capture.passenger_services_comments
-              }
-            />
-
-          </Section>
-        )}
-
-        {/* CARGO */}
-
-        {capture.department === "cargo" && (
-          <Section title="CARGO">
-
-            <Field
-              label="Cargo Acceptance Start Time"
-              value={
-                capture.cargo_acceptance_start_time
-              }
-            />
-
-            <Field
-              label="Cargo Acceptance End Time"
-              value={
-                capture.cargo_acceptance_end_time
-              }
-            />
-
-            <Field
-              label="Cargo Weight"
-              value={capture.cargo_weight}
-            />
-
-            <Field
-              label="Cargo Pieces"
-              value={capture.cargo_pieces}
-            />
-
-            <Field
-              label="AWB Number"
-              value={capture.awb_number}
-            />
-
-            <Field
-              label="Cargo ULD Number"
-              value={
-                capture.cargo_uld_number
-              }
-            />
-
-            <Field
-              label="Dangerous Goods"
-              value={
-                capture.dangerous_goods
-              }
-            />
-
-            <Field
-              label="Special Cargo"
-              value={
-                capture.special_cargo
-              }
-            />
-
-            <Field
-              label="Warehouse Location"
-              value={
-                capture.warehouse_location
-              }
-            />
-
-            <Field
-              label="Cargo Loading Start Time"
-              value={
-                capture.cargo_loading_start_time
-              }
-            />
-
-            <Field
-              label="Cargo Loading End Time"
-              value={
-                capture.cargo_loading_end_time
-              }
-            />
-
-            <Field
-              label="Cargo Remarks"
-              value={
-                capture.cargo_remarks
-              }
-            />
-
-            <Field
-              label="Cargo Comments"
-              value={
-                capture.cargo_comments
-              }
-            />
-
-          </Section>
-        )}
-
+              >
+                ← MANAGEMENT
+              </button>
+
+              {flight && (
+                <button
+                  className="action-button view"
+                  onClick={() =>
+                    router.push(
+                      `/flight/${flight.id}`
+                    )
+                  }
+                >
+                  VIEW FLIGHT
+                </button>
+              )}
+            </div>
+          </div>
+        </section>
       </section>
 
       <footer className="dashboard-footer">
@@ -915,7 +1132,6 @@ export default function CaptureDetailsPage() {
           Management — Authorized Personnel Only
         </span>
       </footer>
-
     </main>
   );
-  }
+              }
