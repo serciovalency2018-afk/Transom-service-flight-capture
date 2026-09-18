@@ -4,130 +4,219 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 
-type Profile = {
-  id: string;
-  full_name: string;
-  role: string;
-  department: string;
+type Department = {
+  key: string;
+  name: string;
+  description: string;
+  icon: string;
 };
 
-const departments = [
+type Profile = {
+  id: string;
+  full_name: string | null;
+  role: string | null;
+  department: string | null;
+};
+
+const departments: Department[] = [
   {
     key: "ramp",
     name: "RAMP",
-    description: "Ramp & Ground Services",
+    description: "Ground handling and aircraft turnaround services",
     icon: "✈",
   },
   {
     key: "sorting",
     name: "SORTING",
-    description: "Baggage & ULD Sorting",
+    description: "Baggage sorting, transfer and ULD operations",
     icon: "▣",
   },
   {
     key: "load_control_ops",
     name: "LOAD CONTROL / OPS",
-    description: "Load Control & Operations",
-    icon: "▤",
+    description: "Load control and flight operational information",
+    icon: "◈",
   },
   {
     key: "passenger_services",
     name: "PASSENGER SERVICES",
-    description: "Passenger & Gate Services",
+    description: "Check-in, boarding and passenger assistance",
     icon: "♙",
   },
   {
     key: "cargo",
     name: "CARGO",
-    description: "Cargo Operations",
-    icon: "▰",
+    description: "Cargo acceptance, handling and loading operations",
+    icon: "▤",
   },
 ];
 
 export default function DepartmentsPage() {
   const router = useRouter();
 
-  const [profile, setProfile] =
-    useState<Profile | null>(null);
-
-  const [loading, setLoading] =
-    useState(true);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [visibleDepartments, setVisibleDepartments] = useState<Department[]>(
+    []
+  );
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadProfile() {
+    loadUserProfile();
+  }, []);
+
+  async function loadUserProfile() {
+    try {
+      setLoading(true);
+
+      // Check logged-in user
       const {
         data: { user },
+        error: userError,
       } = await supabase.auth.getUser();
 
-      if (!user) {
-        router.push("/");
+      if (userError || !user) {
+        router.replace("/");
         return;
       }
 
-      const {
-        data,
-        error,
-      } = await supabase
+      // Get user's profile
+      const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select(
-          "id, full_name, role, department"
-        )
+        .select("id, full_name, role, department")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
-      if (error) {
-        alert(error.message);
-        router.push("/");
+      if (profileError) {
+        console.error("Profile error:", profileError);
+        alert("Unable to load your profile.");
+        router.replace("/");
         return;
       }
 
-      setProfile(data);
+      if (!profileData) {
+        alert("Your user profile was not found.");
+        router.replace("/");
+        return;
+      }
+
+      setProfile(profileData);
+
+      // =====================================================
+      // MANAGEMENT
+      // =====================================================
+
+      if (profileData.role === "management") {
+        setVisibleDepartments(departments);
+        return;
+      }
+
+      // =====================================================
+      // REGULAR USER
+      // =====================================================
+
+      if (!profileData.department) {
+        alert("No department has been assigned to your account.");
+        setVisibleDepartments([]);
+        return;
+      }
+
+      const userDepartment = departments.find(
+        (department) => department.key === profileData.department
+      );
+
+      if (!userDepartment) {
+        alert(
+          `The department "${profileData.department}" is not configured in TRANSOM.`
+        );
+        setVisibleDepartments([]);
+        return;
+      }
+
+      // User sees ONLY their department
+      setVisibleDepartments([userDepartment]);
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      alert("Something went wrong while loading departments.");
+      router.replace("/");
+    } finally {
       setLoading(false);
     }
+  }
 
-    loadProfile();
-  }, [router]);
+  // =========================================================
+  // DEPARTMENT SELECT
+  // =========================================================
 
-  function selectDepartment(
-    departmentKey: string
-  ) {
+  function handleDepartmentSelect(departmentKey: string) {
+    if (!profile) return;
+
+    // Management can access all departments
+    if (profile.role === "management") {
+      router.push(
+        `/flights?department=${encodeURIComponent(departmentKey)}`
+      );
+      return;
+    }
+
+    // Regular user can ONLY access assigned department
+    if (profile.department !== departmentKey) {
+      alert("Access denied. You are not assigned to this department.");
+      return;
+    }
+
     router.push(
-      `/flights?department=${encodeURIComponent(
-        departmentKey
-      )}`
+      `/flights?department=${encodeURIComponent(departmentKey)}`
     );
   }
 
-  async function logout() {
+  // =========================================================
+  // LOGOUT
+  // =========================================================
+
+  async function handleLogout() {
     await supabase.auth.signOut();
-    router.push("/");
+    router.replace("/");
   }
+
+  // =========================================================
+  // LOADING SCREEN
+  // =========================================================
 
   if (loading) {
     return (
       <main className="dashboard-page">
-        <div className="empty-state">
-          <h3>
-            Loading departments...
-          </h3>
+        <header className="dashboard-header">
+          <div>
+            <div className="dashboard-logo">TRANSOM</div>
+            <div className="dashboard-subtitle">
+              FLIGHT SERVICE CAPTURE
+            </div>
+          </div>
+        </header>
+
+        <div className="dashboard-content">
+          <div className="welcome-section">
+            <h1>LOADING...</h1>
+            <p>Checking your department access.</p>
+          </div>
         </div>
       </main>
     );
   }
 
-  if (!profile) {
-    return null;
-  }
+  // =========================================================
+  // PAGE
+  // =========================================================
 
   return (
     <main className="dashboard-page">
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
 
       <header className="dashboard-header">
-
         <div>
-          <div className="dashboard-logo">
-            TRANSOM
-          </div>
+          <div className="dashboard-logo">TRANSOM</div>
 
           <div className="dashboard-subtitle">
             FLIGHT SERVICE CAPTURE
@@ -135,129 +224,104 @@ export default function DepartmentsPage() {
         </div>
 
         <button
+          type="button"
           className="logout-button"
-          onClick={logout}
+          onClick={handleLogout}
         >
           LOGOUT
         </button>
-
       </header>
 
-      <section className="dashboard-content">
+      {/* =====================================================
+          CONTENT
+      ====================================================== */}
 
-        <div className="welcome-section">
-
+      <div className="dashboard-content">
+        <section className="welcome-section">
           <h1>
-            Select Department
+            WELCOME
+            {profile?.full_name
+              ? `, ${profile.full_name}`
+              : ""}
           </h1>
 
           <p>
-            Choose the department you want
-            to access.
+            {profile?.role === "management"
+              ? "MANAGEMENT — SELECT DEPARTMENT"
+              : profile?.department
+              ? `SELECT YOUR DEPARTMENT — ${
+                  departments.find(
+                    (item) => item.key === profile.department
+                  )?.name || profile.department
+                }`
+              : "SELECT DEPARTMENT"}
           </p>
-
-        </div>
-
-        <section className="flights-section">
-
-          <div
-            style={{
-              padding: "30px",
-            }}
-          >
-
-            <div
-              style={{
-                marginBottom: "28px",
-              }}
-            >
-
-              <div
-                style={{
-                  color: "#667085",
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.7px",
-                }}
-              >
-                Logged in as
-              </div>
-
-              <div
-                style={{
-                  marginTop: "5px",
-                  color: "#071d41",
-                  fontSize: "20px",
-                  fontWeight: 900,
-                }}
-              >
-                {profile.full_name}
-              </div>
-
-            </div>
-
-            <div className="department-grid">
-
-              {departments.map(
-                (department) => (
-
-                  <button
-                    key={
-                      department.key
-                    }
-                    type="button"
-                    className="department-card"
-                    onClick={() =>
-                      selectDepartment(
-                        department.key
-                      )
-                    }
-                  >
-
-                    <div className="department-icon">
-                      {department.icon}
-                    </div>
-
-                    <div className="department-name">
-                      {department.name}
-                    </div>
-
-                    <div className="department-description">
-                      {
-                        department.description
-                      }
-                    </div>
-
-                    <div className="department-arrow">
-                      →
-                    </div>
-
-                  </button>
-
-                )
-              )}
-
-            </div>
-
-          </div>
-
         </section>
 
-      </section>
+        {/* ===================================================
+            DEPARTMENTS
+        ==================================================== */}
+
+        <section className="flights-section">
+          <div className="section-heading">
+            <h2>SELECT DEPARTMENT</h2>
+
+            <p>
+              {profile?.role === "management"
+                ? "Management access — all departments"
+                : "You can access your assigned department only"}
+            </p>
+          </div>
+
+          {visibleDepartments.length === 0 ? (
+            <div className="empty-state">
+              <h3>NO DEPARTMENT ASSIGNED</h3>
+
+              <p>
+                Please contact TRANSOM management to assign
+                a department to your account.
+              </p>
+            </div>
+          ) : (
+            <div className="department-grid">
+              {visibleDepartments.map((department) => (
+                <button
+                  type="button"
+                  key={department.key}
+                  className="department-card"
+                  onClick={() =>
+                    handleDepartmentSelect(department.key)
+                  }
+                >
+                  <div className="department-icon">
+                    {department.icon}
+                  </div>
+
+                  <div className="department-name">
+                    {department.name}
+                  </div>
+
+                  <div className="department-description">
+                    {department.description}
+                  </div>
+
+                  <div className="department-arrow">
+                    →
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* =====================================================
+          FOOTER
+      ====================================================== */}
 
       <footer className="dashboard-footer">
-
-        <p>
-          TRANSOM Flight Service Capture
-        </p>
-
-        <span>
-          Authorized Personnel Only
-        </span>
-
+        TRANSOM — FLIGHT SERVICE CAPTURE
       </footer>
-
     </main>
   );
 }
