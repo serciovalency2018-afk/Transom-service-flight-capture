@@ -1123,7 +1123,7 @@ export default function CapturePage() {
         </section>
       </section>
 
-      <footer className="dashboard-footer">
+            <footer className="dashboard-footer">
         <p>
           TRANSOM Flight Service Capture
         </p>
@@ -1134,4 +1134,4 @@ export default function CapturePage() {
       </footer>
     </main>
   );
-              }
+}
