@@ -163,6 +163,7 @@ export default function ManagementPage() {
 
   return (
     <main className="dashboard-page">
+      {/* HEADER */}
       <header className="dashboard-header">
         <div>
           <div className="dashboard-logo">
@@ -182,7 +183,9 @@ export default function ManagementPage() {
         </button>
       </header>
 
+      {/* CONTENT */}
       <section className="dashboard-content">
+        {/* WELCOME */}
         <div className="welcome-section">
           <h1>Management Dashboard</h1>
 
@@ -192,6 +195,7 @@ export default function ManagementPage() {
           </p>
         </div>
 
+        {/* STATUS CARDS */}
         <div className="status-cards">
           <div className="status-card open">
             <span className="status-number">
@@ -234,6 +238,7 @@ export default function ManagementPage() {
           </div>
         </div>
 
+        {/* ALL FLIGHTS */}
         <section className="flights-section">
           <div className="section-header">
             <div>
@@ -357,6 +362,7 @@ export default function ManagementPage() {
           )}
         </section>
 
+        {/* SERVICE CAPTURES */}
         <section className="flights-section">
           <div className="section-header">
             <div>
@@ -391,12 +397,14 @@ export default function ManagementPage() {
                     <th>DEPARTMENT</th>
                     <th>CAPTURE ID</th>
                     <th>CREATED</th>
+                    <th>ACTION</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {captures.map((capture) => (
                     <tr key={capture.id}>
+                      {/* FLIGHT */}
                       <td>
                         <strong>
                           {getFlightNumber(
@@ -405,6 +413,7 @@ export default function ManagementPage() {
                         </strong>
                       </td>
 
+                      {/* DEPARTMENT */}
                       <td>
                         {departmentNames[
                           capture.department
@@ -412,14 +421,30 @@ export default function ManagementPage() {
                           capture.department}
                       </td>
 
+                      {/* CAPTURE ID */}
                       <td>
                         {capture.id.slice(0, 8)}
                       </td>
 
+                      {/* CREATED */}
                       <td>
                         {new Date(
                           capture.created_at
                         ).toLocaleString()}
+                      </td>
+
+                      {/* VIEW CAPTURE */}
+                      <td>
+                        <button
+                          className="action-button view"
+                          onClick={() =>
+                            router.push(
+                              `/capture/${capture.id}`
+                            )
+                          }
+                        >
+                          VIEW CAPTURE
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -430,6 +455,7 @@ export default function ManagementPage() {
         </section>
       </section>
 
+      {/* FOOTER */}
       <footer className="dashboard-footer">
         <p>
           TRANSOM Flight Service Capture
@@ -441,4 +467,4 @@ export default function ManagementPage() {
       </footer>
     </main>
   );
-          }
+}
