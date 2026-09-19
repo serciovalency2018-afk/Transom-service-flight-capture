@@ -1,0 +1,285 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
+
+const departments = [
+  {
+    key: "ramp",
+    name: "RAMP",
+  },
+  {
+    key: "sorting",
+    name: "SORTING",
+  },
+  {
+    key: "load_control_ops",
+    name: "LOAD CONTROL / OPS",
+  },
+  {
+    key: "passenger_services",
+    name: "PASSENGER SERVICES",
+  },
+  {
+    key: "cargo",
+    name: "CARGO",
+  },
+];
+
+export default function UsersPage() {
+  const router = useRouter();
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("user");
+  const [department, setDepartment] = useState("ramp");
+
+  const [loading, setLoading] = useState(false);
+
+  async function handleCreateUser(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!fullName || !email || !password || !department) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      /*
+       * User creation will be connected to the secure
+       * Supabase Edge Function in the next step.
+       */
+
+      alert(
+        "User form is ready. Secure user creation will be connected next."
+      );
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.replace("/");
+  }
+
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        background: "#f4f6f9",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      <header
+        style={{
+          background: "#071d41",
+          color: "white",
+          padding: "20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <div>
+          <div
+            style={{
+              fontSize: "28px",
+              fontWeight: "800",
+              letterSpacing: "2px",
+            }}
+          >
+            TRANSOM
+          </div>
+
+          <div
+            style={{
+              fontSize: "12px",
+              letterSpacing: "2px",
+              opacity: 0.8,
+            }}
+          >
+            FLIGHT SERVICE CAPTURE
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          style={{
+            background: "#d71920",
+            color: "white",
+            border: "none",
+            padding: "10px 18px",
+            borderRadius: "6px",
+            fontWeight: "700",
+            cursor: "pointer",
+          }}
+        >
+          LOGOUT
+        </button>
+      </header>
+
+      <div
+        style={{
+          maxWidth: "700px",
+          margin: "40px auto",
+          padding: "20px",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => router.push("/departments")}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "#071d41",
+            fontWeight: "700",
+            cursor: "pointer",
+            marginBottom: "20px",
+          }}
+        >
+          ← BACK TO DEPARTMENTS
+        </button>
+
+        <div
+          style={{
+            background: "white",
+            borderRadius: "12px",
+            padding: "30px",
+            boxShadow: "0 4px 18px rgba(0,0,0,0.08)",
+          }}
+        >
+          <h1
+            style={{
+              marginTop: 0,
+              color: "#071d41",
+              fontSize: "26px",
+            }}
+          >
+            ADD NEW USER
+          </h1>
+
+          <p
+            style={{
+              color: "#666",
+              marginBottom: "30px",
+            }}
+          >
+            Create a new authorized TRANSOM user.
+          </p>
+
+          <form onSubmit={handleCreateUser}>
+            <label>FULL NAME</label>
+
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Example: Sercio Valency"
+              style={inputStyle}
+            />
+
+            <label>EMAIL</label>
+
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="user@example.com"
+              style={inputStyle}
+            />
+
+            <label>PASSWORD</label>
+
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Minimum 6 characters"
+              style={inputStyle}
+            />
+
+            <label>ROLE</label>
+
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              style={inputStyle}
+            >
+              <option value="user">USER</option>
+              <option value="management">MANAGEMENT</option>
+            </select>
+
+            <label>DEPARTMENT</label>
+
+            <select
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              style={inputStyle}
+            >
+              {departments.map((item) => (
+                <option key={item.key} value={item.key}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: "100%",
+                marginTop: "20px",
+                padding: "14px",
+                background: "#d71920",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                fontWeight: "800",
+                fontSize: "15px",
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
+            >
+              {loading ? "CREATING USER..." : "CREATE USER"}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <footer
+        style={{
+          textAlign: "center",
+          color: "#777",
+          padding: "20px",
+          fontSize: "12px",
+        }}
+      >
+        TRANSOM — FLIGHT SERVICE CAPTURE
+      </footer>
+    </main>
+  );
+}
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "13px",
+  marginTop: "8px",
+  marginBottom: "18px",
+  border: "1px solid #d0d5db",
+  borderRadius: "6px",
+  boxSizing: "border-box",
+  fontSize: "15px",
+};
