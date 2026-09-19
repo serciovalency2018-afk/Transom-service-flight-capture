@@ -1,1546 +1,313 @@
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-body {
-  color: #071d41;
-  background: #071d41;
-}
-
-button,
-input,
-select,
-textarea {
-  font-family: inherit;
-}
-
-/* =========================================
-   MAIN APPLICATION BACKGROUND
-========================================= */
-
-.dashboard-page {
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-
-  background-image:
-    linear-gradient(
-      90deg,
-      rgba(4, 25, 58, 0.94) 0%,
-      rgba(7, 29, 65, 0.82) 32%,
-      rgba(7, 29, 65, 0.48) 62%,
-      rgba(7, 29, 65, 0.38) 100%
-    ),
-    url("/transom-airport.jpg");
-
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
-.dashboard-page::after {
-  content: "";
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 7px;
-  z-index: 20;
-
-  background:
-    linear-gradient(
-      90deg,
-      #ed1b2f 0%,
-      #ed1b2f 48%,
-      #071d41 48%,
-      #071d41 100%
-    );
-}
-
-/* =========================================
-   HEADER
-========================================= */
-
-.dashboard-header {
-  width: 100%;
-  min-height: 92px;
-
-  padding: 22px 5%;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  background: rgba(3, 20, 48, 0.72);
-  backdrop-filter: blur(10px);
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-
-  position: relative;
-  z-index: 5;
-}
-
-.dashboard-logo {
-  color: #ffffff;
-  font-size: 30px;
-  font-weight: 900;
-  letter-spacing: 3px;
-  line-height: 1;
-}
-
-.dashboard-logo::before {
-  content: "✈";
-  color: #ed1b2f;
-  margin-right: 10px;
-  font-size: 25px;
-}
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "../lib/supabase";
+
+export default function LoginPage() {
+  const router = useRouter();
 
-.dashboard-subtitle {
-  margin-top: 6px;
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  opacity: 0.9;
-}
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+
+    setLoading(true);
+
+    const { error } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+    if (error) {
+      setLoading(false);
+      alert(error.message);
+      return;
+    }
+
+    setLoading(false);
+
+    router.push("/departments");
+  };
+
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
+
+        backgroundImage:
+          "linear-gradient(rgba(7,29,65,0.55), rgba(7,29,65,0.70)), url('/transom-airport.jpg')",
+
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+
+        fontFamily:
+          "Arial, Helvetica, sans-serif",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "440px",
+
+          background:
+            "rgba(255,255,255,0.97)",
+
+          borderRadius: "16px",
+
+          padding: "40px",
+
+          boxShadow:
+            "0 20px 50px rgba(0,0,0,0.35)",
+        }}
+      >
+        {/* HEADER */}
+        <div
+          style={{
+            textAlign: "center",
+            marginBottom: "35px",
+          }}
+        >
+          <h1
+            style={{
+              margin: 0,
+
+              color: "#071d41",
+
+              fontSize: "34px",
+
+              fontWeight: 900,
+
+              letterSpacing: "2px",
+            }}
+          >
+            TRANSOM
+          </h1>
+
+          <p
+            style={{
+              marginTop: "8px",
+
+              marginBottom: 0,
+
+              color: "#d71920",
+
+              fontSize: "13px",
+
+              fontWeight: 700,
+
+              letterSpacing: "1.5px",
+            }}
+          >
+            FLIGHT SERVICE CAPTURE
+          </p>
+        </div>
+
+        {/* LOGIN FORM */}
+        <form
+          onSubmit={handleLogin}
+          style={{
+            display: "grid",
+            gap: "20px",
+          }}
+        >
+          {/* EMAIL */}
+          <div>
+            <label
+              style={{
+                display: "block",
+
+                marginBottom: "8px",
+
+                color: "#071d41",
+
+                fontWeight: 700,
+              }}
+            >
+              Email
+            </label>
+
+            <input
+              type="email"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
+              placeholder="Enter your email"
+              required
+              autoComplete="email"
+              style={{
+                width: "100%",
+
+                boxSizing: "border-box",
+
+                padding: "14px",
+
+                borderRadius: "8px",
+
+                border:
+                  "1px solid #d0d5dd",
+
+                fontSize: "15px",
+
+                outline: "none",
+              }}
+            />
+          </div>
 
-/* =========================================
-   LOGOUT
-========================================= */
+          {/* PASSWORD */}
+          <div>
+            <label
+              style={{
+                display: "block",
 
-.logout-button {
-  border: none;
-  border-radius: 22px;
+                marginBottom: "8px",
 
-  padding: 11px 22px;
+                color: "#071d41",
 
-  background: #071d41;
-  color: #ffffff;
+                fontWeight: 700,
+              }}
+            >
+              Password
+            </label>
+
+            <input
+              type="password"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
+              placeholder="Enter your password"
+              required
+              autoComplete="current-password"
+              style={{
+                width: "100%",
 
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.7px;
+                boxSizing: "border-box",
 
-  cursor: pointer;
+                padding: "14px",
+
+                borderRadius: "8px",
+
+                border:
+                  "1px solid #d0d5dd",
 
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.22);
-
-  transition: 0.2s ease;
-}
-
-.logout-button:hover {
-  background: #ed1b2f;
-  transform: translateY(-1px);
-}
-
-/* =========================================
-   MAIN CONTENT
-========================================= */
-
-.dashboard-content {
-  width: min(1400px, 92%);
-  margin: 0 auto;
-
-  padding: 45px 0 90px;
-
-  position: relative;
-  z-index: 2;
-}
-
-/* =========================================
-   PAGE TITLE
-========================================= */
-
-.welcome-section {
-  margin-bottom: 30px;
-}
-
-.welcome-section h1 {
-  margin: 0;
-
-  color: #ffffff;
-
-  font-size: clamp(30px, 4vw, 48px);
-  font-weight: 900;
-
-  letter-spacing: -1px;
-
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-}
-
-.welcome-section h1::before {
-  content: "✈";
-  color: #ed1b2f;
-  font-size: 30px;
-  margin-right: 12px;
-}
-
-.welcome-section p {
-  margin: 10px 0 0;
-
-  color: rgba(255, 255, 255, 0.86);
-
-  font-size: 15px;
-}
-
-.welcome-section::after {
-  content: "";
-  display: block;
-
-  width: 80px;
-  height: 4px;
-
-  margin-top: 15px;
-
-  background: #ed1b2f;
-
-  border-radius: 10px;
-}
-
-/* =========================================
-   SECTIONS / GLASS PANELS
-========================================= */
-
-.flights-section {
-  margin-bottom: 28px;
-
-  background: rgba(255, 255, 255, 0.95);
-
-  border: 1px solid rgba(255, 255, 255, 0.65);
-
-  border-radius: 18px;
-
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
-
-  overflow: hidden;
-
-  backdrop-filter: blur(10px);
-}
-
-/* =========================================
-   SECTION HEADER
-========================================= */
-
-.section-header {
-  padding: 25px 30px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 20px;
-
-  border-bottom: 1px solid #e4e7ec;
-}
-
-.section-header h2 {
-  margin: 0;
-
-  color: #071d41;
-
-  font-size: 22px;
-  font-weight: 900;
-}
-
-.section-header p {
-  margin: 6px 0 0;
-
-  color: #667085;
-
-  font-size: 13px;
-}
-
-/* =========================================
-   FLIGHT TABLE
-========================================= */
-
-.flight-table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.flight-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  background: rgba(255, 255, 255, 0.97);
-}
-
-.flight-table th {
-  padding: 15px 14px;
-
-  background: #071d41;
-  color: #ffffff;
-
-  font-size: 11px;
-  font-weight: 800;
-
-  letter-spacing: 0.8px;
-
-  text-align: left;
-  white-space: nowrap;
-}
-
-.flight-table td {
-  padding: 16px 14px;
-
-  border-bottom: 1px solid #eaecf0;
-
-  color: #344054;
-
-  font-size: 13px;
-
-  white-space: nowrap;
-}
-
-.flight-table tbody tr:hover {
-  background: #f5f8fc;
-}
-
-.flight-table td strong {
-  color: #071d41;
-}
-
-/* =========================================
-   STATUS
-========================================= */
-
-.flight-status {
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
-
-  padding: 7px 12px;
-
-  border-radius: 20px;
-
-  font-size: 11px;
-  font-weight: 800;
-
-  white-space: nowrap;
-}
-
-.open-status {
-  background: #ffffff;
-  color: #071d41;
-  border: 1px solid #98a2b3;
-}
-
-.progress-status {
-  background: #071d41;
-  color: #ffffff;
-}
-
-.no-delay-status {
-  background: #16a34a;
-  color: #ffffff;
-}
-
-.delay-status {
-  background: #ed1b2f;
-  color: #ffffff;
-}
-
-/* =========================================
-   ACTION BUTTONS
-========================================= */
-
-.flight-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.action-button {
-  border: none;
-
-  border-radius: 7px;
-
-  padding: 9px 13px;
-
-  font-size: 11px;
-  font-weight: 800;
-
-  cursor: pointer;
-
-  transition: 0.2s ease;
-
-  white-space: nowrap;
-}
-
-.action-button:hover {
-  transform: translateY(-1px);
-}
-
-.action-button.view {
-  background: #071d41;
-  color: #ffffff;
-}
-
-.action-button.start {
-  background: #071d41;
-  color: #ffffff;
-}
-
-.action-button.close-green {
-  background: #16a34a;
-  color: #ffffff;
-}
-
-.action-button.close-red {
-  background: #ed1b2f;
-  color: #ffffff;
-}
-
-.action-button.reopen {
-  background: #ffffff;
-  color: #071d41;
-  border: 1px solid #071d41;
-}
-
-/* =========================================
-   NEW FLIGHT BUTTON
-========================================= */
-
-.new-flight-button {
-  border: none;
-
-  border-radius: 8px;
-
-  padding: 12px 20px;
-
-  background: #ed1b2f;
-  color: #ffffff;
-
-  font-size: 12px;
-  font-weight: 900;
-
-  cursor: pointer;
-
-  box-shadow: 0 5px 15px rgba(237, 27, 47, 0.22);
-
-  transition: 0.2s ease;
-}
-
-.new-flight-button:hover {
-  background: #c91427;
-  transform: translateY(-1px);
-}
-
-.new-flight-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* =========================================
-   STATUS CARDS
-========================================= */
-
-.status-cards {
-  display: grid;
-
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-
-  gap: 18px;
-
-  margin-bottom: 28px;
-}
-
-.status-card {
-  min-height: 120px;
-
-  padding: 22px;
-
-  border-radius: 15px;
-
-  background: rgba(255, 255, 255, 0.94);
-
-  border-left: 6px solid #071d41;
-
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.status-card.open {
-  border-left-color: #98a2b3;
-}
-
-.status-card.progress {
-  border-left-color: #071d41;
-}
-
-.status-card.completed {
-  border-left-color: #16a34a;
-}
-
-.status-card.delayed {
-  border-left-color: #ed1b2f;
-}
-
-.status-number {
-  color: #071d41;
-  font-size: 32px;
-  font-weight: 900;
-}
-
-.status-label {
-  margin-top: 5px;
-
-  color: #667085;
-
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-}
-
-/* =========================================
-   EMPTY STATE
-========================================= */
-
-.empty-state {
-  padding: 55px 25px;
-  text-align: center;
-  color: #667085;
-}
-
-.empty-state h3 {
-  margin: 10px 0;
-  color: #071d41;
-}
-
-.empty-state p {
-  margin: 0;
-}
-
-.empty-icon {
-  font-size: 42px;
-  margin-bottom: 10px;
-}
-
-/* =========================================
-   GENERAL FORMS
-========================================= */
-
-.flights-section form {
-  color: #071d41;
-}
-
-.flights-section label {
-  color: #071d41;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.flights-section input,
-.flights-section select,
-.flights-section textarea {
-  font-family: inherit;
-}
-
-.flights-section input:focus,
-.flights-section select:focus,
-.flights-section textarea:focus {
-  outline: none;
-
-  border-color: #071d41 !important;
-
-  box-shadow: 0 0 0 3px rgba(7, 29, 65, 0.08);
-}
-
-/* =========================================
-   ✈ FLIGHT SERVICE CAPTURE PAGE
-========================================= */
-
-/*
-   Hizi styles zinarekebisha page inayofunguka
-   baada ya SELECT FLIGHT.
-*/
-
-.flight-page {
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-
-  padding-bottom: 90px;
-
-  background-image:
-    linear-gradient(
-      90deg,
-      rgba(4, 25, 58, 0.93) 0%,
-      rgba(7, 29, 65, 0.78) 40%,
-      rgba(7, 29, 65, 0.55) 100%
-    ),
-    url("/transom-airport.jpg");
-
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
-.flight-page::after {
-  content: "";
-
-  position: fixed;
-
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  height: 7px;
-
-  z-index: 50;
-
-  background:
-    linear-gradient(
-      90deg,
-      #ed1b2f 0%,
-      #ed1b2f 48%,
-      #071d41 48%,
-      #071d41 100%
-    );
-}
-
-/* =========================================
-   FLIGHT PAGE CONTAINER
-========================================= */
-
-.flight-container {
-  width: min(1200px, 94%);
-
-  margin: 0 auto;
-
-  padding: 35px 0 80px;
-
-  position: relative;
-
-  z-index: 2;
-}
-
-/* =========================================
-   FLIGHT TOP HEADER
-========================================= */
-
-.flight-header {
-  margin-bottom: 22px;
-
-  padding: 25px 30px;
-
-  border-radius: 18px;
-
-  background: rgba(255, 255, 255, 0.96);
-
-  box-shadow:
-    0 15px 40px rgba(0, 0, 0, 0.22);
-}
-
-.flight-header h1 {
-  margin: 0;
-
-  color: #071d41;
-
-  font-size: 28px;
-
-  font-weight: 900;
-
-  letter-spacing: 0.3px;
-}
-
-.flight-header p {
-  margin: 8px 0 0;
-
-  color: #667085;
-
-  font-size: 13px;
-}
-
-/* =========================================
-   FLIGHT INFORMATION
-========================================= */
-
-.flight-info {
-  display: grid;
-
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
-
-  gap: 12px;
-
-  margin-top: 20px;
-}
-
-.flight-info-item {
-  padding: 15px 16px;
-
-  border-radius: 10px;
-
-  background: #f6f8fb;
-
-  border: 1px solid #e1e6ee;
-}
-
-.flight-info-item span {
-  display: block;
-
-  margin-bottom: 6px;
-
-  color: #667085;
-
-  font-size: 10px;
-
-  font-weight: 800;
-
-  letter-spacing: 0.8px;
-
-  text-transform: uppercase;
-}
-
-.flight-info-item strong {
-  color: #071d41;
-
-  font-size: 15px;
-
-  font-weight: 900;
-}
-
-/* =========================================
-   FLIGHT STATUS PANEL
-========================================= */
-
-.flight-status-section {
-  margin-bottom: 22px;
-
-  padding: 25px 30px;
-
-  border-radius: 18px;
-
-  background: rgba(255, 255, 255, 0.96);
-
-  box-shadow:
-    0 15px 40px rgba(0, 0, 0, 0.22);
-}
-
-.flight-status-section h2 {
-  margin: 0;
-
-  color: #071d41;
-
-  font-size: 21px;
-
-  font-weight: 900;
-}
-
-.flight-status-section p {
-  margin: 7px 0 18px;
-
-  color: #667085;
-
-  font-size: 13px;
-}
-
-/* =========================================
-   CURRENT STATUS
-========================================= */
-
-.current-flight-status {
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  margin-bottom: 17px;
-
-  padding: 8px 15px;
-
-  border-radius: 20px;
-
-  font-size: 12px;
-
-  font-weight: 900;
-}
-
-.current-flight-status.open {
-  background: #ffffff;
-
-  color: #071d41;
-
-  border: 1px solid #98a2b3;
-}
-
-.current-flight-status.in-progress {
-  background: #071d41;
-
-  color: #ffffff;
-}
-
-.current-flight-status.closed-no-delay {
-  background: #16a34a;
-
-  color: #ffffff;
-}
-
-.current-flight-status.closed-with-delay {
-  background: #ed1b2f;
-
-  color: #ffffff;
-}
-
-/* =========================================
-   OPEN / IN PROGRESS / CLOSE BUTTONS
-========================================= */
-
-.flight-status-buttons {
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 10px;
-}
-
-.flight-status-button {
-  min-width: 105px;
-
-  padding: 12px 18px;
-
-  border-radius: 8px;
-
-  font-size: 12px;
-
-  font-weight: 900;
-
-  letter-spacing: 0.5px;
-
-  cursor: pointer;
-
-  transition:
-    transform 0.15s ease,
-    opacity 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.flight-status-button:hover {
-  transform: translateY(-1px);
-}
-
-.flight-status-button.open {
-  background: #ffffff;
-
-  color: #071d41;
-
-  border: 1px solid #98a2b3;
-}
-
-.flight-status-button.progress {
-  background: #071d41;
-
-  color: #ffffff;
-
-  border: 1px solid #071d41;
-}
-
-.flight-status-button.close {
-  background: #ed1b2f;
-
-  color: #ffffff;
-
-  border: 1px solid #ed1b2f;
-}
-
-.flight-status-button:disabled {
-  opacity: 0.55;
-
-  cursor: not-allowed;
-
-  transform: none;
-}
-
-/* =========================================
-   SERVICE CAPTURE PANEL
-========================================= */
-
-.service-capture-section {
-  margin-bottom: 25px;
-
-  padding: 28px 30px;
-
-  border-radius: 18px;
-
-  background: rgba(255, 255, 255, 0.97);
-
-  box-shadow:
-    0 15px 40px rgba(0, 0, 0, 0.22);
-}
-
-.service-capture-section h2 {
-  margin: 0;
-
-  color: #071d41;
-
-  font-size: 22px;
-
-  font-weight: 900;
-}
-
-.service-capture-section h3 {
-  margin: 0 0 18px;
-
-  padding-bottom: 10px;
-
-  color: #071d41;
-
-  font-size: 16px;
-
-  font-weight: 900;
-
-  border-bottom: 3px solid #ed1b2f;
-}
-
-.service-capture-section p {
-  color: #667085;
-
-  font-size: 13px;
-}
-
-/* =========================================
-   FORM GRID
-========================================= */
-
-.form-grid {
-  display: grid;
-
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
-
-  gap: 18px;
-
-  margin-top: 22px;
-}
-
-.form-grid.three-columns {
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
-}
-
-.form-grid.four-columns {
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
-}
-
-/* =========================================
-   FORM GROUP
-========================================= */
-
-.form-group {
-  display: flex;
-
-  flex-direction: column;
-
-  min-width: 0;
-}
-
-.form-group.full-width {
-  grid-column: 1 / -1;
-}
-
-.form-group label {
-  margin-bottom: 7px;
-
-  color: #071d41;
-
-  font-size: 11px;
-
-  font-weight: 900;
-
-  letter-spacing: 0.5px;
-
-  text-transform: uppercase;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-
-  padding: 12px 13px;
-
-  border: 1px solid #cfd5df;
-
-  border-radius: 8px;
-
-  background: #ffffff;
-
-  color: #071d41;
-
-  font-size: 13px;
-
-  outline: none;
-
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.form-group input {
-  min-height: 44px;
-}
-
-.form-group select {
-  min-height: 44px;
-
-  cursor: pointer;
-}
-
-.form-group textarea {
-  min-height: 100px;
-
-  resize: vertical;
-
-  line-height: 1.5;
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-  color: #98a2b3;
-
-  opacity: 1;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: #071d41;
-
-  box-shadow:
-    0 0 0 3px rgba(7, 29, 65, 0.08);
-}
-
-/* =========================================
-   TIME FIELD GROUPS
-========================================= */
-
-.time-group {
-  display: grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
-  gap: 10px;
-}
-
-.time-item label {
-  display: block;
-
-  margin-bottom: 6px;
-
-  color: #667085;
-
-  font-size: 10px;
-
-  font-weight: 800;
-
-  text-transform: uppercase;
-}
-
-/* =========================================
-   DEPARTMENT SECTION DIVIDER
-========================================= */
-
-.department-form-section {
-  margin-top: 28px;
-
-  padding-top: 24px;
-
-  border-top: 1px solid #e4e7ec;
-}
-
-.department-form-title {
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  margin-bottom: 20px;
-}
-
-.department-form-title::before {
-  content: "";
-
-  width: 5px;
-
-  height: 25px;
-
-  border-radius: 5px;
-
-  background: #ed1b2f;
-}
-
-.department-form-title h3 {
-  margin: 0;
-
-  padding: 0;
-
-  border: none;
-
-  font-size: 17px;
-}
-
-/* =========================================
-   SAVE BUTTON
-========================================= */
-
-.save-capture-button {
-  width: 100%;
-
-  margin-top: 28px;
-
-  padding: 15px 22px;
-
-  border: none;
-
-  border-radius: 9px;
-
-  background: #ed1b2f;
-
-  color: #ffffff;
-
-  font-size: 13px;
-
-  font-weight: 900;
-
-  letter-spacing: 0.7px;
-
-  cursor: pointer;
-
-  box-shadow:
-    0 8px 18px rgba(237, 27, 47, 0.22);
-
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
-}
-
-.save-capture-button:hover {
-  background: #c91427;
-
-  transform: translateY(-1px);
-}
-
-.save-capture-button:disabled {
-  background: #98a2b3;
-
-  cursor: not-allowed;
-
-  transform: none;
-
-  box-shadow: none;
-}
-
-/* =========================================
-   BACK BUTTON
-========================================= */
-
-.back-button {
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  gap: 8px;
-
-  margin-bottom: 18px;
-
-  padding: 10px 17px;
-
-  border: 1px solid rgba(255, 255, 255, 0.55);
-
-  border-radius: 8px;
-
-  background: rgba(7, 29, 65, 0.75);
-
-  color: #ffffff;
-
-  font-size: 12px;
-
-  font-weight: 800;
-
-  cursor: pointer;
-
-  transition: 0.2s ease;
-}
-
-.back-button:hover {
-  background: #ed1b2f;
-
-  border-color: #ed1b2f;
-}
-
-/* =========================================
-   MANAGEMENT CAPTURE LIST
-========================================= */
-
-.capture-list {
-  display: grid;
-
-  gap: 14px;
-
-  margin-top: 20px;
-}
-
-.capture-card {
-  padding: 18px;
-
-  border: 1px solid #e1e6ee;
-
-  border-radius: 12px;
-
-  background: #f8fafc;
-}
-
-.capture-card h4 {
-  margin: 0;
-
-  color: #071d41;
-
-  font-size: 14px;
-
-  font-weight: 900;
-}
-
-.capture-card p {
-  margin: 6px 0 0;
-
-  color: #667085;
-
-  font-size: 12px;
-}
-
-/* =========================================
-   DEPARTMENT GRID
-========================================= */
-
-.department-grid {
-  display: grid;
-
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
-
-  gap: 18px;
-}
-
-/* =========================================
-   DEPARTMENT CARD
-========================================= */
-
-.department-card {
-  position: relative;
-
-  min-height: 145px;
-
-  padding: 25px 22px;
-
-  border: 1px solid #d9e0ea;
-
-  border-radius: 14px;
-
-  background: #ffffff;
-
-  color: #071d41;
-
-  cursor: pointer;
-
-  text-align: left;
-
-  overflow: hidden;
-
-  box-shadow:
-    0 8px 20px rgba(7, 29, 65, 0.08);
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.department-card::before {
-  content: "";
-
-  position: absolute;
-
-  top: 0;
-  left: 0;
-
-  width: 72px;
-  height: 72px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #ed1b2f 0%,
-      #ed1b2f 48%,
-      #071d41 49%,
-      #071d41 100%
-    );
-
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    0 100%
+                fontSize: "15px",
+
+                outline: "none",
+              }}
+            />
+          </div>
+
+          {/* FORGOT PASSWORD */}
+          <div
+            style={{
+              textAlign: "right",
+              marginTop: "-8px",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() =>
+                alert(
+                  "Please contact Management to reset your password."
+                )
+              }
+              style={{
+                border: "none",
+
+                background: "transparent",
+
+                color: "#071d41",
+
+                fontSize: "13px",
+
+                fontWeight: 600,
+
+                cursor: "pointer",
+
+                padding: 0,
+              }}
+            >
+              Forgot Password?
+            </button>
+          </div>
+
+          {/* LOGIN BUTTON */}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: "100%",
+
+              padding: "15px",
+
+              marginTop: "5px",
+
+              border: "none",
+
+              borderRadius: "8px",
+
+              background: "#d71920",
+
+              color: "#ffffff",
+
+              fontSize: "16px",
+
+              fontWeight: 800,
+
+              cursor: loading
+                ? "not-allowed"
+                : "pointer",
+
+              opacity: loading ? 0.7 : 1,
+
+              boxShadow:
+                "0 6px 15px rgba(215,25,32,0.25)",
+            }}
+          >
+            {loading
+              ? "LOGGING IN..."
+              : "LOGIN"}
+          </button>
+        </form>
+
+        {/* FOOTER INSIDE CARD */}
+        <div
+          style={{
+            marginTop: "30px",
+
+            paddingTop: "20px",
+
+            borderTop:
+              "1px solid #eaecf0",
+
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+
+              fontSize: "12px",
+
+              color: "#667085",
+            }}
+          >
+            Authorized Personnel Only
+          </p>
+        </div>
+      </div>
+    </main>
   );
-}
-
-.department-card::after {
-  content: "";
-
-  position: absolute;
-
-  right: -25px;
-  bottom: -25px;
-
-  width: 90px;
-  height: 90px;
-
-  border-radius: 50%;
-
-  background: rgba(237, 27, 47, 0.08);
-}
-
-.department-card:hover {
-  transform: translateY(-5px);
-
-  border-color: #ed1b2f;
-
-  box-shadow:
-    0 16px 30px rgba(7, 29, 65, 0.16);
-}
-
-.department-icon {
-  position: relative;
-  z-index: 2;
-
-  width: 44px;
-  height: 44px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin-bottom: 17px;
-
-  border-radius: 10px;
-
-  background: #ed1b2f;
-
-  color: #ffffff;
-
-  font-size: 21px;
-
-  box-shadow:
-    0 6px 14px rgba(237, 27, 47, 0.25);
-}
-
-.department-name {
-  position: relative;
-  z-index: 2;
-
-  font-size: 17px;
-  font-weight: 900;
-
-  letter-spacing: 0.3px;
-
-  color: #071d41;
-}
-
-.department-description {
-  position: relative;
-  z-index: 2;
-
-  margin-top: 7px;
-
-  color: #667085;
-
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.department-arrow {
-  position: absolute;
-
-  right: 18px;
-  bottom: 18px;
-
-  z-index: 3;
-
-  width: 30px;
-  height: 30px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: #071d41;
-  color: #ffffff;
-
-  font-size: 17px;
-}
-
-/* =========================================
-   FOOTER
-========================================= */
-
-.dashboard-footer {
-  position: relative;
-  z-index: 3;
-
-  width: 100%;
-
-  padding: 25px;
-
-  text-align: center;
-
-  background: rgba(3, 20, 48, 0.82);
-
-  color: rgba(255, 255, 255, 0.85);
-
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.dashboard-footer p {
-  margin: 0;
-
-  font-size: 12px;
-
-  font-weight: 700;
-}
-
-.dashboard-footer span {
-  display: block;
-
-  margin-top: 5px;
-
-  color: #ed1b2f;
-
-  font-size: 11px;
-
-  font-weight: 800;
-}
-
-/* =========================================
-   RESPONSIVE
-========================================= */
-
-@media (max-width: 1000px) {
-  .status-cards {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-  .department-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-  .flight-info {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-  .form-grid.three-columns,
-  .form-grid.four-columns {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 700px) {
-  .dashboard-header {
-    padding: 18px 20px;
-  }
-
-  .dashboard-logo {
-    font-size: 23px;
-  }
-
-  .dashboard-content {
-    width: 94%;
-    padding-top: 30px;
-  }
-
-  .welcome-section h1 {
-    font-size: 30px;
-  }
-
-  .status-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .department-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .section-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .flight-table {
-    min-width: 900px;
-  }
-
-  .flight-container {
-    width: 94%;
-
-    padding-top: 20px;
-  }
-
-  .flight-header,
-  .flight-status-section,
-  .service-capture-section {
-    padding: 20px;
-  }
-
-  .flight-header h1 {
-    font-size: 22px;
-  }
-
-  .flight-info {
-    grid-template-columns: 1fr;
-  }
-
-  .form-grid,
-  .form-grid.three-columns,
-  .form-grid.four-columns {
-    grid-template-columns: 1fr;
-  }
-
-  .form-group.full-width {
-    grid-column: auto;
-  }
-
-  .time-group {
-    grid-template-columns: 1fr;
-  }
-
-  .flight-status-buttons {
-    flex-direction: column;
-  }
-
-  .flight-status-button {
-    width: 100%;
-  }
 }
