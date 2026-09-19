@@ -1,1651 +1,748 @@
-"use client";
-
-import { Suspense, useEffect, useState } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "../../../lib/supabase";
-
-type Flight = {
-  id: string;
-  flight_number: string;
-  aircraft: string | null;
-  route: string | null;
-  flight_date: string | null;
-  status: string | null;
-};
-
-type Capture = {
-  id: string;
-  department: string;
-  created_at: string;
-  created_by: string | null;
-  [key: string]: any;
-};
-
-const departmentNames: Record<string, string> = {
-  ramp: "RAMP DEPARTMENT",
-  sorting: "SORTING DEPARTMENT",
-  load_control_ops: "LOAD CONTROL / OPS",
-  passenger_services: "PASSENGER SERVICES",
-  cargo: "CARGO DEPARTMENT",
-};
-
-function Field({
-  label,
-  value,
-  onChange,
-  type = "text",
-  placeholder = "",
-}: {
-  label: string;
-  value: string | number;
-  onChange: (value: string) => void;
-  type?: string;
-  placeholder?: string;
-}) {
-  return (
-    <div className="form-group">
-      <label>{label}</label>
-      <input
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </div>
-  );
+* {
+  box-sizing: border-box;
 }
 
-function TextAreaField({
-  label,
-  value,
-  onChange,
-  placeholder = "",
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-}) {
-  return (
-    <div className="form-group">
-      <label>{label}</label>
-      <textarea
-        value={value}
-        placeholder={placeholder}
-        rows={4}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </div>
-  );
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-function StatusButton({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      className={`status-option ${active ? "active-status" : ""}`}
-      onClick={onClick}
-    >
-      {label}
-    </button>
-  );
+body {
+  color: #071d3b;
+  background: #071d3b;
 }
 
-function ServiceTime({
-  title,
-  start,
-  end,
-  duration,
-  setStart,
-  setEnd,
-}: {
-  title: string;
-  start: string;
-  end: string;
-  duration: string;
-  setStart: (value: string) => void;
-  setEnd: (value: string) => void;
-}) {
-  return (
-    <div className="service-time-card">
-      <h4>{title}</h4>
-
-      <div className="form-grid">
-        <Field
-          label="START TIME"
-          type="time"
-          value={start}
-          onChange={setStart}
-        />
-
-        <Field
-          label="END TIME"
-          type="time"
-          value={end}
-          onChange={setEnd}
-        />
-
-        <Field
-          label="DURATION"
-          value={duration}
-          onChange={() => {}}
-        />
-      </div>
-    </div>
-  );
-}
-
-function calculateDuration(start: string, end: string) {
-  if (!start || !end) return "";
-
-  const [startHour, startMinute] = start.split(":").map(Number);
-  const [endHour, endMinute] = end.split(":").map(Number);
-
-  let startTotal = startHour * 60 + startMinute;
-  let endTotal = endHour * 60 + endMinute;
-
-  if (endTotal < startTotal) {
-    endTotal += 24 * 60;
-  }
-
-  const difference = endTotal - startTotal;
-
-  const hours = Math.floor(difference / 60);
-  const minutes = difference % 60;
-
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-    2,
-    "0"
-  )}`;
-}
-
-function FlightPageContent() {
-  const params = useParams();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const flightId = params.id as string;
-  const department = searchParams.get("department") || "";
-
-  const [flight, setFlight] = useState<Flight | null>(null);
-  const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
-
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [changingStatus, setChangingStatus] = useState(false);
-
-  const [captures, setCaptures] = useState<Capture[]>([]);
-
-  // =========================================================
-  // BASIC / LOAD CONTROL / OPS
-  // =========================================================
-
-  const [pax, setPax] = useState("");
-  const [baggages, setBaggages] = useState("");
-  const [cargo, setCargo] = useState("");
-  const [parkingBay, setParkingBay] = useState("");
-  const [loadRamp, setLoadRamp] = useState("");
-
-  const [stdEtd, setStdEtd] = useState("");
-  const [staEta, setStaEta] = useState("");
-  const [actualDeparture, setActualDeparture] = useState("");
-  const [actualArrival, setActualArrival] = useState("");
-
-  const [loadControlTrcName, setLoadControlTrcName] = useState("");
-  const [salName, setSalName] = useState("");
-  const [delayReason, setDelayReason] = useState("");
-  const [iataDelayCode, setIataDelayCode] = useState("");
-  const [operationalRemarks, setOperationalRemarks] = useState("");
-  const [comments, setComments] = useState("");
-
-  // =========================================================
-  // RAMP
-  // =========================================================
-
-  const [gpuStartTime, setGpuStartTime] = useState("");
-  const [gpuEndTime, setGpuEndTime] = useState("");
-
-  const [acuStartTime, setAcuStartTime] = useState("");
-  const [acuEndTime, setAcuEndTime] = useState("");
-
-  const [cleaningStartTime, setCleaningStartTime] = useState("");
-  const [cleaningEndTime, setCleaningEndTime] = useState("");
-
-  const [conveyorStartTime, setConveyorStartTime] = useState("");
-  const [conveyorEndTime, setConveyorEndTime] = useState("");
-
-  const [vomitingStartTime, setVomitingStartTime] = useState("");
-  const [vomitingEndTime, setVomitingEndTime] = useState("");
-
-  const [cobusTripNumber, setCobusTripNumber] = useState("");
-  const [towingStatus, setTowingStatus] = useState("");
-  const [asuStatus, setAsuStatus] = useState("");
-
-  const [paxStairs, setPaxStairs] = useState("");
-  const [paxStep, setPaxStep] = useState("");
-  const [pushback, setPushback] = useState("");
-  const [lavatoryService, setLavatoryService] = useState("");
-  const [portableWater, setPortableWater] = useState("");
-  const [ambulift, setAmbulift] = useState("");
-
-  const [supervisorName, setSupervisorName] = useState("");
-  const [rampOpeningStatus, setRampOpeningStatus] = useState("");
-  const [rampClosingStatus, setRampClosingStatus] = useState("");
-  const [rampComments, setRampComments] = useState("");
-
-  // =========================================================
-  // SORTING
-  // =========================================================
-
-  const [uldBagSorting, setUldBagSorting] = useState("");
-  const [numberOfBags, setNumberOfBags] = useState("");
-  const [uldNumber, setUldNumber] = useState("");
-
-  const [sortingStartTime, setSortingStartTime] = useState("");
-  const [sortingEndTime, setSortingEndTime] = useState("");
-
-  const [bagTransfer, setBagTransfer] = useState("");
-  const [rushPriorityBags, setRushPriorityBags] = useState("");
-  const [misroutedBags, setMisroutedBags] = useState("");
-  const [damagedBags, setDamagedBags] = useState("");
-  const [missingBags, setMissingBags] = useState("");
-
-  const [sortingRemarks, setSortingRemarks] = useState("");
-  const [sortingComments, setSortingComments] = useState("");
-
-  // =========================================================
-  // PASSENGER SERVICES
-  // =========================================================
-
-  const [checkInStartTime, setCheckInStartTime] = useState("");
-  const [checkInEndTime, setCheckInEndTime] = useState("");
-  const [checkInAgents, setCheckInAgents] = useState("");
-
-  const [boardingStartTime, setBoardingStartTime] = useState("");
-  const [boardingEndTime, setBoardingEndTime] = useState("");
-  const [boardingAgents, setBoardingAgents] = useState("");
-
-  const [gateNumber, setGateNumber] = useState("");
-  const [gateOpenTime, setGateOpenTime] = useState("");
-  const [gateCloseTime, setGateCloseTime] = useState("");
-
-  const [wheelchairAssistance, setWheelchairAssistance] = useState("");
-  const [specialAssistance, setSpecialAssistance] = useState("");
-  const [noShowPax, setNoShowPax] = useState("");
-  const [deniedBoardingPax, setDeniedBoardingPax] = useState("");
-  const [transferPax, setTransferPax] = useState("");
-
-  const [passengerServicesRemarks, setPassengerServicesRemarks] =
-    useState("");
-  const [passengerServicesComments, setPassengerServicesComments] =
-    useState("");
-
-  // =========================================================
-  // CARGO
-  // =========================================================
-
-  const [cargoAcceptanceStartTime, setCargoAcceptanceStartTime] = useState("");
-  const [cargoAcceptanceEndTime, setCargoAcceptanceEndTime] = useState("");
-
-  const [cargoWeight, setCargoWeight] = useState("");
-  const [cargoPieces, setCargoPieces] = useState("");
-
-  const [awbNumber, setAwbNumber] = useState("");
-  const [cargoUldNumber, setCargoUldNumber] = useState("");
-
-  const [dangerousGoods, setDangerousGoods] = useState("");
-  const [specialCargo, setSpecialCargo] = useState("");
-
-  const [warehouseLocation, setWarehouseLocation] = useState("");
-
-  const [cargoLoadingStartTime, setCargoLoadingStartTime] = useState("");
-  const [cargoLoadingEndTime, setCargoLoadingEndTime] = useState("");
-
-  const [cargoRemarks, setCargoRemarks] = useState("");
-  const [cargoComments, setCargoComments] = useState("");
-
-  // =========================================================
-  // CALCULATED DURATIONS
-  // =========================================================
-
-  const gpuDuration = calculateDuration(gpuStartTime, gpuEndTime);
-  const acuDuration = calculateDuration(acuStartTime, acuEndTime);
-  const cleaningDuration = calculateDuration(
-    cleaningStartTime,
-    cleaningEndTime
-  );
-  const conveyorDuration = calculateDuration(
-    conveyorStartTime,
-    conveyorEndTime
-  );
-  const vomitingDuration = calculateDuration(
-    vomitingStartTime,
-    vomitingEndTime
-  );
-
-  // =========================================================
-  // USER / FLIGHT LOAD
-  // =========================================================
-
-  useEffect(() => {
-    loadPage();
-  }, [flightId]);
-
-  async function loadPage() {
-    try {
-      setLoading(true);
-
-      const {
-        data: { user: currentUser },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !currentUser) {
-        router.replace("/");
-        return;
-      }
-
-      setUser(currentUser);
-
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("id, full_name, role, department")
-        .eq("id", currentUser.id)
-        .maybeSingle();
-
-      setProfile(profileData);
-
-      const { data: flightData, error: flightError } = await supabase
-        .from("flights")
-        .select(
-          "id, flight_number, aircraft, route, flight_date, status"
-        )
-        .eq("id", flightId)
-        .single();
-
-      if (flightError || !flightData) {
-        console.error(flightError);
-
-        if (profileData?.role === "management") {
-          router.replace("/management");
-        } else {
-          router.replace("/departments");
-        }
-
-        return;
-      }
-
-      setFlight(flightData);
-
-      if (profileData?.role === "management") {
-        const { data: captureData, error: captureError } = await supabase
-          .from("flight_service_captures")
-          .select("*")
-          .eq("flight_id", flightId)
-          .order("created_at", { ascending: false });
-
-        if (!captureError && captureData) {
-          setCaptures(captureData);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // =========================================================
-  // FLIGHT OPEN / CLOSE
-  // =========================================================
-
-  async function updateFlightStatus(newStatus: string) {
-    if (!flight) return;
-
-    try {
-      setChangingStatus(true);
-
-      const { error } = await supabase
-        .from("flights")
-        .update({
-          status: newStatus,
-        })
-        .eq("id", flight.id);
-
-      if (error) {
-        console.error(error);
-        alert(`Failed to update flight status: ${error.message}`);
-        return;
-      }
-
-      setFlight({
-        ...flight,
-        status: newStatus,
-      });
-    } catch (error) {
-      console.error(error);
-      alert("Failed to update flight status.");
-    } finally {
-      setChangingStatus(false);
-    }
-  }
-
-  async function handleOpenFlight() {
-    await updateFlightStatus("Open");
-  }
-
-  async function handleCloseFlight() {
-    const hasDelay =
-      delayReason.trim() !== "" ||
-      iataDelayCode.trim() !== "";
-
-    const newStatus = hasDelay
-      ? "Closed - With Delay"
-      : "Closed - No Delay";
-
-    await updateFlightStatus(newStatus);
-  }
-
-  async function handleInProgress() {
-    await updateFlightStatus("In Progress");
-  }
-
-  // =========================================================
-  // LOGOUT
-  // =========================================================
-
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.replace("/");
-  }
-
-  // =========================================================
-  // SAVE SERVICE CAPTURE
-  // =========================================================
-
-  async function handleSave() {
-    if (!user || !flight) {
-      alert("User or flight information is missing.");
-      return;
-    }
-
-    if (!department) {
-      alert("Department is missing.");
-      return;
-    }
-
-    try {
-      setSaving(true);
-
-      const payload = {
-        flight_id: flight.id,
-        department,
-
-        // -----------------------------------------------------
-        // BASIC / LOAD CONTROL
-        // -----------------------------------------------------
-
-        pax: pax ? Number(pax) : null,
-        baggages: baggages ? Number(baggages) : null,
-        cargo: cargo ? Number(cargo) : null,
-
-        parking_bay: parkingBay || null,
-        load_ramp: loadRamp || null,
-
-        std_etd: stdEtd || null,
-        sta_eta: staEta || null,
-        actual_departure: actualDeparture || null,
-        actual_arrival: actualArrival || null,
-
-        load_control_trc_name: loadControlTrcName || null,
-        sal_name: salName || null,
-
-        delay_reason: delayReason || null,
-        iata_delay_code: iataDelayCode || null,
-
-        operational_remarks: operationalRemarks || null,
-        comments: comments || null,
-
-        // -----------------------------------------------------
-        // RAMP
-        // -----------------------------------------------------
-
-        gpu_start_time: gpuStartTime || null,
-        gpu_end_time: gpuEndTime || null,
-        gpu_duration: gpuDuration || null,
-
-        acu_start_time: acuStartTime || null,
-        acu_end_time: acuEndTime || null,
-        acu_duration: acuDuration || null,
-
-        cleaning_start_time: cleaningStartTime || null,
-        cleaning_end_time: cleaningEndTime || null,
-        cleaning_duration: cleaningDuration || null,
-
-        conveyor_start_time: conveyorStartTime || null,
-        conveyor_end_time: conveyorEndTime || null,
-        conveyor_duration: conveyorDuration || null,
-
-        vomiting_start_time: vomitingStartTime || null,
-        vomiting_end_time: vomitingEndTime || null,
-        vomiting_duration: vomitingDuration || null,
-
-        cobus_trip_number: cobusTripNumber || null,
-        towing_status: towingStatus || null,
-        asu_status: asuStatus || null,
-
-        pax_stairs: paxStairs || null,
-        pax_step: paxStep || null,
-        pushback: pushback || null,
-        lavatory_service: lavatoryService || null,
-        portable_water: portableWater || null,
-        ambulift: ambulift || null,
-
-        supervisor_name: supervisorName || null,
-
-        ramp_opening_status: rampOpeningStatus || null,
-        ramp_closing_status: rampClosingStatus || null,
-
-        ramp_comments: rampComments || null,
-
-        // -----------------------------------------------------
-        // SORTING
-        // -----------------------------------------------------
-
-        uld_bag_sorting: uldBagSorting || null,
-        number_of_bags: numberOfBags
-          ? Number(numberOfBags)
-          : null,
-
-        uld_number: uldNumber || null,
-
-        sorting_start_time: sortingStartTime || null,
-        sorting_end_time: sortingEndTime || null,
-
-        bag_transfer: bagTransfer || null,
-        rush_priority_bags: rushPriorityBags || null,
-        misrouted_bags: misroutedBags || null,
-        damaged_bags: damagedBags || null,
-        missing_bags: missingBags || null,
-
-        sorting_remarks: sortingRemarks || null,
-        sorting_comments: sortingComments || null,
-
-        // -----------------------------------------------------
-        // PASSENGER SERVICES
-        // -----------------------------------------------------
-
-        check_in_start_time: checkInStartTime || null,
-        check_in_end_time: checkInEndTime || null,
-        check_in_agents: checkInAgents || null,
-
-        boarding_start_time: boardingStartTime || null,
-        boarding_end_time: boardingEndTime || null,
-        boarding_agents: boardingAgents || null,
-
-        gate_number: gateNumber || null,
-        gate_open_time: gateOpenTime || null,
-        gate_close_time: gateCloseTime || null,
-
-        wheelchair_assistance: wheelchairAssistance || null,
-        special_assistance: specialAssistance || null,
-
-        no_show_pax: noShowPax ? Number(noShowPax) : null,
-        denied_boarding_pax: deniedBoardingPax
-          ? Number(deniedBoardingPax)
-          : null,
-        transfer_pax: transferPax
-          ? Number(transferPax)
-          : null,
-
-        passenger_services_remarks:
-          passengerServicesRemarks || null,
-
-        passenger_services_comments:
-          passengerServicesComments || null,
-
-        // -----------------------------------------------------
-        // CARGO
-        // -----------------------------------------------------
-
-        cargo_acceptance_start_time:
-          cargoAcceptanceStartTime || null,
-
-        cargo_acceptance_end_time:
-          cargoAcceptanceEndTime || null,
-
-        cargo_weight: cargoWeight
-          ? Number(cargoWeight)
-          : null,
-
-        cargo_pieces: cargoPieces
-          ? Number(cargoPieces)
-          : null,
-
-        awb_number: awbNumber || null,
-        cargo_uld_number: cargoUldNumber || null,
-
-        dangerous_goods: dangerousGoods || null,
-        special_cargo: specialCargo || null,
-
-        warehouse_location: warehouseLocation || null,
-
-        cargo_loading_start_time:
-          cargoLoadingStartTime || null,
-
-        cargo_loading_end_time:
-          cargoLoadingEndTime || null,
-
-        cargo_remarks: cargoRemarks || null,
-        cargo_comments: cargoComments || null,
-
-        created_by: user.id,
-      };
-
-      const { error } = await supabase
-        .from("flight_service_captures")
-        .insert(payload);
-
-      if (error) {
-        console.error(error);
-        alert(`Failed to save capture: ${error.message}`);
-        return;
-      }
-
-      alert("Service capture saved successfully.");
-
-      router.push(
-        `/flights?department=${encodeURIComponent(department)}`
-      );
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong while saving.");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  // =========================================================
-  // LOADING
-  // =========================================================
-
-  if (loading) {
-    return (
-      <main className="dashboard-page">
-        <div className="dashboard-content">
-          <h2>Loading flight...</h2>
-        </div>
-      </main>
+/* =========================================================
+   MAIN PAGE
+========================================================= */
+
+.dashboard-page {
+  min-height: 100vh;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(4, 28, 61, 0.98),
+      rgba(8, 45, 91, 0.96)
     );
-  }
-
-  if (!flight) {
-    return (
-      <main className="dashboard-page">
-        <div className="dashboard-content">
-          <h2>Flight not found.</h2>
-        </div>
-      </main>
-    );
-  }
-
-  const isManagement = profile?.role === "management";
-
-  // =========================================================
-  // STATUS CLASS
-  // =========================================================
-
-  function getStatusClass(status: string | null) {
-    switch (status) {
-      case "Open":
-        return "flight-status open-status";
-
-      case "In Progress":
-        return "flight-status progress-status";
-
-      case "Closed - No Delay":
-        return "flight-status no-delay-status";
-
-      case "Closed - With Delay":
-        return "flight-status delay-status";
-
-      default:
-        return "flight-status open-status";
-    }
-  }
-
-  // =========================================================
-  // RENDER
-  // =========================================================
-
-  return (
-    <main className="dashboard-page">
-      {/* =====================================================
-          HEADER
-      ====================================================== */}
-
-      <header className="dashboard-header">
-        <div>
-          <div className="dashboard-logo">TRANSOM</div>
-          <div className="dashboard-subtitle">
-            FLIGHT SERVICE CAPTURE
-          </div>
-        </div>
-
-        <button
-          type="button"
-          className="logout-button"
-          onClick={handleLogout}
-        >
-          LOGOUT
-        </button>
-      </header>
-
-      <div className="dashboard-content">
-        {/* ===================================================
-            FLIGHT INFORMATION
-        ==================================================== */}
-
-        <section className="welcome-section">
-          <h1>
-            FLIGHT {flight.flight_number}
-          </h1>
-
-          <p>
-            {departmentNames[department] ||
-              department.toUpperCase()}
-          </p>
-        </section>
-
-        <section className="flights-section">
-          <div className="flight-info-card">
-            <div className="flight-info-grid">
-              <div>
-                <span>FLIGHT</span>
-                <strong>{flight.flight_number}</strong>
-              </div>
-
-              <div>
-                <span>AIRCRAFT</span>
-                <strong>{flight.aircraft || "-"}</strong>
-              </div>
-
-              <div>
-                <span>ROUTE</span>
-                <strong>{flight.route || "-"}</strong>
-              </div>
-
-              <div>
-                <span>DATE</span>
-                <strong>
-                  {flight.flight_date
-                    ? new Date(
-                        flight.flight_date
-                      ).toLocaleDateString()
-                    : "-"}
-                </strong>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ===================================================
-            OPEN / CLOSE
-        ==================================================== */}
-
-        <section className="flights-section">
-          <div className="flight-status-panel">
-            <div className="status-panel-header">
-              <div>
-                <h2>FLIGHT STATUS</h2>
-                <p>
-                  Control the operational status of this
-                  flight.
-                </p>
-              </div>
-
-              <span className={getStatusClass(flight.status)}>
-                {flight.status || "Open"}
-              </span>
-            </div>
-
-            <div className="status-actions">
-              <button
-                type="button"
-                className="open-flight-button"
-                onClick={handleOpenFlight}
-                disabled={changingStatus}
-              >
-                OPEN
-              </button>
-
-              <button
-                type="button"
-                className="progress-flight-button"
-                onClick={handleInProgress}
-                disabled={changingStatus}
-              >
-                IN PROGRESS
-              </button>
-
-              <button
-                type="button"
-                className="close-flight-button"
-                onClick={handleCloseFlight}
-                disabled={changingStatus}
-              >
-                CLOSE
-              </button>
-            </div>
-
-            <p className="status-help">
-              CLOSE automatically uses{" "}
-              <strong>Closed - With Delay</strong> when a
-              Delay Reason or IATA Delay Code has been entered.
-              Otherwise it uses{" "}
-              <strong>Closed - No Delay</strong>.
-            </p>
-          </div>
-        </section>
-
-        {/* ===================================================
-            MANAGEMENT VIEW
-        ==================================================== */}
-
-        {isManagement && (
-          <section className="flights-section">
-            <div className="section-heading">
-              <h2>SERVICE CAPTURES</h2>
-              <p>
-                Management view of all service captures for
-                this flight.
-              </p>
-            </div>
-
-            {captures.length === 0 ? (
-              <div className="empty-state">
-                No service captures have been submitted for
-                this flight.
-              </div>
-            ) : (
-              <div className="capture-list">
-                {captures.map((capture) => (
-                  <div
-                    className="capture-card"
-                    key={capture.id}
-                  >
-                    <div>
-                      <strong>
-                        {departmentNames[
-                          capture.department
-                        ] ||
-                          capture.department.toUpperCase()}
-                      </strong>
-
-                      <span>
-                        {capture.created_at
-                          ? new Date(
-                              capture.created_at
-                            ).toLocaleString()
-                          : ""}
-                      </span>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="select-flight-button"
-                      onClick={() =>
-                        router.push(
-                          `/capture/${capture.id}`
-                        )
-                      }
-                    >
-                      VIEW CAPTURE
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ===================================================
-            LOAD CONTROL / OPS
-        ==================================================== */}
-
-        {!isManagement &&
-          department === "load_control_ops" && (
-            <section className="form-section">
-              <div className="section-heading">
-                <h2>LOAD CONTROL / OPS</h2>
-                <p>Flight operational information.</p>
-              </div>
-
-              <div className="form-grid">
-                <Field
-                  label="PAX"
-                  type="number"
-                  value={pax}
-                  onChange={setPax}
-                />
-
-                <Field
-                  label="BAGGAGES"
-                  type="number"
-                  value={baggages}
-                  onChange={setBaggages}
-                />
-
-                <Field
-                  label="CARGO"
-                  type="number"
-                  value={cargo}
-                  onChange={setCargo}
-                />
-
-                <Field
-                  label="PARKING BAY"
-                  value={parkingBay}
-                  onChange={setParkingBay}
-                />
-
-                <Field
-                  label="LOAD RAMP"
-                  value={loadRamp}
-                  onChange={setLoadRamp}
-                />
-
-                <Field
-                  label="STD / ETD"
-                  type="datetime-local"
-                  value={stdEtd}
-                  onChange={setStdEtd}
-                />
-
-                <Field
-                  label="STA / ETA"
-                  type="datetime-local"
-                  value={staEta}
-                  onChange={setStaEta}
-                />
-
-                <Field
-                  label="ACTUAL DEPARTURE"
-                  type="datetime-local"
-                  value={actualDeparture}
-                  onChange={setActualDeparture}
-                />
-
-                <Field
-                  label="ACTUAL ARRIVAL"
-                  type="datetime-local"
-                  value={actualArrival}
-                  onChange={setActualArrival}
-                />
-
-                <Field
-                  label="LOADCONTROL / TRC NAME"
-                  value={loadControlTrcName}
-                  onChange={setLoadControlTrcName}
-                />
-
-                <Field
-                  label="SAL NAME"
-                  value={salName}
-                  onChange={setSalName}
-                />
-
-                <Field
-                  label="IATA DELAY CODE"
-                  value={iataDelayCode}
-                  onChange={setIataDelayCode}
-                  placeholder="Example: 93"
-                />
-              </div>
-
-              <TextAreaField
-                label="DELAY REASON"
-                value={delayReason}
-                onChange={setDelayReason}
-              />
-
-              <TextAreaField
-                label="OPERATIONAL REMARKS"
-                value={operationalRemarks}
-                onChange={setOperationalRemarks}
-              />
-
-              <TextAreaField
-                label="COMMENTS"
-                value={comments}
-                onChange={setComments}
-              />
-
-              <button
-                type="button"
-                className="save-button"
-                onClick={handleSave}
-                disabled={saving}
-              >
-                {saving
-                  ? "SAVING..."
-                  : "SAVE LOAD CONTROL / OPS CAPTURE"}
-              </button>
-            </section>
-          )}
-
-        {/* ===================================================
-            RAMP
-        ==================================================== */}
-
-        {!isManagement && department === "ramp" && (
-          <section className="form-section">
-            <div className="section-heading">
-              <h2>RAMP DEPARTMENT</h2>
-              <p>Ground handling service capture.</p>
-            </div>
-
-            {/* RAMP OPEN / CLOSE */}
-            <div className="mini-status-section">
-              <h3>RAMP OPERATION STATUS</h3>
-
-              <div className="status-button-row">
-                <StatusButton
-                  label="OPEN"
-                  active={rampOpeningStatus === "Open"}
-                  onClick={() =>
-                    setRampOpeningStatus("Open")
-                  }
-                />
-
-                <StatusButton
-                  label="CLOSED"
-                  active={
-                    rampClosingStatus === "Closed"
-                  }
-                  onClick={() =>
-                    setRampClosingStatus("Closed")
-                  }
-                />
-              </div>
-            </div>
-
-            {/* GPU */}
-            <ServiceTime
-              title="GPU"
-              start={gpuStartTime}
-              end={gpuEndTime}
-              duration={gpuDuration}
-              setStart={setGpuStartTime}
-              setEnd={setGpuEndTime}
-            />
-
-            {/* ACU */}
-            <ServiceTime
-              title="ACU"
-              start={acuStartTime}
-              end={acuEndTime}
-              duration={acuDuration}
-              setStart={setAcuStartTime}
-              setEnd={setAcuEndTime}
-            />
-
-            {/* CLEANING */}
-            <ServiceTime
-              title="CLEANING"
-              start={cleaningStartTime}
-              end={cleaningEndTime}
-              duration={cleaningDuration}
-              setStart={setCleaningStartTime}
-              setEnd={setCleaningEndTime}
-            />
-
-            {/* CONVEYOR */}
-            <ServiceTime
-              title="CONVEYOR"
-              start={conveyorStartTime}
-              end={conveyorEndTime}
-              duration={conveyorDuration}
-              setStart={setConveyorStartTime}
-              setEnd={setConveyorEndTime}
-            />
-
-            {/* VOMITING */}
-            <ServiceTime
-              title="VOMITING"
-              start={vomitingStartTime}
-              end={vomitingEndTime}
-              duration={vomitingDuration}
-              setStart={setVomitingStartTime}
-              setEnd={setVomitingEndTime}
-            />
-
-            <div className="form-grid">
-              <Field
-                label="COBUS TRIP NUMBER"
-                value={cobusTripNumber}
-                onChange={setCobusTripNumber}
-              />
-
-              <Field
-                label="GROUND EQUIPMENT TOWING"
-                value={towingStatus}
-                onChange={setTowingStatus}
-                placeholder="Status / Details"
-              />
-
-              <Field
-                label="ASU"
-                value={asuStatus}
-                onChange={setAsuStatus}
-                placeholder="Status / Details"
-              />
-
-              <Field
-                label="PAX STAIRS"
-                value={paxStairs}
-                onChange={setPaxStairs}
-              />
-
-              <Field
-                label="PAX STEP"
-                value={paxStep}
-                onChange={setPaxStep}
-              />
-
-              <Field
-                label="PUSHBACK"
-                value={pushback}
-                onChange={setPushback}
-              />
-
-              <Field
-                label="LAVATORY SERVICE"
-                value={lavatoryService}
-                onChange={setLavatoryService}
-              />
-
-              <Field
-                label="PORTABLE WATER"
-                value={portableWater}
-                onChange={setPortableWater}
-              />
-
-              <Field
-                label="AMBULIFT"
-                value={ambulift}
-                onChange={setAmbulift}
-              />
-
-              <Field
-                label="SUPERVISOR NAME"
-                value={supervisorName}
-                onChange={setSupervisorName}
-              />
-            </div>
-
-            <TextAreaField
-              label="RAMP COMMENTS"
-              value={rampComments}
-              onChange={setRampComments}
-            />
-
-            <button
-              type="button"
-              className="save-button"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? "SAVING..." : "SAVE RAMP CAPTURE"}
-            </button>
-          </section>
-        )}
-
-        {/* ===================================================
-            SORTING
-        ==================================================== */}
-
-        {!isManagement && department === "sorting" && (
-          <section className="form-section">
-            <div className="section-heading">
-              <h2>SORTING DEPARTMENT</h2>
-              <p>Baggage sorting and transfer capture.</p>
-            </div>
-
-            <div className="form-grid">
-              <Field
-                label="ULD BAG SORTING"
-                value={uldBagSorting}
-                onChange={setUldBagSorting}
-                placeholder="Pallet / Container"
-              />
-
-              <Field
-                label="NUMBER OF BAGS"
-                type="number"
-                value={numberOfBags}
-                onChange={setNumberOfBags}
-              />
-
-              <Field
-                label="ULD NUMBER"
-                value={uldNumber}
-                onChange={setUldNumber}
-              />
-
-              <Field
-                label="SORTING START TIME"
-                type="time"
-                value={sortingStartTime}
-                onChange={setSortingStartTime}
-              />
-
-              <Field
-                label="SORTING END TIME"
-                type="time"
-                value={sortingEndTime}
-                onChange={setSortingEndTime}
-              />
-
-              <Field
-                label="BAG TRANSFER"
-                value={bagTransfer}
-                onChange={setBagTransfer}
-              />
-
-              <Field
-                label="RUSH / PRIORITY BAGS"
-                value={rushPriorityBags}
-                onChange={setRushPriorityBags}
-              />
-
-              <Field
-                label="MISROUTED BAGS"
-                value={misroutedBags}
-                onChange={setMisroutedBags}
-              />
-
-              <Field
-                label="DAMAGED BAGS"
-                value={damagedBags}
-                onChange={setDamagedBags}
-              />
-
-              <Field
-                label="MISSING BAGS"
-                value={missingBags}
-                onChange={setMissingBags}
-              />
-            </div>
-
-            <TextAreaField
-              label="SORTING REMARKS"
-              value={sortingRemarks}
-              onChange={setSortingRemarks}
-            />
-
-            <TextAreaField
-              label="COMMENTS"
-              value={sortingComments}
-              onChange={setSortingComments}
-            />
-
-            <button
-              type="button"
-              className="save-button"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving
-                ? "SAVING..."
-                : "SAVE SORTING CAPTURE"}
-            </button>
-          </section>
-        )}
-
-        {/* ===================================================
-            PASSENGER SERVICES
-        ==================================================== */}
-
-        {!isManagement &&
-          department === "passenger_services" && (
-            <section className="form-section">
-              <div className="section-heading">
-                <h2>PASSENGER SERVICES</h2>
-                <p>
-                  Check-in, boarding and passenger
-                  assistance capture.
-                </p>
-              </div>
-
-              <div className="service-time-card">
-                <h4>CHECK-IN</h4>
-
-                <div className="form-grid">
-                  <Field
-                    label="CHECK-IN START"
-                    type="time"
-                    value={checkInStartTime}
-                    onChange={setCheckInStartTime}
-                  />
-
-                  <Field
-                    label="CHECK-IN END"
-                    type="time"
-                    value={checkInEndTime}
-                    onChange={setCheckInEndTime}
-                  />
-
-                  <Field
-                    label="CHECK-IN AGENTS"
-                    value={checkInAgents}
-                    onChange={setCheckInAgents}
-                  />
-                </div>
-              </div>
-
-              <div className="service-time-card">
-                <h4>BOARDING</h4>
-
-                <div className="form-grid">
-                  <Field
-                    label="BOARDING START"
-                    type="time"
-                    value={boardingStartTime}
-                    onChange={setBoardingStartTime}
-                  />
-
-                  <Field
-                    label="BOARDING END"
-                    type="time"
-                    value={boardingEndTime}
-                    onChange={setBoardingEndTime}
-                  />
-
-                  <Field
-                    label="BOARDING AGENTS"
-                    value={boardingAgents}
-                    onChange={setBoardingAgents}
-                  />
-                </div>
-              </div>
-
-              <div className="service-time-card">
-                <h4>GATE</h4>
-
-                <div className="form-grid">
-                  <Field
-                    label="GATE NUMBER"
-                    value={gateNumber}
-                    onChange={setGateNumber}
-                  />
-
-                  <Field
-                    label="GATE OPEN TIME"
-                    type="time"
-                    value={gateOpenTime}
-                    onChange={setGateOpenTime}
-                  />
-
-                  <Field
-                    label="GATE CLOSE TIME"
-                    type="time"
-                    value={gateCloseTime}
-                    onChange={setGateCloseTime}
-                  />
-                </div>
-              </div>
-
-              <div className="form-grid">
-                <Field
-                  label="WHEELCHAIR ASSISTANCE"
-                  value={wheelchairAssistance}
-                  onChange={setWheelchairAssistance}
-                />
-
-                <Field
-                  label="SPECIAL ASSISTANCE"
-                  value={specialAssistance}
-                  onChange={setSpecialAssistance}
-                />
-
-                <Field
-                  label="NO-SHOW PAX"
-                  type="number"
-                  value={noShowPax}
-                  onChange={setNoShowPax}
-                />
-
-                <Field
-                  label="DENIED BOARDING PAX"
-                  type="number"
-                  value={deniedBoardingPax}
-                  onChange={setDeniedBoardingPax}
-                />
-
-                <Field
-                  label="TRANSFER PAX"
-                  type="number"
-                  value={transferPax}
-                  onChange={setTransferPax}
-                />
-              </div>
-
-              <TextAreaField
-                label="REMARKS"
-                value={passengerServicesRemarks}
-                onChange={setPassengerServicesRemarks}
-              />
-
-              <TextAreaField
-                label="COMMENTS"
-                value={passengerServicesComments}
-                onChange={
-                  setPassengerServicesComments
-                }
-              />
-
-              <button
-                type="button"
-                className="save-button"
-                onClick={handleSave}
-                disabled={saving}
-              >
-                {saving
-                  ? "SAVING..."
-                  : "SAVE PASSENGER SERVICES CAPTURE"}
-              </button>
-            </section>
-          )}
-
-        {/* ===================================================
-            CARGO
-        ==================================================== */}
-
-        {!isManagement && department === "cargo" && (
-          <section className="form-section">
-            <div className="section-heading">
-              <h2>CARGO DEPARTMENT</h2>
-              <p>Cargo acceptance and loading capture.</p>
-            </div>
-
-            <div className="service-time-card">
-              <h4>CARGO ACCEPTANCE</h4>
-
-              <div className="form-grid">
-                <Field
-                  label="ACCEPTANCE START"
-                  type="time"
-                  value={cargoAcceptanceStartTime}
-                  onChange={setCargoAcceptanceStartTime}
-                />
-
-                <Field
-                  label="ACCEPTANCE END"
-                  type="time"
-                  value={cargoAcceptanceEndTime}
-                  onChange={setCargoAcceptanceEndTime}
-                />
-              </div>
-            </div>
-
-            <div className="form-grid">
-              <Field
-                label="CARGO TYPE"
-                value={specialCargo}
-                onChange={setSpecialCargo}
-              />
-
-              <Field
-                label="CARGO WEIGHT"
-                type="number"
-                value={cargoWeight}
-                onChange={setCargoWeight}
-                placeholder="kg"
-              />
-
-              <Field
-                label="CARGO PIECES"
-                type="number"
-                value={cargoPieces}
-                onChange={setCargoPieces}
-              />
-
-              <Field
-                label="AWB NUMBER"
-                value={awbNumber}
-                onChange={setAwbNumber}
-              />
-
-              <Field
-                label="ULD NUMBER"
-                value={cargoUldNumber}
-                onChange={setCargoUldNumber}
-              />
-
-              <Field
-                label="DANGEROUS GOODS"
-                value={dangerousGoods}
-                onChange={setDangerousGoods}
-              />
-
-              <Field
-                label="SPECIAL CARGO"
-                value={specialCargo}
-                onChange={setSpecialCargo}
-              />
-
-              <Field
-                label="WAREHOUSE LOCATION"
-                value={warehouseLocation}
-                onChange={setWarehouseLocation}
-              />
-            </div>
-
-            <div className="service-time-card">
-              <h4>CARGO LOADING</h4>
-
-              <div className="form-grid">
-                <Field
-                  label="LOADING START"
-                  type="time"
-                  value={cargoLoadingStartTime}
-                  onChange={setCargoLoadingStartTime}
-                />
-
-                <Field
-                  label="LOADING END"
-                  type="time"
-                  value={cargoLoadingEndTime}
-                  onChange={setCargoLoadingEndTime}
-                />
-              </div>
-            </div>
-
-            <Field
-              label="DO NAME"
-              value={cargoRemarks}
-              onChange={setCargoRemarks}
-            />
-
-            <Field
-              label="AGENT NAME"
-              value={cargoComments}
-              onChange={setCargoComments}
-            />
-
-            <TextAreaField
-              label="CARGO REMARKS"
-              value={cargoRemarks}
-              onChange={setCargoRemarks}
-            />
-
-            <TextAreaField
-              label="COMMENTS"
-              value={cargoComments}
-              onChange={setCargoComments}
-            />
-
-            <button
-              type="button"
-              className="save-button"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? "SAVING..." : "SAVE CARGO CAPTURE"}
-            </button>
-          </section>
-        )}
-
-        {/* ===================================================
-            NAVIGATION
-        ==================================================== */}
-
-        <div className="bottom-actions">
-          <button
-            type="button"
-            className="back-button"
-            onClick={() =>
-              router.push(
-                `/flights?department=${encodeURIComponent(
-                  department
-                )}`
-              )
-            }
-          >
-            ← BACK TO FLIGHTS
-          </button>
-        </div>
-      </div>
-
-      <footer className="dashboard-footer">
-        TRANSOM — FLIGHT SERVICE CAPTURE
-      </footer>
-    </main>
-  );
+  padding: 0;
 }
 
-export default function FlightPage() {
-  return (
-    <Suspense
-      fallback={
-        <main className="dashboard-page">
-          <div className="dashboard-content">
-            <h2>Loading...</h2>
-          </div>
-        </main>
-      }
-    >
-      <FlightPageContent />
-    </Suspense>
-  );
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dashboard-header {
+  width: 100%;
+  min-height: 82px;
+  padding: 18px 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #061d3b;
+  border-bottom: 4px solid #e31837;
+
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.dashboard-logo {
+  color: white;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.dashboard-subtitle {
+  margin-top: 3px;
+  color: #b9c7d8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.logout-button {
+  border: 1px solid rgba(255,255,255,0.25);
+  background: transparent;
+  color: white;
+
+  padding: 11px 18px;
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.dashboard-content {
+  width: min(1180px, calc(100% - 32px));
+  margin: 28px auto 50px;
+}
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+.welcome-section {
+  background: #f4f6f9;
+  border-radius: 26px 26px 0 0;
+  padding: 34px 42px 26px;
+}
+
+.welcome-section h1 {
+  margin: 0;
+  color: #08264b;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.welcome-section p {
+  margin: 8px 0 0;
+  color: #737d8c;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+/* =========================================================
+   FLIGHT INFORMATION
+========================================================= */
+
+.flights-section {
+  margin-top: 16px;
+}
+
+.flight-info-card,
+.flight-status-panel,
+.form-section,
+.capture-card,
+.empty-state {
+  background: #f4f6f9;
+  border-radius: 24px;
+  padding: 28px;
+  border: 1px solid rgba(7, 29, 59, 0.08);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.flight-info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.flight-info-grid > div {
+  background: white;
+  border: 1px solid #dfe4eb;
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.flight-info-grid span {
+  display: block;
+  color: #7a8493;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.flight-info-grid strong {
+  display: block;
+  color: #08264b;
+  font-size: 18px;
+}
+
+/* =========================================================
+   FLIGHT STATUS
+========================================================= */
+
+.flight-status-panel {
+  background: white;
+}
+
+.status-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.status-panel-header h2 {
+  margin: 0;
+  color: #08264b;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.status-panel-header p {
+  margin: 6px 0 0;
+  color: #778190;
+  font-size: 14px;
+}
+
+.flight-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 145px;
+  padding: 11px 16px;
+
+  border-radius: 10px;
+
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.open-status {
+  background: white;
+  color: #071d3b;
+  border: 2px solid #071d3b;
+}
+
+.progress-status {
+  background: #071d3b;
+  color: white;
+}
+
+.no-delay-status {
+  background: #1b9b59;
+  color: white;
+}
+
+.delay-status {
+  background: #e31837;
+  color: white;
+}
+
+.status-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.status-actions button {
+  min-width: 150px;
+  min-height: 46px;
+
+  border-radius: 9px;
+
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+
+  cursor: pointer;
+}
+
+.open-flight-button {
+  background: white;
+  color: #071d3b;
+  border: 2px solid #071d3b;
+}
+
+.progress-flight-button {
+  background: #071d3b;
+  color: white;
+  border: 2px solid #071d3b;
+}
+
+.close-flight-button {
+  background: #e31837;
+  color: white;
+  border: 2px solid #e31837;
+}
+
+.status-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.status-help {
+  margin: 18px 0 0;
+  color: #7a8493;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   FORM SECTION
+========================================================= */
+
+.form-section {
+  background: #f1f3f7;
+  padding: 32px;
+}
+
+.section-heading {
+  margin-bottom: 24px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  color: #08264b;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.section-heading p {
+  margin: 8px 0 0;
+  color: #7a8493;
+  font-size: 16px;
+}
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin: 0 0 8px 2px;
+
+  color: #112c50;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+
+  border: 1px solid #d9dee6;
+  background: white;
+
+  color: #102947;
+
+  border-radius: 12px;
+
+  padding: 14px 15px;
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-group input {
+  min-height: 52px;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 105px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #0b3a70;
+  box-shadow: 0 0 0 3px rgba(11, 58, 112, 0.10);
+}
+
+/* =========================================================
+   SERVICE TIME CARD
+========================================================= */
+
+.service-time-card {
+  background: white;
+
+  border: 1px solid #dfe4eb;
+  border-radius: 18px;
+
+  padding: 24px;
+
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  box-shadow: 0 3px 12px rgba(7,29,59,0.06);
+}
+
+.service-time-card h4 {
+  margin: 0 0 20px;
+
+  color: #08264b;
+
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+}
+
+.service-time-card .form-grid {
+  align-items: start;
+}
+
+.service-time-card .form-grid > .form-group:last-child {
+  max-width: 360px;
+}
+
+.service-time-card .form-grid > .form-group:last-child input {
+  background: #edf1f7;
+  color: #102947;
+  font-weight: 800;
+}
+
+/* =========================================================
+   RAMP STATUS
+========================================================= */
+
+.mini-status-section {
+  background: white;
+
+  border: 1px solid #dfe4eb;
+  border-radius: 18px;
+
+  padding: 24px;
+
+  margin-bottom: 20px;
+
+  box-shadow: 0 3px 12px rgba(7,29,59,0.06);
+}
+
+.mini-status-section h3 {
+  margin: 0 0 20px;
+
+  color: #08264b;
+
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.status-button-row {
+  display: flex;
+  gap: 16px;
+}
+
+.status-option {
+  min-width: 185px;
+  min-height: 48px;
+
+  background: white;
+  color: #112c50;
+
+  border: 2px solid #d8dde5;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.status-option:hover {
+  border-color: #08264b;
+}
+
+.status-option.active-status {
+  background: #08264b;
+  color: white;
+  border-color: #08264b;
+}
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+.save-button {
+  width: 100%;
+
+  margin-top: 26px;
+
+  min-height: 55px;
+
+  border: none;
+  border-radius: 11px;
+
+  background: #08264b;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+
+.save-button:hover {
+  background: #0b3768;
+}
+
+.save-button:active {
+  transform: scale(0.99);
+}
+
+.save-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   MANAGEMENT CAPTURES
+========================================================= */
+
+.capture-list {
+  display: grid;
+  gap: 12px;
+}
+
+.capture-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 20px;
+
+  background: white;
+}
+
+.capture-card > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.capture-card strong {
+  color: #08264b;
+}
+
+.capture-card span {
+  color: #7a8493;
+  font-size: 12px;
+}
+
+.select-flight-button {
+  border: 1px solid #08264b;
+  background: #08264b;
+  color: white;
+
+  padding: 11px 16px;
+
+  border-radius: 8px;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+  color: #6e7887;
+  text-align: center;
+}
+
+/* =========================================================
+   BOTTOM ACTIONS
+========================================================= */
+
+.bottom-actions {
+  margin-top: 24px;
+}
+
+.back-button {
+  width: 100%;
+
+  min-height: 48px;
+
+  background: rgba(255,255,255,0.96);
+  color: #08264b;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 13px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background: white;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.dashboard-footer {
+  padding: 25px 20px 35px;
+
+  text-align: center;
+
+  color: #aebbd0;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+/* =========================================================
+   MOBILE / TABLET
+========================================================= */
+
+@media (max-width: 800px) {
+  .dashboard-header {
+    min-height: 72px;
+    padding: 14px 18px;
+  }
+
+  .dashboard-logo {
+    font-size: 22px;
+  }
+
+  .dashboard-subtitle {
+    font-size: 9px;
+  }
+
+  .logout-button {
+    padding: 9px 12px;
+    font-size: 10px;
+  }
+
+  .dashboard-content {
+    width: calc(100% - 20px);
+    margin-top: 15px;
+  }
+
+  .welcome-section {
+    padding: 28px 22px 22px;
+    border-radius: 22px 22px 0 0;
+  }
+
+  .welcome-section h1 {
+    font-size: 25px;
+  }
+
+  .welcome-section p {
+    font-size: 14px;
+  }
+
+  .flight-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .flight-info-card,
+  .flight-status-panel,
+  .form-section {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .status-panel-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .status-actions {
+    flex-direction: column;
+  }
+
+  .status-actions button {
+    width: 100%;
+  }
+
+  .form-section {
+    padding: 18px;
+  }
+
+  .section-heading h2 {
+    font-size: 24px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .service-time-card {
+    padding: 20px;
+    border-radius: 17px;
+  }
+
+  .service-time-card .form-grid > .form-group:last-child {
+    max-width: 100%;
+  }
+
+  .status-button-row {
+    flex-direction: column;
+  }
+
+  .status-option {
+    width: 100%;
+  }
+
+  .capture-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .select-flight-button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 480px) {
+  .dashboard-content {
+    width: calc(100% - 12px);
+  }
+
+  .flight-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-section h1 {
+    font-size: 22px;
+  }
+
+  .section-heading h2 {
+    font-size: 22px;
+  }
+
+  .service-time-card h4 {
+    font-size: 19px;
+  }
 }
