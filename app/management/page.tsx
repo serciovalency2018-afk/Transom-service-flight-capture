@@ -4,467 +4,378 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 
-type Flight = {
+type Profile = {
   id: string;
-  flight_number: string;
-  aircraft: string;
-  route: string;
-  flight_date: string;
-  status: string;
-  created_at: string;
-};
-
-type Capture = {
-  id: string;
-  flight_id: string;
-  department: string;
-  created_at: string;
-};
-
-const departmentNames: Record<string, string> = {
-  ramp: "RAMP",
-  sorting: "SORTING",
-  load_control_ops: "LOAD CONTROL / OPS",
-  passenger_services: "PASSENGER SERVICES",
-  cargo: "CARGO",
+  full_name: string | null;
+  role: string | null;
+  department: string | null;
 };
 
 export default function ManagementPage() {
   const router = useRouter();
 
-  const [flights, setFlights] = useState<Flight[]>([]);
-  const [captures, setCaptures] = useState<Capture[]>([]);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userName, setUserName] = useState("");
 
   useEffect(() => {
-    async function loadManagementData() {
+    checkManagement();
+  }, []);
+
+  async function checkManagement() {
+    try {
+      setLoading(true);
+
       const {
         data: { user },
+        error: userError,
       } = await supabase.auth.getUser();
 
-      if (!user) {
-        router.push("/");
+      if (userError || !user) {
+        router.replace("/");
         return;
       }
 
-      const { data: profile, error: profileError } =
-        await supabase
-          .from("profiles")
-          .select("full_name, role")
-          .eq("id", user.id)
-          .single();
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, role, department")
+        .eq("id", user.id)
+        .maybeSingle();
 
-      if (profileError) {
-        alert(profileError.message);
-        router.push("/");
+      if (error) {
+        console.error("Profile error:", error);
+        alert("Unable to load your profile.");
+        router.replace("/");
         return;
       }
 
-      if (profile.role !== "management") {
+      if (!data) {
+        alert("Your profile was not found.");
+        router.replace("/");
+        return;
+      }
+
+      if (data.role !== "management") {
         alert("Management access only.");
-        router.push("/departments");
+        router.replace("/departments");
         return;
       }
 
-      setUserName(profile.full_name || "Management");
-
-      const { data: flightData, error: flightError } =
-        await supabase
-          .from("flights")
-          .select(
-            "id, flight_number, aircraft, route, flight_date, status, created_at"
-          )
-          .order("created_at", {
-            ascending: false,
-          });
-
-      if (flightError) {
-        alert(flightError.message);
-        setLoading(false);
-        return;
-      }
-
-      const {
-        data: captureData,
-        error: captureError,
-      } = await supabase
-        .from("flight_service_captures")
-        .select(
-          "id, flight_id, department, created_at"
-        )
-        .order("created_at", {
-          ascending: false,
-        });
-
-      if (captureError) {
-        alert(captureError.message);
-        setLoading(false);
-        return;
-      }
-
-      setFlights(flightData || []);
-      setCaptures(captureData || []);
+      setProfile(data);
+    } catch (error) {
+      console.error(error);
+      router.replace("/");
+    } finally {
       setLoading(false);
     }
+  }
 
-    loadManagementData();
-  }, [router]);
-
-  const handleLogout = async () => {
+  async function handleLogout() {
     await supabase.auth.signOut();
-    router.push("/");
-  };
+    router.replace("/");
+  }
 
-  const getStatusClass = (status: string) => {
-    switch (status) {
-      case "Open":
-        return "flight-status open-status";
+  if (loading) {
+    return (
+      <main style={pageStyle}>
+        <header style={headerStyle}>
+          <div>
+            <div style={logoStyle}>TRANSOM</div>
+            <div style={subtitleStyle}>
+              FLIGHT SERVICE CAPTURE
+            </div>
+          </div>
+        </header>
 
-      case "In Progress":
-        return "flight-status progress-status";
-
-      case "Closed - No Delay":
-        return "flight-status no-delay-status";
-
-      case "Closed - With Delay":
-        return "flight-status delay-status";
-
-      default:
-        return "flight-status";
-    }
-  };
-
-  const openCount = flights.filter(
-    (flight) => flight.status === "Open"
-  ).length;
-
-  const progressCount = flights.filter(
-    (flight) => flight.status === "In Progress"
-  ).length;
-
-  const noDelayCount = flights.filter(
-    (flight) =>
-      flight.status === "Closed - No Delay"
-  ).length;
-
-  const delayCount = flights.filter(
-    (flight) =>
-      flight.status === "Closed - With Delay"
-  ).length;
-
-  const getFlightNumber = (flightId: string) => {
-    const flight = flights.find(
-      (item) => item.id === flightId
+        <div style={loadingStyle}>
+          LOADING MANAGEMENT DASHBOARD...
+        </div>
+      </main>
     );
-
-    return flight?.flight_number || "Unknown";
-  };
+  }
 
   return (
-    <main className="dashboard-page">
+    <main style={pageStyle}>
       {/* HEADER */}
-      <header className="dashboard-header">
+      <header style={headerStyle}>
         <div>
-          <div className="dashboard-logo">
-            TRANSOM
-          </div>
+          <div style={logoStyle}>TRANSOM</div>
 
-          <div className="dashboard-subtitle">
+          <div style={subtitleStyle}>
             FLIGHT SERVICE CAPTURE
           </div>
         </div>
 
         <button
-          className="logout-button"
+          type="button"
           onClick={handleLogout}
+          style={logoutButtonStyle}
         >
           LOGOUT
         </button>
       </header>
 
       {/* CONTENT */}
-      <section className="dashboard-content">
-        {/* WELCOME */}
-        <div className="welcome-section">
-          <h1>Management Dashboard</h1>
+      <div style={contentStyle}>
+        <section style={welcomeStyle}>
+          <h1 style={welcomeTitleStyle}>
+            WELCOME
+            {profile?.full_name
+              ? `, ${profile.full_name}`
+              : ""}
+          </h1>
 
-          <p>
-            Welcome, {userName}. Monitor all
-            flights and service capture operations.
+          <p style={welcomeTextStyle}>
+            MANAGEMENT DASHBOARD
           </p>
-        </div>
+        </section>
 
-        {/* STATUS CARDS */}
-        <div className="status-cards">
-          <div className="status-card open">
-            <span className="status-number">
-              {openCount}
-            </span>
+        {/* MANAGEMENT OPTIONS */}
+        <section>
+          <div style={sectionHeaderStyle}>
+            <h2 style={sectionTitleStyle}>
+              MANAGEMENT CONTROL
+            </h2>
 
-            <span className="status-label">
-              OPEN
-            </span>
+            <p style={sectionTextStyle}>
+              Manage TRANSOM operations and review operational
+              information.
+            </p>
           </div>
 
-          <div className="status-card progress">
-            <span className="status-number">
-              {progressCount}
-            </span>
-
-            <span className="status-label">
-              IN PROGRESS
-            </span>
-          </div>
-
-          <div className="status-card completed">
-            <span className="status-number">
-              {noDelayCount}
-            </span>
-
-            <span className="status-label">
-              CLOSED — NO DELAY
-            </span>
-          </div>
-
-          <div className="status-card delayed">
-            <span className="status-number">
-              {delayCount}
-            </span>
-
-            <span className="status-label">
-              CLOSED — WITH DELAY
-            </span>
-          </div>
-        </div>
-
-        {/* ALL FLIGHTS */}
-        <section className="flights-section">
-          <div className="section-header">
-            <div>
-              <h2>All Flights</h2>
-
-              <p>
-                Management view of all flight
-                operations.
-              </p>
-            </div>
-
+          <div style={gridStyle}>
+            {/* USERS */}
             <button
-              className="new-flight-button"
-              onClick={() =>
-                router.push("/new-flight")
-              }
+              type="button"
+              onClick={() => router.push("/users")}
+              style={cardStyle}
             >
-              + NEW FLIGHT
-            </button>
-          </div>
+              <div style={iconStyle}>👤</div>
 
-          {loading ? (
-            <div className="empty-state">
-              <h3>
-                Loading management dashboard...
-              </h3>
-            </div>
-          ) : flights.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">
-                ✈
+              <div style={cardTitleStyle}>
+                USERS
               </div>
 
-              <h3>No flights available</h3>
+              <div style={cardDescriptionStyle}>
+                Manage TRANSOM users, roles and departments.
+              </div>
 
-              <p>
-                No flight records have been
-                created yet.
-              </p>
-            </div>
-          ) : (
-            <div className="flight-table-wrapper">
-              <table className="flight-table">
-                <thead>
-                  <tr>
-                    <th>FLIGHT</th>
-                    <th>AIRCRAFT</th>
-                    <th>ROUTE</th>
-                    <th>DATE</th>
-                    <th>STATUS</th>
-                    <th>SERVICES</th>
-                    <th>ACTION</th>
-                  </tr>
-                </thead>
+              <div style={arrowStyle}>→</div>
+            </button>
 
-                <tbody>
-                  {flights.map((flight) => {
-                    const flightCaptures =
-                      captures.filter(
-                        (capture) =>
-                          capture.flight_id ===
-                          flight.id
-                      );
+            {/* FLIGHTS */}
+            <button
+              type="button"
+              onClick={() =>
+                router.push("/flights?department=management")
+              }
+              style={cardStyle}
+            >
+              <div style={iconStyle}>✈</div>
 
-                    return (
-                      <tr key={flight.id}>
-                        <td>
-                          <strong>
-                            {flight.flight_number}
-                          </strong>
-                        </td>
+              <div style={cardTitleStyle}>
+                FLIGHTS
+              </div>
 
-                        <td>
-                          {flight.aircraft}
-                        </td>
+              <div style={cardDescriptionStyle}>
+                View and manage all operational flights.
+              </div>
 
-                        <td>
-                          {flight.route}
-                        </td>
+              <div style={arrowStyle}>→</div>
+            </button>
 
-                        <td>
-                          {flight.flight_date}
-                        </td>
+            {/* SERVICE CAPTURES */}
+            <button
+              type="button"
+              onClick={() =>
+                router.push(
+                  "/flights?department=management"
+                )
+              }
+              style={cardStyle}
+            >
+              <div style={iconStyle}>▣</div>
 
-                        <td>
-                          <span
-                            className={getStatusClass(
-                              flight.status
-                            )}
-                          >
-                            {flight.status}
-                          </span>
-                        </td>
+              <div style={cardTitleStyle}>
+                SERVICE CAPTURES
+              </div>
 
-                        <td>
-                          <strong>
-                            {
-                              flightCaptures.length
-                            }
-                          </strong>
-                        </td>
+              <div style={cardDescriptionStyle}>
+                Review flight service capture information.
+              </div>
 
-                        <td>
-                          <button
-                            className="action-button view"
-                            onClick={() =>
-                              router.push(
-                                `/flight/${flight.id}`
-                              )
-                            }
-                          >
-                            VIEW DETAILS
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
+              <div style={arrowStyle}>→</div>
+            </button>
 
-        {/* SERVICE CAPTURES */}
-        <section className="flights-section">
-          <div className="section-header">
-            <div>
-              <h2>Service Captures</h2>
+            {/* DEPARTMENTS */}
+            <button
+              type="button"
+              onClick={() => router.push("/departments")}
+              style={cardStyle}
+            >
+              <div style={iconStyle}>◈</div>
 
-              <p>
-                Captures submitted by all service
-                departments.
-              </p>
-            </div>
+              <div style={cardTitleStyle}>
+                DEPARTMENTS
+              </div>
+
+              <div style={cardDescriptionStyle}>
+                Access all TRANSOM operational departments.
+              </div>
+
+              <div style={arrowStyle}>→</div>
+            </button>
           </div>
-
-          {loading ? (
-            <div className="empty-state">
-              <h3>Loading captures...</h3>
-            </div>
-          ) : captures.length === 0 ? (
-            <div className="empty-state">
-              <h3>No service captures yet</h3>
-
-              <p>
-                Service captures will appear here
-                after users submit them.
-              </p>
-            </div>
-          ) : (
-            <div className="flight-table-wrapper">
-              <table className="flight-table">
-                <thead>
-                  <tr>
-                    <th>FLIGHT</th>
-                    <th>DEPARTMENT</th>
-                    <th>CAPTURE ID</th>
-                    <th>CREATED</th>
-                    <th>ACTION</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {captures.map((capture) => (
-                    <tr key={capture.id}>
-                      {/* FLIGHT */}
-                      <td>
-                        <strong>
-                          {getFlightNumber(
-                            capture.flight_id
-                          )}
-                        </strong>
-                      </td>
-
-                      {/* DEPARTMENT */}
-                      <td>
-                        {departmentNames[
-                          capture.department
-                        ] ||
-                          capture.department}
-                      </td>
-
-                      {/* CAPTURE ID */}
-                      <td>
-                        {capture.id.slice(0, 8)}
-                      </td>
-
-                      {/* CREATED */}
-                      <td>
-                        {new Date(
-                          capture.created_at
-                        ).toLocaleString()}
-                      </td>
-
-                      {/* VIEW CAPTURE */}
-                      <td>
-                        <button
-                          className="action-button view"
-                          onClick={() =>
-                            router.push(
-                              `/capture/${capture.id}`
-                            )
-                          }
-                        >
-                          VIEW CAPTURE
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
         </section>
-      </section>
+      </div>
 
-      {/* FOOTER */}
-      <footer className="dashboard-footer">
-        <p>
-          TRANSOM Flight Service Capture
-        </p>
-
-        <span>
-          Management — Authorized Personnel Only
-        </span>
+      <footer style={footerStyle}>
+        TRANSOM — MANAGEMENT CONTROL
       </footer>
     </main>
   );
 }
+
+/* =========================
+   STYLES
+========================= */
+
+const pageStyle: React.CSSProperties = {
+  minHeight: "100vh",
+  background: "#f4f6f9",
+  fontFamily: "Arial, sans-serif",
+};
+
+const headerStyle: React.CSSProperties = {
+  background: "#071d41",
+  color: "white",
+  padding: "20px",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+};
+
+const logoStyle: React.CSSProperties = {
+  fontSize: "28px",
+  fontWeight: "800",
+  letterSpacing: "2px",
+};
+
+const subtitleStyle: React.CSSProperties = {
+  fontSize: "12px",
+  letterSpacing: "2px",
+  opacity: 0.8,
+  marginTop: "4px",
+};
+
+const logoutButtonStyle: React.CSSProperties = {
+  background: "#d71920",
+  color: "white",
+  border: "none",
+  padding: "10px 18px",
+  borderRadius: "6px",
+  fontWeight: "700",
+  cursor: "pointer",
+};
+
+const loadingStyle: React.CSSProperties = {
+  minHeight: "70vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  color: "#071d41",
+  fontWeight: "700",
+};
+
+const contentStyle: React.CSSProperties = {
+  maxWidth: "1100px",
+  margin: "0 auto",
+  padding: "40px 20px",
+};
+
+const welcomeStyle: React.CSSProperties = {
+  marginBottom: "35px",
+};
+
+const welcomeTitleStyle: React.CSSProperties = {
+  color: "#071d41",
+  fontSize: "30px",
+  margin: 0,
+};
+
+const welcomeTextStyle: React.CSSProperties = {
+  color: "#d71920",
+  fontWeight: "700",
+  letterSpacing: "1px",
+  marginTop: "8px",
+};
+
+const sectionHeaderStyle: React.CSSProperties = {
+  marginBottom: "20px",
+};
+
+const sectionTitleStyle: React.CSSProperties = {
+  color: "#071d41",
+  margin: 0,
+  fontSize: "22px",
+};
+
+const sectionTextStyle: React.CSSProperties = {
+  color: "#666",
+  marginTop: "8px",
+};
+
+const gridStyle: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns:
+    "repeat(auto-fit, minmax(240px, 1fr))",
+  gap: "20px",
+};
+
+const cardStyle: React.CSSProperties = {
+  position: "relative",
+  textAlign: "left",
+  background: "white",
+  border: "1px solid #e0e4e8",
+  borderRadius: "12px",
+  padding: "25px",
+  minHeight: "190px",
+  boxShadow: "0 4px 15px rgba(0,0,0,0.06)",
+  cursor: "pointer",
+};
+
+const iconStyle: React.CSSProperties = {
+  fontSize: "34px",
+  color: "#071d41",
+  marginBottom: "18px",
+};
+
+const cardTitleStyle: React.CSSProperties = {
+  color: "#071d41",
+  fontSize: "19px",
+  fontWeight: "800",
+  letterSpacing: "1px",
+};
+
+const cardDescriptionStyle: React.CSSProperties = {
+  color: "#666",
+  fontSize: "14px",
+  lineHeight: "1.5",
+  marginTop: "10px",
+  paddingRight: "20px",
+};
+
+const arrowStyle: React.CSSProperties = {
+  position: "absolute",
+  right: "20px",
+  bottom: "18px",
+  color: "#d71920",
+  fontSize: "22px",
+  fontWeight: "800",
+};
+
+const footerStyle: React.CSSProperties = {
+  textAlign: "center",
+  color: "#777",
+  padding: "25px",
+  fontSize: "12px",
+};
