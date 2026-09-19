@@ -902,4 +902,645 @@ textarea {
 
   font-size: 16px;
 
-  font
+  font-weight: 900;
+
+  border-bottom: 3px solid #ed1b2f;
+}
+
+.service-capture-section p {
+  color: #667085;
+
+  font-size: 13px;
+}
+
+/* =========================================
+   FORM GRID
+========================================= */
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+
+  margin-top: 22px;
+}
+
+.form-grid.three-columns {
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+}
+
+.form-grid.four-columns {
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+}
+
+/* =========================================
+   FORM GROUP
+========================================= */
+
+.form-group {
+  display: flex;
+
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  margin-bottom: 7px;
+
+  color: #071d41;
+
+  font-size: 11px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.5px;
+
+  text-transform: uppercase;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+
+  padding: 12px 13px;
+
+  border: 1px solid #cfd5df;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #071d41;
+
+  font-size: 13px;
+
+  outline: none;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.form-group input {
+  min-height: 44px;
+}
+
+.form-group select {
+  min-height: 44px;
+
+  cursor: pointer;
+}
+
+.form-group textarea {
+  min-height: 100px;
+
+  resize: vertical;
+
+  line-height: 1.5;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #98a2b3;
+
+  opacity: 1;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #071d41;
+
+  box-shadow:
+    0 0 0 3px rgba(7, 29, 65, 0.08);
+}
+
+/* =========================================
+   TIME FIELD GROUPS
+========================================= */
+
+.time-group {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 10px;
+}
+
+.time-item label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #667085;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+/* =========================================
+   DEPARTMENT SECTION DIVIDER
+========================================= */
+
+.department-form-section {
+  margin-top: 28px;
+
+  padding-top: 24px;
+
+  border-top: 1px solid #e4e7ec;
+}
+
+.department-form-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 20px;
+}
+
+.department-form-title::before {
+  content: "";
+
+  width: 5px;
+
+  height: 25px;
+
+  border-radius: 5px;
+
+  background: #ed1b2f;
+}
+
+.department-form-title h3 {
+  margin: 0;
+
+  padding: 0;
+
+  border: none;
+
+  font-size: 17px;
+}
+
+/* =========================================
+   SAVE BUTTON
+========================================= */
+
+.save-capture-button {
+  width: 100%;
+
+  margin-top: 28px;
+
+  padding: 15px 22px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #ed1b2f;
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.7px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 18px rgba(237, 27, 47, 0.22);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.save-capture-button:hover {
+  background: #c91427;
+
+  transform: translateY(-1px);
+}
+
+.save-capture-button:disabled {
+  background: #98a2b3;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+/* =========================================
+   BACK BUTTON
+========================================= */
+
+.back-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  margin-bottom: 18px;
+
+  padding: 10px 17px;
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+
+  border-radius: 8px;
+
+  background: rgba(7, 29, 65, 0.75);
+
+  color: #ffffff;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.back-button:hover {
+  background: #ed1b2f;
+
+  border-color: #ed1b2f;
+}
+
+/* =========================================
+   MANAGEMENT CAPTURE LIST
+========================================= */
+
+.capture-list {
+  display: grid;
+
+  gap: 14px;
+
+  margin-top: 20px;
+}
+
+.capture-card {
+  padding: 18px;
+
+  border: 1px solid #e1e6ee;
+
+  border-radius: 12px;
+
+  background: #f8fafc;
+}
+
+.capture-card h4 {
+  margin: 0;
+
+  color: #071d41;
+
+  font-size: 14px;
+
+  font-weight: 900;
+}
+
+.capture-card p {
+  margin: 6px 0 0;
+
+  color: #667085;
+
+  font-size: 12px;
+}
+
+/* =========================================
+   DEPARTMENT GRID
+========================================= */
+
+.department-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+/* =========================================
+   DEPARTMENT CARD
+========================================= */
+
+.department-card {
+  position: relative;
+
+  min-height: 145px;
+
+  padding: 25px 22px;
+
+  border: 1px solid #d9e0ea;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  color: #071d41;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 8px 20px rgba(7, 29, 65, 0.08);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.department-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 72px;
+  height: 72px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ed1b2f 0%,
+      #ed1b2f 48%,
+      #071d41 49%,
+      #071d41 100%
+    );
+
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    0 100%
+  );
+}
+
+.department-card::after {
+  content: "";
+
+  position: absolute;
+
+  right: -25px;
+  bottom: -25px;
+
+  width: 90px;
+  height: 90px;
+
+  border-radius: 50%;
+
+  background: rgba(237, 27, 47, 0.08);
+}
+
+.department-card:hover {
+  transform: translateY(-5px);
+
+  border-color: #ed1b2f;
+
+  box-shadow:
+    0 16px 30px rgba(7, 29, 65, 0.16);
+}
+
+.department-icon {
+  position: relative;
+  z-index: 2;
+
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 17px;
+
+  border-radius: 10px;
+
+  background: #ed1b2f;
+
+  color: #ffffff;
+
+  font-size: 21px;
+
+  box-shadow:
+    0 6px 14px rgba(237, 27, 47, 0.25);
+}
+
+.department-name {
+  position: relative;
+  z-index: 2;
+
+  font-size: 17px;
+  font-weight: 900;
+
+  letter-spacing: 0.3px;
+
+  color: #071d41;
+}
+
+.department-description {
+  position: relative;
+  z-index: 2;
+
+  margin-top: 7px;
+
+  color: #667085;
+
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.department-arrow {
+  position: absolute;
+
+  right: 18px;
+  bottom: 18px;
+
+  z-index: 3;
+
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #071d41;
+  color: #ffffff;
+
+  font-size: 17px;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.dashboard-footer {
+  position: relative;
+  z-index: 3;
+
+  width: 100%;
+
+  padding: 25px;
+
+  text-align: center;
+
+  background: rgba(3, 20, 48, 0.82);
+
+  color: rgba(255, 255, 255, 0.85);
+
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.dashboard-footer p {
+  margin: 0;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.dashboard-footer span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #ed1b2f;
+
+  font-size: 11px;
+
+  font-weight: 800;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+  .status-cards {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .department-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .flight-info {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .form-grid.three-columns,
+  .form-grid.four-columns {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard-header {
+    padding: 18px 20px;
+  }
+
+  .dashboard-logo {
+    font-size: 23px;
+  }
+
+  .dashboard-content {
+    width: 94%;
+    padding-top: 30px;
+  }
+
+  .welcome-section h1 {
+    font-size: 30px;
+  }
+
+  .status-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .department-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .flight-table {
+    min-width: 900px;
+  }
+
+  .flight-container {
+    width: 94%;
+
+    padding-top: 20px;
+  }
+
+  .flight-header,
+  .flight-status-section,
+  .service-capture-section {
+    padding: 20px;
+  }
+
+  .flight-header h1 {
+    font-size: 22px;
+  }
+
+  .flight-info {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid,
+  .form-grid.three-columns,
+  .form-grid.four-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group.full-width {
+    grid-column: auto;
+  }
+
+  .time-group {
+    grid-template-columns: 1fr;
+  }
+
+  .flight-status-buttons {
+    flex-direction: column;
+  }
+
+  .flight-status-button {
+    width: 100%;
+  }
+}
