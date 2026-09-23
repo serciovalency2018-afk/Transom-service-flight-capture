@@ -35,16 +35,13 @@ function FlightsContent() {
   const department =
     searchParams.get("department") || "";
 
-  const [flights, setFlights] =
-    useState<Flight[]>([]);
-
-  const [loading, setLoading] =
-    useState(true);
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [showAddFlight, setShowAddFlight] =
     useState(false);
 
-  const [saving, setSaving] =
+  const [savingFlight, setSavingFlight] =
     useState(false);
 
   const [flightNumber, setFlightNumber] =
@@ -59,7 +56,7 @@ function FlightsContent() {
   const [flightDate, setFlightDate] =
     useState("");
 
-  const [status, setStatus] =
+  const [flightStatus, setFlightStatus] =
     useState("Open");
 
   const loadFlights = async () => {
@@ -95,7 +92,7 @@ function FlightsContent() {
 
   useEffect(() => {
     loadFlights();
-  }, []);
+  }, [router]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -110,7 +107,11 @@ function FlightsContent() {
     );
   };
 
-  const handleAddFlight = async () => {
+  const handleAddFlight = async (
+    e: React.FormEvent
+  ) => {
+    e.preventDefault();
+
     if (
       !flightNumber.trim() ||
       !aircraft.trim() ||
@@ -118,29 +119,29 @@ function FlightsContent() {
       !flightDate
     ) {
       alert(
-        "Please fill in all flight information."
+        "Please complete all required flight information."
       );
       return;
     }
 
-    setSaving(true);
+    setSavingFlight(true);
 
     const { error } = await supabase
       .from("flights")
-      .insert({
-        flight_number:
-          flightNumber.trim().toUpperCase(),
-        aircraft:
-          aircraft.trim().toUpperCase(),
-        route:
-          route.trim().toUpperCase(),
-        flight_date: flightDate,
-        status,
-      });
+      .insert([
+        {
+          flight_number:
+            flightNumber.trim(),
+          aircraft: aircraft.trim(),
+          route: route.trim(),
+          flight_date: flightDate,
+          status: flightStatus,
+        },
+      ]);
 
     if (error) {
       alert(error.message);
-      setSaving(false);
+      setSavingFlight(false);
       return;
     }
 
@@ -148,19 +149,20 @@ function FlightsContent() {
     setAircraft("");
     setRoute("");
     setFlightDate("");
-    setStatus("Open");
+    setFlightStatus("Open");
 
     setShowAddFlight(false);
-
-    setSaving(false);
+    setSavingFlight(false);
 
     await loadFlights();
+
+    alert("Flight added successfully.");
   };
 
   const getStatusClass = (
-    flightStatus: string
+    status: string
   ) => {
-    switch (flightStatus) {
+    switch (status) {
       case "Open":
         return "flight-status open-status";
 
@@ -179,135 +181,421 @@ function FlightsContent() {
   };
 
   return (
-    <main className="flight-selection-page">
+    <main className="dashboard-page">
 
-      {/* ================================
-          HEADER
-      ================================= */}
+      {/* HEADER */}
+      <header className="dashboard-header">
 
-      <header className="flight-header">
-
-        <div className="flight-brand">
-
-          <div className="flight-logo">
+        <div>
+          <div className="dashboard-logo">
             TRANSOM
           </div>
 
-          <div className="flight-tagline">
+          <div className="dashboard-subtitle">
             FLIGHT SERVICE CAPTURE
           </div>
-
         </div>
 
-        <div className="flight-header-actions">
-
-          <div className="flight-user">
-            <span className="flight-user-icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle
-                  cx="12"
-                  cy="8"
-                  r="4"
-                />
-
-                <path
-                  d="M4 21c0-4.5 3.5-7 8-7s8 2.5 8 7"
-                />
-              </svg>
-            </span>
-
-            <span>
-              Authorized User
-            </span>
-          </div>
-
-          <div className="flight-header-divider" />
-
-          <button
-            className="flight-logout"
-            onClick={handleLogout}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M10 17l5-5-5-5" />
-              <path d="M15 12H3" />
-              <path d="M21 3v18" />
-            </svg>
-
-            LOGOUT
-          </button>
-
-        </div>
+        <button
+          className="logout-button"
+          onClick={handleLogout}
+        >
+          LOGOUT
+        </button>
 
       </header>
 
+      {/* MAIN CONTENT */}
+      <section className="dashboard-content">
 
-      {/* ================================
-          HERO
-      ================================= */}
+        {/* WELCOME */}
+        <div className="welcome-section">
 
-      <section className="flight-hero">
-
-        <div>
+          <button
+            className="back-button"
+            onClick={() =>
+              router.push("/departments")
+            }
+          >
+            ← BACK TO DEPARTMENTS
+          </button>
 
           <h1>
-            SELECT FLIGHT
+            Select Flight
           </h1>
-
-          <div className="flight-hero-line" />
 
           <p>
             {departmentNames[department] ||
               department ||
-              "FLIGHT OPERATIONS"}
+              "Flight Operations"}
           </p>
 
         </div>
 
-      </section>
+        {/* FLIGHT SECTION */}
+        <section className="flights-section">
 
+          <div className="flight-color-line">
+            <span className="line-red"></span>
+            <span className="line-blue"></span>
+            <span className="line-navy"></span>
+          </div>
 
-      {/* ================================
-          MAIN PANEL
-      ================================= */}
-
-      <section className="flight-main-panel">
-
-        {/* PANEL HEADER */}
-
-        <div className="flight-panel-heading">
-
-          <div className="flight-panel-title">
-
-            <div className="flight-panel-icon">
-              ✈
-            </div>
+          <div className="section-header">
 
             <div>
-
               <h2>
-                SELECT FLIGHT
+                Available Flights
               </h2>
 
               <p>
                 Select a flight to access
                 the service capture.
               </p>
-
             </div>
+
+            <button
+              className="new-flight-button"
+              onClick={() =>
+                setShowAddFlight(
+                  !showAddFlight
+                )
+              }
+            >
+              + ADD NEW FLIGHT
+            </button>
 
           </div>
 
-        </div>
+          {/* ADD FLIGHT FORM */}
+          {showAddFlight && (
+            <div className="new-flight-card">
 
+              <div className="new-flight-header">
 
-        <div className="flight-color-line">
+                <div>
+                  <h3>
+                    Add New Flight
+                  </h3>
+
+                  <p>
+                    Enter the flight information
+                    below.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  className="close-form-button"
+                  onClick={() =>
+                    setShowAddFlight(false)
+                  }
+                >
+                  ×
+                </button>
+
+              </div>
+
+              <form
+                onSubmit={handleAddFlight}
+                className="new-flight-form"
+              >
+
+                <div className="flight-form-grid">
+
+                  <div className="form-field">
+                    <label>
+                      FLIGHT NUMBER
+                    </label>
+
+                    <input
+                      type="text"
+                      placeholder="e.g. TC100"
+                      value={flightNumber}
+                      onChange={(e) =>
+                        setFlightNumber(
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div className="form-field">
+                    <label>
+                      AIRCRAFT
+                    </label>
+
+                    <input
+                      type="text"
+                      placeholder="e.g. Q400"
+                      value={aircraft}
+                      onChange={(e) =>
+                        setAircraft(
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div className="form-field">
+                    <label>
+                      ROUTE
+                    </label>
+
+                    <input
+                      type="text"
+                      placeholder="e.g. DAR - MWZ"
+                      value={route}
+                      onChange={(e) =>
+                        setRoute(
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div className="form-field">
+                    <label>
+                      FLIGHT DATE
+                    </label>
+
+                    <input
+                      type="date"
+                      value={flightDate}
+                      onChange={(e) =>
+                        setFlightDate(
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div className="form-field">
+                    <label>
+                      STATUS
+                    </label>
+
+                    <select
+                      value={flightStatus}
+                      onChange={(e) =>
+                        setFlightStatus(
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option value="Open">
+                        Open
+                      </option>
+
+                      <option value="In Progress">
+                        In Progress
+                      </option>
+
+                      <option value="Closed - No Delay">
+                        Closed - No Delay
+                      </option>
+
+                      <option value="Closed - With Delay">
+                        Closed - With Delay
+                      </option>
+                    </select>
+                  </div>
+
+                </div>
+
+                <div className="form-actions">
+
+                  <button
+                    type="button"
+                    className="cancel-flight-button"
+                    onClick={() =>
+                      setShowAddFlight(false)
+                    }
+                  >
+                    CANCEL
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="save-flight-button"
+                    disabled={savingFlight}
+                  >
+                    {savingFlight
+                      ? "SAVING..."
+                      : "SAVE FLIGHT"}
+                  </button>
+
+                </div>
+
+              </form>
+
+            </div>
+          )}
+
+          {/* LOADING */}
+          {loading ? (
+            <div className="empty-state">
+
+              <div className="loading-spinner"></div>
+
+              <h3>
+                Loading flights...
+              </h3>
+
+            </div>
+          ) : flights.length === 0 ? (
+
+            /* NO FLIGHTS */
+            <div className="empty-state">
+
+              <div className="empty-icon">
+                ✈
+              </div>
+
+              <h3>
+                No flights available
+              </h3>
+
+              <p>
+                There are currently no
+                flights available.
+              </p>
+
+              <button
+                className="new-flight-button"
+                onClick={() =>
+                  setShowAddFlight(true)
+                }
+              >
+                + ADD NEW FLIGHT
+              </button>
+
+            </div>
+
+          ) : (
+
+            /* FLIGHT TABLE */
+            <div className="flight-table-wrapper">
+
+              <table className="flight-table">
+
+                <thead>
+                  <tr>
+                    <th>FLIGHT</th>
+                    <th>AIRCRAFT</th>
+                    <th>ROUTE</th>
+                    <th>DATE</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  {flights.map(
+                    (flight) => (
+                      <tr
+                        key={flight.id}
+                      >
+
+                        <td>
+                          <strong>
+                            {
+                              flight.flight_number
+                            }
+                          </strong>
+                        </td>
+
+                        <td>
+                          {flight.aircraft}
+                        </td>
+
+                        <td>
+                          {flight.route}
+                        </td>
+
+                        <td>
+                          {flight.flight_date}
+                        </td>
+
+                        <td>
+                          <span
+                            className={getStatusClass(
+                              flight.status
+                            )}
+                          >
+                            {flight.status}
+                          </span>
+                        </td>
+
+                        <td>
+
+                          <button
+                            className="action-button view"
+                            onClick={() =>
+                              handleFlightSelect(
+                                flight.id
+                              )
+                            }
+                          >
+                            SELECT FLIGHT
+                          </button>
+
+                        </td>
+
+                      </tr>
+                    )
+                  )}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          )}
+
+        </section>
+
+      </section>
+
+      {/* FOOTER */}
+      <footer className="dashboard-footer">
+
+        <p>
+          TRANSOM Flight Service Capture
+        </p>
+
+        <span>
+          Authorized Personnel Only
+        </span>
+
+      </footer>
+
+    </main>
+  );
+}
+
+export default function FlightsPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="dashboard-page">
+
+          <div className="empty-state">
+
+            <div className="loading-spinner"></div>
+
+            <h3>
+              Loading flights...
+            </h3>
+
+          </div>
+
+        </main>
+      }
+    >
+      <FlightsContent />
+    </Suspense>
+  );
+}
