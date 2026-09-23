@@ -1,7 +1,11 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 
 type Flight = {
@@ -20,40 +24,42 @@ type Profile = {
   department: string;
 };
 
-type Capture = {
-  id?: string;
-  department: string;
-  created_by?: string;
-  [key: string]: any;
-};
-
 const departmentNames: Record<string, string> = {
-  ramp: "RAMP DEPARTMENT",
-  sorting: "SORTING DEPARTMENT",
+  ramp: "RAMP",
+  sorting: "SORTING",
   load_control_ops: "LOAD CONTROL / OPS",
   passenger_services: "PASSENGER SERVICES",
-  cargo: "CARGO DEPARTMENT",
+  cargo: "CARGO",
+};
+
+const departmentDescriptions: Record<string, string> = {
+  ramp: "Ramp & Ground Services",
+  sorting: "Baggage & ULD Sorting",
+  load_control_ops: "Load Control & Operations",
+  passenger_services: "Passenger & Gate Services",
+  cargo: "Cargo Operations",
 };
 
 function calculateDuration(start: string, end: string) {
   if (!start || !end) return "";
 
-  const startDate = new Date(`1970-01-01T${start}`);
-  const endDate = new Date(`1970-01-01T${end}`);
+  const s = new Date(`1970-01-01T${start}`);
+  const e = new Date(`1970-01-01T${end}`);
 
-  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+  if (
+    Number.isNaN(s.getTime()) ||
+    Number.isNaN(e.getTime())
+  ) {
     return "";
   }
 
-  let difference =
-    endDate.getTime() - startDate.getTime();
+  let difference = e.getTime() - s.getTime();
 
   if (difference < 0) {
     difference += 24 * 60 * 60 * 1000;
   }
 
   const minutes = Math.floor(difference / 60000);
-
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
 
@@ -61,6 +67,10 @@ function calculateDuration(start: string, end: string) {
     mins
   ).padStart(2, "0")}`;
 }
+
+/* =========================================================
+   FIELD
+========================================================= */
 
 function Field({
   label,
@@ -76,7 +86,7 @@ function Field({
   type?: string;
 }) {
   return (
-    <div className="capture-field">
+    <div className="transom-field">
       <label>{label}</label>
 
       <input
@@ -88,6 +98,10 @@ function Field({
     </div>
   );
 }
+
+/* =========================================================
+   TEXT AREA
+========================================================= */
 
 function TextAreaField({
   label,
@@ -101,7 +115,7 @@ function TextAreaField({
   placeholder?: string;
 }) {
   return (
-    <div className="capture-field capture-textarea">
+    <div className="transom-field transom-textarea">
       <label>{label}</label>
 
       <textarea
@@ -112,6 +126,10 @@ function TextAreaField({
     </div>
   );
 }
+
+/* =========================================================
+   SERVICE CARD
+========================================================= */
 
 function ServiceTime({
   title,
@@ -129,15 +147,15 @@ function ServiceTime({
   const duration = calculateDuration(start, end);
 
   return (
-    <div className="service-card">
-      <div className="service-card-title">
-        {title}
+    <div className="service-box">
+      <div className="service-box-header">
+        <span className="service-icon">✓</span>
+        <strong>{title}</strong>
       </div>
 
-      <div className="service-time-row">
+      <div className="service-times">
         <div>
           <label>START TIME</label>
-
           <input
             type="time"
             value={start}
@@ -149,7 +167,6 @@ function ServiceTime({
 
         <div>
           <label>END TIME</label>
-
           <input
             type="time"
             value={end}
@@ -160,16 +177,17 @@ function ServiceTime({
         </div>
       </div>
 
-      <div className="service-duration">
+      <div className="duration-box">
         <span>SERVICE DURATION</span>
-
-        <strong>
-          {duration || "--:--"}
-        </strong>
+        <strong>{duration || "--:--"}</strong>
       </div>
     </div>
   );
 }
+
+/* =========================================================
+   STATUS BUTTON
+========================================================= */
 
 function StatusButton({
   label,
@@ -183,8 +201,8 @@ function StatusButton({
   return (
     <button
       type="button"
-      className={`capture-status-button ${
-        active ? "active" : ""
+      className={`status-control ${
+        active ? "status-active" : ""
       }`}
       onClick={onClick}
     >
@@ -193,12 +211,17 @@ function StatusButton({
   );
 }
 
+/* =========================================================
+   MAIN
+========================================================= */
+
 function FlightCapturePage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const flightId = params.id as string;
+
   const department =
     searchParams.get("department") || "ramp";
 
@@ -207,9 +230,6 @@ function FlightCapturePage() {
 
   const [profile, setProfile] =
     useState<Profile | null>(null);
-
-  const [captures, setCaptures] =
-    useState<Capture[]>([]);
 
   const [loading, setLoading] =
     useState(true);
@@ -220,9 +240,9 @@ function FlightCapturePage() {
   const [message, setMessage] =
     useState("");
 
-  /* ================================
+  /* =====================================================
      RAMP
-  ================================= */
+  ===================================================== */
 
   const [gpuStart, setGpuStart] = useState("");
   const [gpuEnd, setGpuEnd] = useState("");
@@ -276,9 +296,9 @@ function FlightCapturePage() {
   const [rampComments, setRampComments] =
     useState("");
 
-  /* ================================
+  /* =====================================================
      SORTING
-  ================================= */
+  ===================================================== */
 
   const [uldBagSorting, setUldBagSorting] =
     useState("");
@@ -316,9 +336,9 @@ function FlightCapturePage() {
   const [sortingComments, setSortingComments] =
     useState("");
 
-  /* ================================
-     LOAD CONTROL / OPS
-  ================================= */
+  /* =====================================================
+     LOAD CONTROL
+  ===================================================== */
 
   const [pax, setPax] = useState("");
   const [baggages, setBaggages] =
@@ -358,9 +378,9 @@ function FlightCapturePage() {
   const [loadControlComments, setLoadControlComments] =
     useState("");
 
-  /* ================================
+  /* =====================================================
      PASSENGER SERVICES
-  ================================= */
+  ===================================================== */
 
   const [checkInStart, setCheckInStart] =
     useState("");
@@ -410,9 +430,9 @@ function FlightCapturePage() {
   const [passengerComments, setPassengerComments] =
     useState("");
 
-  /* ================================
+  /* =====================================================
      CARGO
-  ================================= */
+  ===================================================== */
 
   const [cargoAcceptanceStart, setCargoAcceptanceStart] =
     useState("");
@@ -462,9 +482,9 @@ function FlightCapturePage() {
   const [cargoComments, setCargoComments] =
     useState("");
 
-  /* ================================
+  /* =====================================================
      LOAD DATA
-  ================================= */
+  ===================================================== */
 
   useEffect(() => {
     const loadData = async () => {
@@ -502,25 +522,13 @@ function FlightCapturePage() {
           .single();
 
       if (error) {
-        console.error(error);
-        setMessage("Unable to load flight.");
+        setMessage(
+          `Unable to load flight: ${error.message}`
+        );
       }
 
       if (flightData) {
         setFlight(flightData);
-      }
-
-      const { data: captureData } =
-        await supabase
-          .from("flight_service_captures")
-          .select("*")
-          .eq("flight_id", flightId)
-          .order("created_at", {
-            ascending: false,
-          });
-
-      if (captureData) {
-        setCaptures(captureData);
       }
 
       setLoading(false);
@@ -529,18 +537,18 @@ function FlightCapturePage() {
     loadData();
   }, [flightId, router]);
 
-  /* ================================
+  /* =====================================================
      LOGOUT
-  ================================= */
+  ===================================================== */
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
   };
 
-  /* ================================
+  /* =====================================================
      SAVE
-  ================================= */
+  ===================================================== */
 
   const handleSave = async () => {
     if (!profile || !flight) return;
@@ -548,215 +556,182 @@ function FlightCapturePage() {
     setSaving(true);
     setMessage("");
 
-    try {
-      const captureData: any = {
-        flight_id: flight.id,
-        department,
-        created_by: profile.id,
+    const captureData: any = {
+      flight_id: flight.id,
+      department,
+      created_by: profile.id,
 
-        /* RAMP */
-        gpu_start: gpuStart,
-        gpu_end: gpuEnd,
-        gpu_duration: calculateDuration(
-          gpuStart,
-          gpuEnd
-        ),
+      gpu_start: gpuStart,
+      gpu_end: gpuEnd,
+      gpu_duration: calculateDuration(
+        gpuStart,
+        gpuEnd
+      ),
 
-        acu_start: acuStart,
-        acu_end: acuEnd,
-        acu_duration: calculateDuration(
-          acuStart,
-          acuEnd
-        ),
+      acu_start: acuStart,
+      acu_end: acuEnd,
+      acu_duration: calculateDuration(
+        acuStart,
+        acuEnd
+      ),
 
-        cleaning_start: cleaningStart,
-        cleaning_end: cleaningEnd,
-        cleaning_duration: calculateDuration(
-          cleaningStart,
-          cleaningEnd
-        ),
+      cleaning_start: cleaningStart,
+      cleaning_end: cleaningEnd,
+      cleaning_duration: calculateDuration(
+        cleaningStart,
+        cleaningEnd
+      ),
 
-        conveyor_start: conveyorStart,
-        conveyor_end: conveyorEnd,
-        conveyor_duration: calculateDuration(
-          conveyorStart,
-          conveyorEnd
-        ),
+      conveyor_start: conveyorStart,
+      conveyor_end: conveyorEnd,
+      conveyor_duration: calculateDuration(
+        conveyorStart,
+        conveyorEnd
+      ),
 
-        vomiting_start: vomitingStart,
-        vomiting_end: vomitingEnd,
-        vomiting_duration: calculateDuration(
-          vomitingStart,
-          vomitingEnd
-        ),
+      vomiting_start: vomitingStart,
+      vomiting_end: vomitingEnd,
+      vomiting_duration: calculateDuration(
+        vomitingStart,
+        vomitingEnd
+      ),
 
-        cobus,
-        towing,
-        pushback,
-        lavatory_service: lavatoryService,
-        portable_water: portableWater,
-        pax_stairs: paxStairs,
-        pax_step: paxStep,
-        ambulift,
-        asu,
-        chocks_in: chocksIn,
-        chocks_out: chocksOut,
+      cobus,
+      towing,
+      pushback,
+      lavatory_service: lavatoryService,
+      portable_water: portableWater,
+      pax_stairs: paxStairs,
+      pax_step: paxStep,
+      ambulift,
+      asu,
+      chocks_in: chocksIn,
+      chocks_out: chocksOut,
 
-        supervisor_name: supervisorName,
-        ramp_opening_status:
-          rampOpeningStatus,
-        ramp_closing_status:
-          rampClosingStatus,
-        ramp_comments: rampComments,
+      supervisor_name: supervisorName,
+      ramp_opening_status: rampOpeningStatus,
+      ramp_closing_status: rampClosingStatus,
+      ramp_comments: rampComments,
 
-        /* SORTING */
-        uld_bag_sorting: uldBagSorting,
-        number_of_bags: numberOfBags,
-        uld_number: uldNumber,
-        sorting_start: sortingStart,
-        sorting_end: sortingEnd,
-        sorting_duration: calculateDuration(
-          sortingStart,
-          sortingEnd
-        ),
-        bag_transfer: bagTransfer,
-        rush_priority: rushPriority,
-        misrouted_bags: misroutedBags,
-        damaged_bags: damagedBags,
-        missing_bags: missingBags,
-        sorting_remarks: sortingRemarks,
-        sorting_comments: sortingComments,
+      uld_bag_sorting: uldBagSorting,
+      number_of_bags: numberOfBags,
+      uld_number: uldNumber,
+      sorting_start: sortingStart,
+      sorting_end: sortingEnd,
+      sorting_duration: calculateDuration(
+        sortingStart,
+        sortingEnd
+      ),
+      bag_transfer: bagTransfer,
+      rush_priority: rushPriority,
+      misrouted_bags: misroutedBags,
+      damaged_bags: damagedBags,
+      missing_bags: missingBags,
+      sorting_remarks: sortingRemarks,
+      sorting_comments: sortingComments,
 
-        /* LOAD CONTROL */
-        pax,
-        baggages,
-        cargo,
-        parking_bay: parkingBay,
-        load_ramp: loadRamp,
-        std,
-        etd,
-        sta,
-        eta,
-        actual_departure: actualDeparture,
-        actual_arrival: actualArrival,
-        load_control_trc_name:
-          loadControlTrcName,
-        sal_name: salName,
-        iata_delay_code: iataDelayCode,
-        delay_reason: delayReason,
-        operational_remarks:
-          operationalRemarks,
-        load_control_comments:
-          loadControlComments,
+      pax,
+      baggages,
+      cargo,
+      parking_bay: parkingBay,
+      load_ramp: loadRamp,
+      std,
+      etd,
+      sta,
+      eta,
+      actual_departure: actualDeparture,
+      actual_arrival: actualArrival,
+      load_control_trc_name:
+        loadControlTrcName,
+      sal_name: salName,
+      iata_delay_code: iataDelayCode,
+      delay_reason: delayReason,
+      operational_remarks:
+        operationalRemarks,
+      load_control_comments:
+        loadControlComments,
 
-        /* PASSENGER */
-        check_in_start: checkInStart,
-        check_in_end: checkInEnd,
-        check_in_duration: calculateDuration(
-          checkInStart,
-          checkInEnd
-        ),
-        check_in_agents: checkInAgents,
+      check_in_start: checkInStart,
+      check_in_end: checkInEnd,
+      check_in_duration: calculateDuration(
+        checkInStart,
+        checkInEnd
+      ),
+      check_in_agents: checkInAgents,
 
-        boarding_start: boardingStart,
-        boarding_end: boardingEnd,
-        boarding_duration: calculateDuration(
-          boardingStart,
-          boardingEnd
-        ),
-        boarding_agents: boardingAgents,
+      boarding_start: boardingStart,
+      boarding_end: boardingEnd,
+      boarding_duration: calculateDuration(
+        boardingStart,
+        boardingEnd
+      ),
+      boarding_agents: boardingAgents,
 
-        gate_number: gateNumber,
-        gate_open: gateOpen,
-        gate_close: gateClose,
-        wheelchair,
-        special_assistance: specialAssistance,
-        no_show: noShow,
-        denied_boarding: deniedBoarding,
-        transfer_pax: transferPax,
-        passenger_remarks:
-          passengerRemarks,
-        passenger_comments:
-          passengerComments,
+      gate_number: gateNumber,
+      gate_open: gateOpen,
+      gate_close: gateClose,
+      wheelchair,
+      special_assistance: specialAssistance,
+      no_show: noShow,
+      denied_boarding: deniedBoarding,
+      transfer_pax: transferPax,
+      passenger_remarks: passengerRemarks,
+      passenger_comments: passengerComments,
 
-        /* CARGO */
-        cargo_acceptance_start:
+      cargo_acceptance_start:
+        cargoAcceptanceStart,
+      cargo_acceptance_end:
+        cargoAcceptanceEnd,
+      cargo_acceptance_duration:
+        calculateDuration(
           cargoAcceptanceStart,
-        cargo_acceptance_end:
-          cargoAcceptanceEnd,
-        cargo_acceptance_duration:
-          calculateDuration(
-            cargoAcceptanceStart,
-            cargoAcceptanceEnd
-          ),
-
-        cargo_type: cargoType,
-        cargo_weight: cargoWeight,
-        cargo_pieces: cargoPieces,
-        awb,
-        cargo_uld_number: cargoUldNumber,
-        dangerous_goods: dangerousGoods,
-        special_cargo: specialCargo,
-        warehouse_location:
-          warehouseLocation,
-
-        loading_start: loadingStart,
-        loading_end: loadingEnd,
-        loading_duration: calculateDuration(
-          loadingStart,
-          loadingEnd
+          cargoAcceptanceEnd
         ),
 
-        do_name: doName,
-        agent_name: agentName,
-        cargo_remarks: cargoRemarks,
-        cargo_comments: cargoComments,
-      };
+      cargo_type: cargoType,
+      cargo_weight: cargoWeight,
+      cargo_pieces: cargoPieces,
+      awb,
+      cargo_uld_number: cargoUldNumber,
+      dangerous_goods: dangerousGoods,
+      special_cargo: specialCargo,
+      warehouse_location:
+        warehouseLocation,
 
-      const { error } =
-        await supabase
-          .from("flight_service_captures")
-          .insert([captureData]);
+      loading_start: loadingStart,
+      loading_end: loadingEnd,
+      loading_duration: calculateDuration(
+        loadingStart,
+        loadingEnd
+      ),
 
-      if (error) {
-        console.error(error);
-        setMessage(
-          `SAVE ERROR: ${error.message}`
-        );
-        return;
-      }
+      do_name: doName,
+      agent_name: agentName,
+      cargo_remarks: cargoRemarks,
+      cargo_comments: cargoComments,
+    };
 
+    const { error } =
+      await supabase
+        .from("flight_service_captures")
+        .insert([captureData]);
+
+    if (error) {
+      setMessage(
+        `SAVE ERROR: ${error.message}`
+      );
+    } else {
       setMessage(
         "SERVICE CAPTURE SAVED SUCCESSFULLY"
       );
-
-      const { data } =
-        await supabase
-          .from("flight_service_captures")
-          .select("*")
-          .eq("flight_id", flight.id)
-          .order("created_at", {
-            ascending: false,
-          });
-
-      if (data) {
-        setCaptures(data);
-      }
-    } catch (error: any) {
-      console.error(error);
-
-      setMessage(
-        error?.message ||
-          "An unexpected error occurred."
-      );
-    } finally {
-      setSaving(false);
     }
+
+    setSaving(false);
   };
 
-  /* ================================
-     FLIGHT STATUS
-  ================================= */
+  /* =====================================================
+     STATUS
+  ===================================================== */
 
   const updateFlightStatus = async (
     status: string
@@ -782,65 +757,30 @@ function FlightCapturePage() {
     });
   };
 
-  const handleOpenFlight = () =>
-    updateFlightStatus("Open");
-
-  const handleInProgress = () =>
-    updateFlightStatus("In Progress");
-
-  const handleCloseFlight = () => {
-    const hasDelay =
-      delayReason.trim() !== "" ||
-      iataDelayCode.trim() !== "";
-
-    updateFlightStatus(
-      hasDelay
-        ? "Closed - With Delay"
-        : "Closed - No Delay"
-    );
-  };
-
-  /* ================================
-     STATUS CLASS
-  ================================= */
-
-  const getStatusClass = (
-    status: string
-  ) => {
-    if (status === "In Progress")
-      return "progress-status";
-
-    if (status === "Closed - With Delay")
-      return "delay-status";
-
-    if (status === "Closed - No Delay")
-      return "no-delay-status";
-
-    return "open-status";
-  };
-
-  /* ================================
+  /* =====================================================
      LOADING
-  ================================= */
+  ===================================================== */
 
   if (loading) {
     return (
-      <main className="capture-page">
-        <div className="capture-loading">
+      <div className="transom-loading">
+        <div className="loading-card">
+          <div className="loading-logo">
+            TRANSOM
+          </div>
           LOADING FLIGHT...
         </div>
-      </main>
+      </div>
     );
   }
 
   if (!flight) {
     return (
-      <main className="capture-page">
-        <div className="capture-panel">
+      <div className="transom-loading">
+        <div className="loading-card">
           <h2>FLIGHT NOT FOUND</h2>
 
           <button
-            className="capture-back-button"
             onClick={() =>
               router.push(
                 `/flights?department=${department}`
@@ -850,1021 +790,1944 @@ function FlightCapturePage() {
             ← BACK TO FLIGHTS
           </button>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="capture-page">
+    <>
+      <main className="transom-capture-page">
 
-      {/* =================================
-          HEADER
-      ================================== */}
+        {/* =================================================
+            TOP HEADER
+        ================================================= */}
 
-      <header className="capture-header">
-
-        <div>
-          <div className="capture-brand">
+        <header className="transom-topbar">
+          <div className="transom-logo">
             TRANSOM
-          </div>
-
-          <div className="capture-brand-subtitle">
-            FLIGHT SERVICE CAPTURE
-          </div>
-        </div>
-
-        <div className="capture-header-right">
-
-          <div className="capture-user">
-            {profile?.full_name ||
-              "Authorized User"}
-          </div>
-
-          <button
-            className="capture-logout"
-            onClick={handleLogout}
-          >
-            LOGOUT
-          </button>
-
-        </div>
-
-      </header>
-
-
-      {/* =================================
-          HERO
-      ================================== */}
-
-      <section className="capture-hero">
-
-        <div>
-
-          <div className="capture-small-title">
-            SERVICE CAPTURE
-          </div>
-
-          <h1>
-            {flight.flight_number}
-            {" - "}
-            {departmentNames[
-              department
-            ] || department}
-          </h1>
-
-          <div className="capture-red-line" />
-
-          <p>
-            Enter the service capture
-            details below.
-          </p>
-
-        </div>
-
-      </section>
-
-
-      {/* =================================
-          MAIN PANEL
-      ================================== */}
-
-      <section className="capture-panel">
-
-        {/* ===============================
-            PANEL HEADER
-        ================================ */}
-
-        <div className="capture-section-heading">
-
-          <div className="capture-heading-icon">
-            ✈
-          </div>
-
-          <div>
-            <h2>
-              FLIGHT INFORMATION
-            </h2>
-
-            <p>
-              Flight operational information
-            </p>
-          </div>
-
-        </div>
-
-
-        {/* ===============================
-            FLIGHT INFO
-        ================================ */}
-
-        <div className="flight-information">
-
-          <div className="flight-info-item">
-            <span>FLIGHT NUMBER</span>
-            <strong>
-              {flight.flight_number}
-            </strong>
-          </div>
-
-          <div className="flight-info-item">
-            <span>AIRCRAFT</span>
-            <strong>
-              {flight.aircraft}
-            </strong>
-          </div>
-
-          <div className="flight-info-item">
-            <span>ROUTE</span>
-            <strong>
-              {flight.route}
-            </strong>
-          </div>
-
-          <div className="flight-info-item">
-            <span>FLIGHT DATE</span>
-            <strong>
-              {flight.flight_date}
-            </strong>
-          </div>
-
-          <div className="flight-info-item">
-            <span>STATUS</span>
-
-            <strong
-              className={`flight-status ${getStatusClass(
-                flight.status
-              )}`}
-            >
-              {flight.status}
-            </strong>
-          </div>
-
-        </div>
-
-
-        {/* ===============================
-            STATUS CONTROL
-        ================================ */}
-
-        <div className="capture-status-panel">
-
-          <div>
             <span>
-              FLIGHT STATUS
+              FLIGHT SERVICE CAPTURE
+            </span>
+          </div>
+
+          <div className="topbar-right">
+            <span>
+              {profile?.full_name ||
+                "Authorized User"}
             </span>
 
-            <small>
-              Update the operational status
-            </small>
+            <button onClick={handleLogout}>
+              LOGOUT
+            </button>
           </div>
+        </header>
 
-          <div className="capture-status-actions">
+        {/* =================================================
+            MAIN CONTAINER
+        ================================================= */}
 
-            <StatusButton
-              label="OPEN"
-              active={
-                flight.status === "Open"
-              }
-              onClick={handleOpenFlight}
-            />
+        <section className="transom-container">
 
-            <StatusButton
-              label="IN PROGRESS"
-              active={
-                flight.status ===
-                "In Progress"
-              }
-              onClick={handleInProgress}
-            />
+          {/* =================================================
+              PAGE TITLE
+          ================================================= */}
 
-            <StatusButton
-              label="CLOSED - NO DELAY"
-              active={
-                flight.status ===
-                "Closed - No Delay"
-              }
-              onClick={() =>
-                updateFlightStatus(
-                  "Closed - No Delay"
-                )
-              }
-            />
+          <div className="page-title">
 
-            <StatusButton
-              label="CLOSED - WITH DELAY"
-              active={
-                flight.status ===
-                "Closed - With Delay"
-              }
-              onClick={() =>
-                updateFlightStatus(
-                  "Closed - With Delay"
-                )
-              }
-            />
-
-          </div>
-
-        </div>
-
-
-        {/* =================================
-            RAMP
-        ================================== */}
-
-        {department === "ramp" && (
-          <>
-            <div className="department-section-title">
-              <div className="section-color red" />
-
-              <div>
-                <h2>
-                  RAMP DEPARTMENT
-                </h2>
-
-                <p>
-                  Ramp & Ground Services
-                </p>
-              </div>
+            <div className="title-icon">
+              {department === "ramp"
+                ? "✈"
+                : department === "sorting"
+                ? "▣"
+                : department ===
+                  "load_control_ops"
+                ? "☑"
+                : department ===
+                  "passenger_services"
+                ? "♙"
+                : "▥"}
             </div>
 
-
-            <div className="service-grid">
-
-              <ServiceTime
-                title="GPU TIME"
-                start={gpuStart}
-                end={gpuEnd}
-                setStart={setGpuStart}
-                setEnd={setGpuEnd}
-              />
-
-              <ServiceTime
-                title="ACU"
-                start={acuStart}
-                end={acuEnd}
-                setStart={setAcuStart}
-                setEnd={setAcuEnd}
-              />
-
-              <ServiceTime
-                title="CLEANING"
-                start={cleaningStart}
-                end={cleaningEnd}
-                setStart={setCleaningStart}
-                setEnd={setCleaningEnd}
-              />
-
-              <ServiceTime
-                title="CONVEYOR"
-                start={conveyorStart}
-                end={conveyorEnd}
-                setStart={setConveyorStart}
-                setEnd={setConveyorEnd}
-              />
-
-              <ServiceTime
-                title="VOMITING"
-                start={vomitingStart}
-                end={vomitingEnd}
-                setStart={setVomitingStart}
-                setEnd={setVomitingEnd}
-              />
-
-            </div>
-
-
-            <div className="capture-fields-grid">
-
-              <Field
-                label="COBUS"
-                value={cobus}
-                onChange={setCobus}
-                placeholder="e.g. 1"
-              />
-
-              <Field
-                label="TOWING"
-                value={towing}
-                onChange={setTowing}
-                placeholder="e.g. 1"
-              />
-
-              <Field
-                label="PUSHBACK"
-                value={pushback}
-                onChange={setPushback}
-                placeholder="e.g. 1"
-              />
-
-              <Field
-                label="LAVATORY SERVICE"
-                value={lavatoryService}
-                onChange={setLavatoryService}
-                placeholder="e.g. 1"
-              />
-
-              <Field
-                label="PORTABLE WATER"
-                value={portableWater}
-                onChange={setPortableWater}
-                placeholder="e.g. 1"
-              />
-
-              <Field
-                label="PAX STAIRS"
-                value={paxStairs}
-                onChange={setPaxStairs}
-                placeholder="e.g. 2"
-              />
-
-              <Field
-                label="PAX STEP"
-                value={paxStep}
-                onChange={setPaxStep}
-                placeholder="e.g. 1"
-              />
-
-              <Field
-                label="AMBULIFT"
-                value={ambulift}
-                onChange={setAmbulift}
-                placeholder="e.g. 0"
-              />
-
-              <Field
-                label="ASU"
-                value={asu}
-                onChange={setAsu}
-                placeholder="e.g. 1"
-              />
-
-              <Field
-                label="CHOCKS IN"
-                value={chocksIn}
-                onChange={setChocksIn}
-                placeholder="e.g. 1"
-              />
-
-              <Field
-                label="CHOCKS OUT"
-                value={chocksOut}
-                onChange={setChocksOut}
-                placeholder="e.g. 1"
-              />
-
-              <Field
-                label="SUPERVISOR NAME"
-                value={supervisorName}
-                onChange={setSupervisorName}
-                placeholder="Enter supervisor name"
-              />
-
-              <Field
-                label="RAMP OPENING STATUS"
-                value={rampOpeningStatus}
-                onChange={setRampOpeningStatus}
-                placeholder="Enter status"
-              />
-
-              <Field
-                label="RAMP CLOSING STATUS"
-                value={rampClosingStatus}
-                onChange={setRampClosingStatus}
-                placeholder="Enter status"
-              />
-
-            </div>
-
-
-            <TextAreaField
-              label="RAMP COMMENTS"
-              value={rampComments}
-              onChange={setRampComments}
-              placeholder="Enter any additional comments..."
-            />
-          </>
-        )}
-
-
-        {/* =================================
-            SORTING
-        ================================== */}
-
-        {department === "sorting" && (
-          <>
-            <div className="department-section-title">
-              <div className="section-color navy" />
-
-              <div>
-                <h2>
-                  SORTING DEPARTMENT
-                </h2>
-
-                <p>
-                  Baggage & ULD Sorting
-                </p>
-              </div>
-            </div>
-
-
-            <div className="capture-fields-grid">
-
-              <Field
-                label="ULD / BAG SORTING"
-                value={uldBagSorting}
-                onChange={setUldBagSorting}
-                placeholder="Enter activity"
-              />
-
-              <Field
-                label="NUMBER OF BAGS"
-                value={numberOfBags}
-                onChange={setNumberOfBags}
-                placeholder="e.g. 120"
-                type="number"
-              />
-
-              <Field
-                label="ULD NUMBER"
-                value={uldNumber}
-                onChange={setUldNumber}
-                placeholder="Enter ULD number"
-              />
-
-            </div>
-
-
-            <div className="service-grid">
-
-              <ServiceTime
-                title="SORTING"
-                start={sortingStart}
-                end={sortingEnd}
-                setStart={setSortingStart}
-                setEnd={setSortingEnd}
-              />
-
-            </div>
-
-
-            <div className="capture-fields-grid">
-
-              <Field
-                label="BAG TRANSFER"
-                value={bagTransfer}
-                onChange={setBagTransfer}
-                placeholder="Enter details"
-              />
-
-              <Field
-                label="RUSH / PRIORITY"
-                value={rushPriority}
-                onChange={setRushPriority}
-                placeholder="Enter details"
-              />
-
-              <Field
-                label="MISROUTED BAGS"
-                value={misroutedBags}
-                onChange={setMisroutedBags}
-                placeholder="e.g. 0"
-              />
-
-              <Field
-                label="DAMAGED BAGS"
-                value={damagedBags}
-                onChange={setDamagedBags}
-                placeholder="e.g. 0"
-              />
-
-              <Field
-                label="MISSING BAGS"
-                value={missingBags}
-                onChange={setMissingBags}
-                placeholder="e.g. 0"
-              />
-
-              <Field
-                label="REMARKS"
-                value={sortingRemarks}
-                onChange={setSortingRemarks}
-                placeholder="Enter remarks"
-              />
-
-            </div>
-
-
-            <TextAreaField
-              label="SORTING COMMENTS"
-              value={sortingComments}
-              onChange={setSortingComments}
-              placeholder="Enter any additional comments..."
-            />
-          </>
-        )}
-
-
-        {/* =================================
-            LOAD CONTROL / OPS
-        ================================== */}
-
-        {department ===
-          "load_control_ops" && (
-          <>
-            <div className="department-section-title">
-              <div className="section-color blue" />
-
-              <div>
-                <h2>
-                  LOAD CONTROL / OPS
-                </h2>
-
-                <p>
-                  Load Control & Operations
-                </p>
-              </div>
-            </div>
-
-
-            <div className="capture-fields-grid">
-
-              <Field
-                label="PAX"
-                value={pax}
-                onChange={setPax}
-                placeholder="e.g. 78"
-              />
-
-              <Field
-                label="BAGGAGES"
-                value={baggages}
-                onChange={setBaggages}
-                placeholder="e.g. 60"
-              />
-
-              <Field
-                label="CARGO"
-                value={cargo}
-                onChange={setCargo}
-                placeholder="Enter cargo"
-              />
-
-              <Field
-                label="PARKING BAY"
-                value={parkingBay}
-                onChange={setParkingBay}
-                placeholder="Enter bay"
-              />
-
-              <Field
-                label="LOAD / RAMP"
-                value={loadRamp}
-                onChange={setLoadRamp}
-                placeholder="Enter details"
-              />
-
-              <Field
-                label="STD"
-                value={std}
-                onChange={setStd}
-                type="time"
-              />
-
-              <Field
-                label="ETD"
-                value={etd}
-                onChange={setEtd}
-                type="time"
-              />
-
-              <Field
-                label="STA"
-                value={sta}
-                onChange={setSta}
-                type="time"
-              />
-
-              <Field
-                label="ETA"
-                value={eta}
-                onChange={setEta}
-                type="time"
-              />
-
-              <Field
-                label="ACTUAL DEPARTURE"
-                value={actualDeparture}
-                onChange={setActualDeparture}
-                type="time"
-              />
-
-              <Field
-                label="ACTUAL ARRIVAL"
-                value={actualArrival}
-                onChange={setActualArrival}
-                type="time"
-              />
-
-              <Field
-                label="LOAD CONTROL / TRC NAME"
-                value={loadControlTrcName}
-                onChange={setLoadControlTrcName}
-                placeholder="Enter name"
-              />
-
-              <Field
-                label="SAL NAME"
-                value={salName}
-                onChange={setSalName}
-                placeholder="Enter name"
-              />
-
-              <Field
-                label="IATA DELAY CODE"
-                value={iataDelayCode}
-                onChange={setIataDelayCode}
-                placeholder="e.g. 15"
-              />
-
-              <Field
-                label="DELAY REASON"
-                value={delayReason}
-                onChange={setDelayReason}
-                placeholder="Enter delay reason"
-              />
-
-            </div>
-
-
-            <TextAreaField
-              label="OPERATIONAL REMARKS"
-              value={operationalRemarks}
-              onChange={setOperationalRemarks}
-              placeholder="Enter operational remarks..."
-            />
-
-            <TextAreaField
-              label="COMMENTS"
-              value={loadControlComments}
-              onChange={setLoadControlComments}
-              placeholder="Enter any additional comments..."
-            />
-          </>
-        )}
-
-
-        {/* =================================
-            PASSENGER SERVICES
-        ================================== */}
-
-        {department ===
-          "passenger_services" && (
-          <>
-            <div className="department-section-title">
-              <div className="section-color red" />
-
-              <div>
-                <h2>
-                  PASSENGER SERVICES
-                </h2>
-
-                <p>
-                  Passenger & Gate Services
-                </p>
-              </div>
-            </div>
-
-
-            <div className="service-grid">
-
-              <ServiceTime
-                title="CHECK-IN"
-                start={checkInStart}
-                end={checkInEnd}
-                setStart={setCheckInStart}
-                setEnd={setCheckInEnd}
-              />
-
-              <ServiceTime
-                title="BOARDING"
-                start={boardingStart}
-                end={boardingEnd}
-                setStart={setBoardingStart}
-                setEnd={setBoardingEnd}
-              />
-
-            </div>
-
-
-            <div className="capture-fields-grid">
-
-              <Field
-                label="CHECK-IN AGENTS"
-                value={checkInAgents}
-                onChange={setCheckInAgents}
-                placeholder="Number / names"
-              />
-
-              <Field
-                label="BOARDING AGENTS"
-                value={boardingAgents}
-                onChange={setBoardingAgents}
-                placeholder="Number / names"
-              />
-
-              <Field
-                label="GATE NUMBER"
-                value={gateNumber}
-                onChange={setGateNumber}
-                placeholder="e.g. 04"
-              />
-
-              <Field
-                label="GATE OPEN"
-                value={gateOpen}
-                onChange={setGateOpen}
-                type="time"
-              />
-
-              <Field
-                label="GATE CLOSE"
-                value={gateClose}
-                onChange={setGateClose}
-                type="time"
-              />
-
-              <Field
-                label="WHEELCHAIR"
-                value={wheelchair}
-                onChange={setWheelchair}
-                placeholder="e.g. 2"
-              />
-
-              <Field
-                label="SPECIAL ASSISTANCE"
-                value={specialAssistance}
-                onChange={setSpecialAssistance}
-                placeholder="Enter details"
-              />
-
-              <Field
-                label="NO-SHOW"
-                value={noShow}
-                onChange={setNoShow}
-                placeholder="e.g. 1"
-              />
-
-              <Field
-                label="DENIED BOARDING"
-                value={deniedBoarding}
-                onChange={setDeniedBoarding}
-                placeholder="e.g. 0"
-              />
-
-              <Field
-                label="TRANSFER PAX"
-                value={transferPax}
-                onChange={setTransferPax}
-                placeholder="e.g. 4"
-              />
-
-              <Field
-                label="REMARKS"
-                value={passengerRemarks}
-                onChange={setPassengerRemarks}
-                placeholder="Enter remarks"
-              />
-
-            </div>
-
-
-            <TextAreaField
-              label="PASSENGER SERVICES COMMENTS"
-              value={passengerComments}
-              onChange={setPassengerComments}
-              placeholder="Enter any additional comments..."
-            />
-          </>
-        )}
-
-
-        {/* =================================
-            CARGO
-        ================================== */}
-
-        {department === "cargo" && (
-          <>
-            <div className="department-section-title">
-              <div className="section-color navy" />
-
-              <div>
-                <h2>
-                  CARGO DEPARTMENT
-                </h2>
-
-                <p>
-                  Cargo Operations
-                </p>
-              </div>
-            </div>
-
-
-            <div className="service-grid">
-
-              <ServiceTime
-                title="CARGO ACCEPTANCE"
-                start={cargoAcceptanceStart}
-                end={cargoAcceptanceEnd}
-                setStart={setCargoAcceptanceStart}
-                setEnd={setCargoAcceptanceEnd}
-              />
-
-              <ServiceTime
-                title="LOADING"
-                start={loadingStart}
-                end={loadingEnd}
-                setStart={setLoadingStart}
-                setEnd={setLoadingEnd}
-              />
-
-            </div>
-
-
-            <div className="capture-fields-grid">
-
-              <Field
-                label="CARGO TYPE"
-                value={cargoType}
-                onChange={setCargoType}
-                placeholder="Enter cargo type"
-              />
-
-              <Field
-                label="WEIGHT"
-                value={cargoWeight}
-                onChange={setCargoWeight}
-                placeholder="e.g. 1250 KG"
-              />
-
-              <Field
-                label="PIECES"
-                value={cargoPieces}
-                onChange={setCargoPieces}
-                placeholder="e.g. 12"
-              />
-
-              <Field
-                label="AWB"
-                value={awb}
-                onChange={setAwb}
-                placeholder="Enter AWB"
-              />
-
-              <Field
-                label="ULD NUMBER"
-                value={cargoUldNumber}
-                onChange={setCargoUldNumber}
-                placeholder="Enter ULD"
-              />
-
-              <Field
-                label="DANGEROUS GOODS"
-                value={dangerousGoods}
-                onChange={setDangerousGoods}
-                placeholder="Yes / No"
-              />
-
-              <Field
-                label="SPECIAL CARGO"
-                value={specialCargo}
-                onChange={setSpecialCargo}
-                placeholder="Enter details"
-              />
-
-              <Field
-                label="WAREHOUSE LOCATION"
-                value={warehouseLocation}
-                onChange={setWarehouseLocation}
-                placeholder="Enter location"
-              />
-
-              <Field
-                label="DO NAME"
-                value={doName}
-                onChange={setDoName}
-                placeholder="Enter DO name"
-              />
-
-              <Field
-                label="AGENT NAME"
-                value={agentName}
-                onChange={setAgentName}
-                placeholder="Enter agent name"
-              />
-
-              <Field
-                label="REMARKS"
-                value={cargoRemarks}
-                onChange={setCargoRemarks}
-                placeholder="Enter remarks"
-              />
-
-            </div>
-
-
-            <TextAreaField
-              label="CARGO COMMENTS"
-              value={cargoComments}
-              onChange={setCargoComments}
-              placeholder="Enter any additional comments..."
-            />
-          </>
-        )}
-
-
-        {/* =================================
-            MESSAGE
-        ================================== */}
-
-        {message && (
-          <div
-            className={`capture-message ${
-              message.includes("SUCCESSFULLY")
-                ? "success"
-                : "error"
-            }`}
-          >
-            {message}
-          </div>
-        )}
-
-
-        {/* =================================
-            SAVE
-        ================================== */}
-
-        <div className="capture-save-area">
-
-          <button
-            className="save-capture-button"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving
-              ? "SAVING..."
-              : `SAVE ${
-                  departmentNames[
+            <div>
+              <h1>
+                {departmentNames[
+                  department
+                ] || department}
+              </h1>
+
+              <p>
+                {
+                  departmentDescriptions[
                     department
-                  ] || "SERVICE"
-                } CAPTURE`}
-          </button>
+                  ]
+                }
+              </p>
+            </div>
 
-        </div>
+          </div>
 
+          <div className="title-line" />
 
-        {/* =================================
-            FOOTER
-        ================================== */}
+          {/* =================================================
+              FLIGHT CARD
+          ================================================= */}
 
-        <div className="capture-footer">
+          <div className="flight-card">
 
-          <button
-            className="capture-back-button"
-            onClick={() =>
-              router.push(
-                `/flights?department=${department}`
-              )
-            }
-          >
-            ← BACK TO FLIGHTS
-          </button>
+            <div className="flight-card-title">
+              <span>FLIGHT</span>
 
-          <span>
-            TRANSOM Flight Service Capture
-          </span>
+              <strong>
+                {flight.flight_number}
+              </strong>
+            </div>
 
-          <span>
-            Authorized Personnel Only
-          </span>
+            <div className="flight-card-item">
+              <span>AIRCRAFT</span>
+              <strong>
+                {flight.aircraft}
+              </strong>
+            </div>
 
-        </div>
+            <div className="flight-card-item">
+              <span>ROUTE</span>
+              <strong>
+                {flight.route}
+              </strong>
+            </div>
 
-      </section>
+            <div className="flight-card-item">
+              <span>DATE</span>
+              <strong>
+                {flight.flight_date}
+              </strong>
+            </div>
 
-    </main>
+            <div className="flight-card-item">
+              <span>STATUS</span>
+
+              <strong
+                className={`flight-status ${
+                  flight.status ===
+                  "In Progress"
+                    ? "blue-status"
+                    : flight.status ===
+                      "Closed - No Delay"
+                    ? "green-status"
+                    : flight.status ===
+                      "Closed - With Delay"
+                    ? "red-status"
+                    : "white-status"
+                }`}
+              >
+                {flight.status}
+              </strong>
+            </div>
+
+          </div>
+
+          {/* =================================================
+              STATUS
+          ================================================= */}
+
+          <div className="section-card">
+
+            <div className="section-card-title">
+              <div>
+                <h2>FLIGHT STATUS</h2>
+                <p>
+                  Update the operational
+                  flight status
+                </p>
+              </div>
+            </div>
+
+            <div className="status-buttons">
+
+              <StatusButton
+                label="OPEN"
+                active={
+                  flight.status === "Open"
+                }
+                onClick={() =>
+                  updateFlightStatus("Open")
+                }
+              />
+
+              <StatusButton
+                label="IN PROGRESS"
+                active={
+                  flight.status ===
+                  "In Progress"
+                }
+                onClick={() =>
+                  updateFlightStatus(
+                    "In Progress"
+                  )
+                }
+              />
+
+              <StatusButton
+                label="CLOSED - NO DELAY"
+                active={
+                  flight.status ===
+                  "Closed - No Delay"
+                }
+                onClick={() =>
+                  updateFlightStatus(
+                    "Closed - No Delay"
+                  )
+                }
+              />
+
+              <StatusButton
+                label="CLOSED - WITH DELAY"
+                active={
+                  flight.status ===
+                  "Closed - With Delay"
+                }
+                onClick={() =>
+                  updateFlightStatus(
+                    "Closed - With Delay"
+                  )
+                }
+              />
+
+            </div>
+
+          </div>
+
+          {/* =================================================
+              RAMP
+          ================================================= */}
+
+          {department === "ramp" && (
+            <div className="department-area">
+
+              <DepartmentHeading
+                icon="✈"
+                title="RAMP SERVICES"
+                description="Ramp & Ground Services"
+                color="red"
+              />
+
+              <div className="service-grid">
+
+                <ServiceTime
+                  title="GPU TIME"
+                  start={gpuStart}
+                  end={gpuEnd}
+                  setStart={setGpuStart}
+                  setEnd={setGpuEnd}
+                />
+
+                <ServiceTime
+                  title="ACU"
+                  start={acuStart}
+                  end={acuEnd}
+                  setStart={setAcuStart}
+                  setEnd={setAcuEnd}
+                />
+
+                <ServiceTime
+                  title="CLEANING"
+                  start={cleaningStart}
+                  end={cleaningEnd}
+                  setStart={setCleaningStart}
+                  setEnd={setCleaningEnd}
+                />
+
+                <ServiceTime
+                  title="CONVEYOR"
+                  start={conveyorStart}
+                  end={conveyorEnd}
+                  setStart={setConveyorStart}
+                  setEnd={setConveyorEnd}
+                />
+
+                <ServiceTime
+                  title="VOMITING"
+                  start={vomitingStart}
+                  end={vomitingEnd}
+                  setStart={setVomitingStart}
+                  setEnd={setVomitingEnd}
+                />
+
+              </div>
+
+              <div className="fields-card">
+
+                <div className="fields-card-heading">
+                  OTHER RAMP SERVICES
+                </div>
+
+                <div className="field-grid">
+
+                  <Field
+                    label="COBUS"
+                    value={cobus}
+                    onChange={setCobus}
+                  />
+
+                  <Field
+                    label="TOWING"
+                    value={towing}
+                    onChange={setTowing}
+                  />
+
+                  <Field
+                    label="PUSHBACK"
+                    value={pushback}
+                    onChange={setPushback}
+                  />
+
+                  <Field
+                    label="LAVATORY SERVICE"
+                    value={lavatoryService}
+                    onChange={setLavatoryService}
+                  />
+
+                  <Field
+                    label="PORTABLE WATER"
+                    value={portableWater}
+                    onChange={setPortableWater}
+                  />
+
+                  <Field
+                    label="PAX STAIRS"
+                    value={paxStairs}
+                    onChange={setPaxStairs}
+                  />
+
+                  <Field
+                    label="PAX STEP"
+                    value={paxStep}
+                    onChange={setPaxStep}
+                  />
+
+                  <Field
+                    label="AMBULIFT"
+                    value={ambulift}
+                    onChange={setAmbulift}
+                  />
+
+                  <Field
+                    label="ASU"
+                    value={asu}
+                    onChange={setAsu}
+                  />
+
+                  <Field
+                    label="CHOCKS IN"
+                    value={chocksIn}
+                    onChange={setChocksIn}
+                  />
+
+                  <Field
+                    label="CHOCKS OUT"
+                    value={chocksOut}
+                    onChange={setChocksOut}
+                  />
+
+                  <Field
+                    label="SUPERVISOR NAME"
+                    value={supervisorName}
+                    onChange={setSupervisorName}
+                  />
+
+                  <Field
+                    label="RAMP OPENING STATUS"
+                    value={rampOpeningStatus}
+                    onChange={
+                      setRampOpeningStatus
+                    }
+                  />
+
+                  <Field
+                    label="RAMP CLOSING STATUS"
+                    value={rampClosingStatus}
+                    onChange={
+                      setRampClosingStatus
+                    }
+                  />
+
+                </div>
+
+                <TextAreaField
+                  label="RAMP COMMENTS"
+                  value={rampComments}
+                  onChange={setRampComments}
+                  placeholder="Enter comments..."
+                />
+
+              </div>
+
+            </div>
+          )}
+
+          {/* =================================================
+              SORTING
+          ================================================= */}
+
+          {department === "sorting" && (
+            <div className="department-area">
+
+              <DepartmentHeading
+                icon="▣"
+                title="SORTING SERVICES"
+                description="Baggage & ULD Sorting"
+                color="navy"
+              />
+
+              <div className="fields-card">
+
+                <div className="field-grid">
+
+                  <Field
+                    label="ULD / BAG SORTING"
+                    value={uldBagSorting}
+                    onChange={setUldBagSorting}
+                  />
+
+                  <Field
+                    label="NUMBER OF BAGS"
+                    value={numberOfBags}
+                    onChange={setNumberOfBags}
+                    type="number"
+                  />
+
+                  <Field
+                    label="ULD NUMBER"
+                    value={uldNumber}
+                    onChange={setUldNumber}
+                  />
+
+                </div>
+
+              </div>
+
+              <div className="service-grid">
+
+                <ServiceTime
+                  title="SORTING"
+                  start={sortingStart}
+                  end={sortingEnd}
+                  setStart={setSortingStart}
+                  setEnd={setSortingEnd}
+                />
+
+              </div>
+
+              <div className="fields-card">
+
+                <div className="field-grid">
+
+                  <Field
+                    label="BAG TRANSFER"
+                    value={bagTransfer}
+                    onChange={setBagTransfer}
+                  />
+
+                  <Field
+                    label="RUSH / PRIORITY"
+                    value={rushPriority}
+                    onChange={setRushPriority}
+                  />
+
+                  <Field
+                    label="MISROUTED BAGS"
+                    value={misroutedBags}
+                    onChange={setMisroutedBags}
+                  />
+
+                  <Field
+                    label="DAMAGED BAGS"
+                    value={damagedBags}
+                    onChange={setDamagedBags}
+                  />
+
+                  <Field
+                    label="MISSING BAGS"
+                    value={missingBags}
+                    onChange={setMissingBags}
+                  />
+
+                  <Field
+                    label="REMARKS"
+                    value={sortingRemarks}
+                    onChange={setSortingRemarks}
+                  />
+
+                </div>
+
+                <TextAreaField
+                  label="SORTING COMMENTS"
+                  value={sortingComments}
+                  onChange={setSortingComments}
+                />
+
+              </div>
+
+            </div>
+          )}
+
+          {/* =================================================
+              LOAD CONTROL
+          ================================================= */}
+
+          {department ===
+            "load_control_ops" && (
+            <div className="department-area">
+
+              <DepartmentHeading
+                icon="☑"
+                title="LOAD CONTROL / OPS"
+                description="Load Control & Operations"
+                color="blue"
+              />
+
+              <div className="fields-card">
+
+                <div className="field-grid">
+
+                  <Field
+                    label="PAX"
+                    value={pax}
+                    onChange={setPax}
+                  />
+
+                  <Field
+                    label="BAGGAGES"
+                    value={baggages}
+                    onChange={setBaggages}
+                  />
+
+                  <Field
+                    label="CARGO"
+                    value={cargo}
+                    onChange={setCargo}
+                  />
+
+                  <Field
+                    label="PARKING BAY"
+                    value={parkingBay}
+                    onChange={setParkingBay}
+                  />
+
+                  <Field
+                    label="LOAD / RAMP"
+                    value={loadRamp}
+                    onChange={setLoadRamp}
+                  />
+
+                  <Field
+                    label="STD"
+                    value={std}
+                    onChange={setStd}
+                    type="time"
+                  />
+
+                  <Field
+                    label="ETD"
+                    value={etd}
+                    onChange={setEtd}
+                    type="time"
+                  />
+
+                  <Field
+                    label="STA"
+                    value={sta}
+                    onChange={setSta}
+                    type="time"
+                  />
+
+                  <Field
+                    label="ETA"
+                    value={eta}
+                    onChange={setEta}
+                    type="time"
+                  />
+
+                  <Field
+                    label="ACTUAL DEPARTURE"
+                    value={actualDeparture}
+                    onChange={
+                      setActualDeparture
+                    }
+                    type="time"
+                  />
+
+                  <Field
+                    label="ACTUAL ARRIVAL"
+                    value={actualArrival}
+                    onChange={
+                      setActualArrival
+                    }
+                    type="time"
+                  />
+
+                  <Field
+                    label="LOAD CONTROL / TRC NAME"
+                    value={loadControlTrcName}
+                    onChange={
+                      setLoadControlTrcName
+                    }
+                  />
+
+                  <Field
+                    label="SAL NAME"
+                    value={salName}
+                    onChange={setSalName}
+                  />
+
+                  <Field
+                    label="IATA DELAY CODE"
+                    value={iataDelayCode}
+                    onChange={
+                      setIataDelayCode
+                    }
+                  />
+
+                  <Field
+                    label="DELAY REASON"
+                    value={delayReason}
+                    onChange={setDelayReason}
+                  />
+
+                </div>
+
+                <TextAreaField
+                  label="OPERATIONAL REMARKS"
+                  value={operationalRemarks}
+                  onChange={
+                    setOperationalRemarks
+                  }
+                />
+
+                <TextAreaField
+                  label="COMMENTS"
+                  value={loadControlComments}
+                  onChange={
+                    setLoadControlComments
+                  }
+                />
+
+              </div>
+
+            </div>
+          )}
+
+          {/* =================================================
+              PASSENGER SERVICES
+          ================================================= */}
+
+          {department ===
+            "passenger_services" && (
+            <div className="department-area">
+
+              <DepartmentHeading
+                icon="♙"
+                title="PASSENGER SERVICES"
+                description="Passenger & Gate Services"
+                color="red"
+              />
+
+              <div className="service-grid">
+
+                <ServiceTime
+                  title="CHECK-IN"
+                  start={checkInStart}
+                  end={checkInEnd}
+                  setStart={setCheckInStart}
+                  setEnd={setCheckInEnd}
+                />
+
+                <ServiceTime
+                  title="BOARDING"
+                  start={boardingStart}
+                  end={boardingEnd}
+                  setStart={setBoardingStart}
+                  setEnd={setBoardingEnd}
+                />
+
+              </div>
+
+              <div className="fields-card">
+
+                <div className="field-grid">
+
+                  <Field
+                    label="CHECK-IN AGENTS"
+                    value={checkInAgents}
+                    onChange={
+                      setCheckInAgents
+                    }
+                  />
+
+                  <Field
+                    label="BOARDING AGENTS"
+                    value={boardingAgents}
+                    onChange={
+                      setBoardingAgents
+                    }
+                  />
+
+                  <Field
+                    label="GATE NUMBER"
+                    value={gateNumber}
+                    onChange={setGateNumber}
+                  />
+
+                  <Field
+                    label="GATE OPEN"
+                    value={gateOpen}
+                    onChange={setGateOpen}
+                    type="time"
+                  />
+
+                  <Field
+                    label="GATE CLOSE"
+                    value={gateClose}
+                    onChange={setGateClose}
+                    type="time"
+                  />
+
+                  <Field
+                    label="WHEELCHAIR"
+                    value={wheelchair}
+                    onChange={setWheelchair}
+                  />
+
+                  <Field
+                    label="SPECIAL ASSISTANCE"
+                    value={specialAssistance}
+                    onChange={
+                      setSpecialAssistance
+                    }
+                  />
+
+                  <Field
+                    label="NO-SHOW"
+                    value={noShow}
+                    onChange={setNoShow}
+                  />
+
+                  <Field
+                    label="DENIED BOARDING"
+                    value={deniedBoarding}
+                    onChange={
+                      setDeniedBoarding
+                    }
+                  />
+
+                  <Field
+                    label="TRANSFER PAX"
+                    value={transferPax}
+                    onChange={setTransferPax}
+                  />
+
+                  <Field
+                    label="REMARKS"
+                    value={passengerRemarks}
+                    onChange={
+                      setPassengerRemarks
+                    }
+                  />
+
+                </div>
+
+                <TextAreaField
+                  label="PASSENGER SERVICES COMMENTS"
+                  value={passengerComments}
+                  onChange={
+                    setPassengerComments
+                  }
+                />
+
+              </div>
+
+            </div>
+          )}
+
+          {/* =================================================
+              CARGO
+          ================================================= */}
+
+          {department === "cargo" && (
+            <div className="department-area">
+
+              <DepartmentHeading
+                icon="▥"
+                title="CARGO SERVICES"
+                description="Cargo Operations"
+                color="navy"
+              />
+
+              <div className="service-grid">
+
+                <ServiceTime
+                  title="CARGO ACCEPTANCE"
+                  start={cargoAcceptanceStart}
+                  end={cargoAcceptanceEnd}
+                  setStart={
+                    setCargoAcceptanceStart
+                  }
+                  setEnd={
+                    setCargoAcceptanceEnd
+                  }
+                />
+
+                <ServiceTime
+                  title="LOADING"
+                  start={loadingStart}
+                  end={loadingEnd}
+                  setStart={setLoadingStart}
+                  setEnd={setLoadingEnd}
+                />
+
+              </div>
+
+              <div className="fields-card">
+
+                <div className="field-grid">
+
+                  <Field
+                    label="CARGO TYPE"
+                    value={cargoType}
+                    onChange={setCargoType}
+                  />
+
+                  <Field
+                    label="WEIGHT"
+                    value={cargoWeight}
+                    onChange={setCargoWeight}
+                  />
+
+                  <Field
+                    label="PIECES"
+                    value={cargoPieces}
+                    onChange={setCargoPieces}
+                  />
+
+                  <Field
+                    label="AWB"
+                    value={awb}
+                    onChange={setAwb}
+                  />
+
+                  <Field
+                    label="ULD NUMBER"
+                    value={cargoUldNumber}
+                    onChange={
+                      setCargoUldNumber
+                    }
+                  />
+
+                  <Field
+                    label="DANGEROUS GOODS"
+                    value={dangerousGoods}
+                    onChange={
+                      setDangerousGoods
+                    }
+                  />
+
+                  <Field
+                    label="SPECIAL CARGO"
+                    value={specialCargo}
+                    onChange={
+                      setSpecialCargo
+                    }
+                  />
+
+                  <Field
+                    label="WAREHOUSE LOCATION"
+                    value={warehouseLocation}
+                    onChange={
+                      setWarehouseLocation
+                    }
+                  />
+
+                  <Field
+                    label="DO NAME"
+                    value={doName}
+                    onChange={setDoName}
+                  />
+
+                  <Field
+                    label="AGENT NAME"
+                    value={agentName}
+                    onChange={setAgentName}
+                  />
+
+                  <Field
+                    label="REMARKS"
+                    value={cargoRemarks}
+                    onChange={setCargoRemarks}
+                  />
+
+                </div>
+
+                <TextAreaField
+                  label="CARGO COMMENTS"
+                  value={cargoComments}
+                  onChange={setCargoComments}
+                />
+
+              </div>
+
+            </div>
+          )}
+
+          {/* =================================================
+              MESSAGE
+          ================================================= */}
+
+          {message && (
+            <div
+              className={`capture-message ${
+                message.includes("SUCCESSFULLY")
+                  ? "success-message"
+                  : "error-message"
+              }`}
+            >
+              {message}
+            </div>
+          )}
+
+          {/* =================================================
+              SAVE
+          ================================================= */}
+
+          <div className="save-area">
+
+            <button
+              className="save-button"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving
+                ? "SAVING..."
+                : `SAVE ${
+                    departmentNames[
+                      department
+                    ] || "SERVICE"
+                  } CAPTURE`}
+            </button>
+
+          </div>
+
+          {/* =================================================
+              BOTTOM
+          ================================================= */}
+
+          <div className="bottom-area">
+
+            <button
+              className="back-button"
+              onClick={() =>
+                router.push(
+                  `/flights?department=${department}`
+                )
+              }
+            >
+              ← BACK TO FLIGHTS
+            </button>
+
+            <span>
+              TRANSOM Flight Service Capture
+            </span>
+
+            <span>
+              Authorized Personnel Only
+            </span>
+
+          </div>
+
+        </section>
+      </main>
+
+      {/* =====================================================
+          DESIGN CSS
+      ===================================================== */}
+
+      <style jsx global>{`
+
+        * {
+          box-sizing: border-box;
+        }
+
+        .transom-capture-page {
+          min-height: 100vh;
+          background:
+            linear-gradient(
+              rgba(6, 24, 49, 0.84),
+              rgba(6, 24, 49, 0.88)
+            ),
+            url("/transom-airport.jpg");
+
+          background-size: cover;
+          background-position: center;
+          background-attachment: fixed;
+
+          color: #172b46;
+
+          padding-bottom: 40px;
+        }
+
+        /* TOP */
+
+        .transom-topbar {
+          height: 76px;
+
+          background: #071d35;
+
+          border-bottom: 4px solid #e3262e;
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: space-between;
+
+          padding: 0 45px;
+
+          color: white;
+        }
+
+        .transom-logo {
+          font-size: 23px;
+          font-weight: 900;
+          letter-spacing: 1px;
+        }
+
+        .transom-logo span {
+          display: block;
+
+          font-size: 9px;
+
+          letter-spacing: 2px;
+
+          color: #aebed0;
+
+          margin-top: 4px;
+        }
+
+        .topbar-right {
+          display: flex;
+
+          align-items: center;
+
+          gap: 15px;
+        }
+
+        .topbar-right span {
+          font-size: 13px;
+          font-weight: 700;
+        }
+
+        .topbar-right button {
+          border: 1px solid #73869c;
+
+          background: transparent;
+
+          color: white;
+
+          border-radius: 6px;
+
+          padding: 8px 15px;
+
+          font-size: 10px;
+
+          font-weight: 800;
+        }
+
+        .topbar-right button:hover {
+          background: #e3262e;
+          border-color: #e3262e;
+        }
+
+        /* MAIN */
+
+        .transom-container {
+          width: calc(100% - 80px);
+
+          max-width: 1250px;
+
+          margin: 34px auto 0;
+
+          background: #ffffff;
+
+          border-radius: 17px;
+
+          padding: 30px;
+
+          box-shadow:
+            0 20px 55px
+            rgba(0, 0, 0, 0.28);
+        }
+
+        /* TITLE */
+
+        .page-title {
+          display: flex;
+
+          align-items: center;
+
+          gap: 17px;
+        }
+
+        .title-icon {
+          width: 57px;
+          height: 57px;
+
+          border-radius: 50%;
+
+          background: #e3262e;
+
+          color: white;
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+
+          font-size: 27px;
+
+          font-weight: 900;
+        }
+
+        .page-title h1 {
+          margin: 0;
+
+          font-size: 27px;
+
+          font-weight: 900;
+
+          color: #182b45;
+
+          letter-spacing: 0.2px;
+        }
+
+        .page-title p {
+          margin: 5px 0 0;
+
+          color: #8490a0;
+
+          font-size: 12px;
+        }
+
+        .title-line {
+          height: 3px;
+
+          margin-top: 18px;
+
+          background:
+            linear-gradient(
+              90deg,
+              #e3262e 0%,
+              #e3262e 18%,
+              #3388d1 18%,
+              #3388d1 100%
+            );
+        }
+
+        /* FLIGHT */
+
+        .flight-card {
+          margin-top: 22px;
+
+          display: grid;
+
+          grid-template-columns:
+            1.2fr
+            1fr
+            1.4fr
+            1.2fr
+            1fr;
+
+          border: 1px solid #e1e6ec;
+
+          border-radius: 12px;
+
+          overflow: hidden;
+
+          background: #f9fafc;
+        }
+
+        .flight-card > div {
+          padding: 17px;
+
+          border-right: 1px solid #e1e6ec;
+        }
+
+        .flight-card > div:last-child {
+          border-right: none;
+        }
+
+        .flight-card span {
+          display: block;
+
+          color: #8994a3;
+
+          font-size: 9px;
+
+          font-weight: 900;
+
+          letter-spacing: 1px;
+
+          margin-bottom: 7px;
+        }
+
+        .flight-card strong {
+          color: #172b46;
+
+          font-size: 15px;
+
+          font-weight: 900;
+        }
+
+        .flight-card-title strong {
+          font-size: 22px;
+        }
+
+        .flight-status {
+          display: inline-block;
+
+          padding: 6px 9px;
+
+          border-radius: 5px;
+
+          font-size: 9px !important;
+
+          white-space: nowrap;
+        }
+
+        .white-status {
+          background: white;
+
+          border: 1px solid #ccd4de;
+        }
+
+        .blue-status {
+          background: #173b64;
+          color: white !important;
+        }
+
+        .green-status {
+          background: #198754;
+          color: white !important;
+        }
+
+        .red-status {
+          background: #dc3545;
+          color: white !important;
+        }
+
+        /* SECTION */
+
+        .section-card {
+          margin-top: 20px;
+
+          border: 1px solid #e2e7ee;
+
+          border-radius: 12px;
+
+          padding: 19px;
+
+          background: white;
+        }
+
+        .section-card-title h2 {
+          margin: 0;
+
+          font-size: 14px;
+
+          font-weight: 900;
+
+          color: #172b46;
+        }
+
+        .section-card-title p {
+          margin: 4px 0 0;
+
+          color: #8a95a3;
+
+          font-size: 11px;
+        }
+
+        .status-buttons {
+          display: flex;
+
+          flex-wrap: wrap;
+
+          gap: 8px;
+
+          margin-top: 15px;
+        }
+
+        .status-control {
+          border: 1px solid #d2dbe5;
+
+          background: #fff;
+
+          color: #30445d;
+
+          padding: 9px 13px;
+
+          border-radius: 6px;
+
+          font-size: 9px;
+
+          font-weight: 900;
+
+          transition: 0.2s;
+        }
+
+        .status-control:hover,
+        .status-active {
+          background: #173b64;
+
+          color: white;
+
+          border-color: #173b64;
+        }
+
+        /* DEPARTMENT */
+
+        .department-area {
+          margin-top: 25px;
+        }
+
+        .department-heading {
+          display: flex;
+
+          align-items: center;
+
+          gap: 13px;
+
+          padding: 17px 19px;
+
+          border: 1px solid #e1e6ed;
+
+          border-radius: 11px;
+
+          background: #f8fafc;
+        }
+
+        .department-heading-icon {
+          width: 43px;
+          height: 43px;
+
+          border-radius: 50%;
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+
+          color: white;
+
+          font-size: 20px;
+        }
+
+        .department-heading-icon.red {
+          background: #e3262e;
+        }
+
+        .department-heading-icon.navy {
+          background: #173b64;
+        }
+
+        .department-heading-icon.blue {
+          background: #238bd1;
+        }
+
+        .department-heading h2 {
+          margin: 0;
+
+          font-size: 16px;
+
+          font-weight: 900;
+
+          color: #172b46;
+        }
+
+        .department-heading p {
+          margin: 4px 0 0;
+
+          color: #8a95a3;
+
+          font-size: 11px;
+        }
+
+        /* SERVICES */
+
+        .service-grid {
+          display: grid;
+
+          grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+          gap: 14px;
+
+          margin-top: 15px;
+        }
+
+        .service-box {
+          border: 1px solid #dfe5ec;
+
+          border-radius: 11px;
+
+          background: white;
+
+          padding: 15px;
+
+          box-shadow:
+            0 3px 10px
+            rgba(25, 45, 70, 0.05);
+        }
+
+        .service-box-header {
+          display: flex;
+
+          align-items: center;
+
+          gap: 8px;
+
+          padding-bottom: 11px;
+
+          border-bottom: 1px solid #edf0f4;
+
+          margin-bottom: 13px;
+        }
+
+        .service-icon {
+          width: 25px;
+          height: 25px;
+
+          border-radius: 50%;
+
+          background: #e3262e;
+
+          color: white;
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+
+          font-size: 11px;
+        }
+
+        .service-box-header strong {
+          color: #172b46;
+
+          font-size: 11px;
+
+          letter-spacing: 0.5px;
+        }
+
+        .service-times {
+          display: grid;
+
+          grid-template-columns: 1fr 1fr;
+
+          gap: 8px;
+        }
+
+        .service-times label {
+          display: block;
+
+          color: #8a95a3;
+
+          font-size: 8px;
+
+          font-weight: 900;
+
+          margin-bottom: 5px;
+        }
+
+        .service-times input {
+          width: 100%;
+
+          height: 36px;
+
+          border: 1px solid #d8e0e8;
+
+          border-radius: 5px;
+
+          padding: 0 7px;
+
+          background: #fbfcfd;
+
+          color: #172b46;
+
+          font-size: 11px;
+        }
+
+        .duration-box {
+          margin-top: 10px;
+
+          display: flex;
+
+          justify-content: space-between;
+
+          align-items: center;
+
+          background: #f3f6f9;
+
+          border-radius: 5px;
+
+          padding: 8px 9px;
+        }
+
+        .duration-box span {
+          color: #8994a3;
+
+          font-size: 8px;
+
+          font-weight: 900;
+        }
+
+        .duration-box strong {
+          color: #173b64;
+
+          font-size: 11px;
+        }
+
+        /* FIELDS CARD */
+
+        .fields-card {
+          margin-top: 15px;
+
+          border: 1px solid #dfe5ec;
+
+          border-radius: 11px;
+
+          padding: 18px;
+
+          background: #fff;
+        }
+
+        .fields-card-heading {
+          font-size: 11px;
+
+          font-weight: 900;
+
+          color: #173b64;
+
+          padding-bottom: 12px;
+
+          border-bottom: 1px solid #e9edf2;
+
+          margin-bottom: 16px;
+        }
+
+        .field-grid {
+          display: grid;
+
+          grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+          gap: 14px;
+        }
+
+        .transom-field label {
+          display: block;
+
+          color: #657489;
+
+          font-size: 9px;
+
+          font-weight: 900;
+
+          letter-spacing: 0.5px;
+
+          margin-bottom: 6px;
+        }
+
+        .transom-field input,
+        .transom-field textarea {
+          width: 100%;
+
+          border: 1px solid #d6dee7;
+
+          border-radius: 6px;
+
+          background: #fbfcfd;
+
+          color: #172b46;
+
+          outline: none;
+        }
+
+        .transom-field input {
+          height: 39px;
+
+          padding: 0 10px;
+
+          font-size: 11px;
+        }
+
+        .transom-field textarea {
+          min-height: 85px;
+
+          padding: 10px;
+
+          resize: vertical;
+
+          font-size: 11px;
+        }
+
+        .transom-field input:focus,
+        .transom-field textarea:focus {
+          border-color: #318bd0;
+
+          background: white;
+
+          box-shadow:
+            0 0 0 2px
+            rgba(49, 139, 208, 0.08);
+        }
+
+        .transom-textarea {
+          margin-top: 15px;
+        }
+
+        /* MESSAGE */
+
+        .capture-message {
+          margin-top: 18px;
+
+          padding: 12px 15px;
+
+          border-radius: 7px;
+
+          font-size: 10px;
+
+          font-weight: 900;
+        }
+
+        .success-message {
+          background: #e9f8ef;
+
+          color: #19723f;
+
+          border: 1px solid #b5dfc5;
+        }
+
+        .error-message {
+          background: #fff0f1;
+
+          color: #b4232d;
+
+          border: 1px solid #efb8bd;
+        }
+
+        /* SAVE */
+
+        .save-area {
+          display: flex;
+
+          justify-content: flex-end;
+
+          margin-top: 22px;
+
+          padding-top: 20px;
+
+          border-top: 1px solid #e6ebf0;
+        }
+
+        .save-button {
+          background: #e3262e;
+
+          color: white;
+
+          border: none;
+
+          border-radius: 7px;
+
+          min-height: 43px;
+
+          padding: 0 25px;
+
+          font-size: 10px;
+
+          font-weight: 900;
+
+          letter-spacing: 0.5px;
+
+          box-shadow:
+            0 4px 10px
+            rgba(227, 38, 46, 0.20);
+        }
+
+        .save-button:hover {
+          background: #c91d26;
+        }
+
+        .save-button:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        /* BOTTOM */
+
+        .bottom-area {
+          margin-top: 25px;
+
+          padding-top: 18px;
+
+          border-top: 1px solid #e5eaf0;
+
+          display: flex;
+
+          justify-content: space-between;
+
+          align-items: center;
+
+          color: #8a95a3;
+
+          font-size: 9px;
+        }
+
+        .back-button {
+          border: 1px solid #cfd8e2;
+
+          background: white;
+
+          color: #173b64;
+
+          border-radius: 6px;
+
+          padding: 8px 12px;
+
+          font-size: 9px;
+
+          font-weight: 900;
+        }
+
+        .back-button:hover {
+          background: #173b64;
+
+          color: white;
+        }
+
+        /* LOADING */
+
+        .transom-loading {
+          min-height: 100vh;
+
+          background:
+            linear-gradient(
+              rgba(6, 24, 49, 0.88),
+              rgba(6, 24, 49, 0.92)
+            ),
+            url("/transom-airport.jpg");
+
+          background-size: cover;
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+        }
+
+        .loading-card {
+          background: white;
+
+          border-radius: 13px;
+
+          padding: 35px;
+
+          text-align: center;
+
+          color: #173b64;
+
+          font-weight: 900;
+        }
+
+        .loading-logo {
+          color: #e3262e;
+
+          font-size: 25px;
+
+          margin-bottom: 10px;
+        }
+
+        /* TABLET */
+
+        @media (max-width: 900px) {
+
+          .transom-container {
+            width: calc(100% - 30px);
+
+            padding: 22px;
+          }
+
+          .flight-card {
+            grid-template-columns:
+              repeat(3, 1fr);
+          }
+
+          .flight-card > div:nth-child(3) {
+            border-right: none;
+          }
+
+          .service-grid {
+            grid-template-columns:
+              repeat(2, 1fr);
+          }
+
+          .field-grid {
+            grid-template-columns:
+              repeat(2, 1fr);
+          }
+
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+          .transom-topbar {
+            height: auto;
+
+            min-height: 70px;
+
+            padding: 13px 17px;
+          }
+
+          .transom-logo {
+            font-size: 18px;
+          }
+
+          .topbar-right span {
+            display: none;
+          }
+
+          .transom-container {
+            width: calc(100% - 16px);
+
+            margin-top: 15px;
+
+            padding: 15px;
+
+            border-radius: 12px;
+          }
+
+          .page-title h1 {
+            font-size: 22px;
+          }
+
+          .flight-card {
+            grid-template-columns:
+              repeat(2, 1fr);
+          }
+
+          .flight-card > div {
+            border-right: none;
+
+            border-bottom: 1px solid #e1e6ec;
+          }
+
+          .service-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .field-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .status-buttons {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+          }
+
+          .status-control {
+            width: 100%;
+          }
+
+          .save-area {
+            justify-content: stretch;
+          }
+
+          .save-button {
+            width: 100%;
+          }
+
+          .bottom-area {
+            flex-direction: column;
+
+            text-align: center;
+
+            gap: 10px;
+          }
+
+          .back-button {
+            width: 100%;
+          }
+        }
+
+      `}</style>
+    </>
   );
 }
+
+/* =========================================================
+   DEPARTMENT HEADING
+========================================================= */
+
+function DepartmentHeading({
+  icon,
+  title,
+  description,
+  color,
+}: {
+  icon: string;
+  title: string;
+  description: string;
+  color: "red" | "navy" | "blue";
+}) {
+  return (
+    <div className="department-heading">
+
+      <div
+        className={`department-heading-icon ${color}`}
+      >
+        {icon}
+      </div>
+
+      <div>
+        <h2>{title}</h2>
+        <p>{description}</p>
+      </div>
+
+    </div>
+  );
+}
+
+/* =========================================================
+   PAGE
+========================================================= */
 
 export default function Page() {
   return (
     <Suspense
       fallback={
-        <main className="capture-page">
-          <div className="capture-loading">
+        <div className="transom-loading">
+          <div className="loading-card">
+            <div className="loading-logo">
+              TRANSOM
+            </div>
             LOADING...
           </div>
-        </main>
+        </div>
       }
     >
       <FlightCapturePage />
