@@ -1,14 +1,16 @@
 /* =========================================================
-   TRANSOM — FLIGHT SELECTION
-========================================================= */
+   TRANSOM — DEPARTMENT SELECTION FINAL DESIGN
+   ========================================================= */
 
-.flight-selection-page {
+.department-page {
   min-height: 100vh;
+  width: 100%;
+  color: #071d35;
 
   background:
     linear-gradient(
-      rgba(3, 25, 55, 0.78),
-      rgba(3, 25, 55, 0.90)
+      rgba(3, 25, 55, 0.70),
+      rgba(3, 25, 55, 0.82)
     ),
     url("/transom-airport.jpg");
 
@@ -16,19 +18,25 @@
   background-position: center;
   background-attachment: fixed;
 
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
   display: flex;
   flex-direction: column;
-
-  color: #071d35;
 }
 
 
-/* HEADER */
+/* =========================================================
+   HEADER
+   ========================================================= */
 
-.flight-header {
-  min-height: 106px;
+.department-header {
+  min-height: 105px;
+  width: 100%;
 
-  padding: 16px 42px;
+  padding: 18px 42px;
 
   display: flex;
   align-items: center;
@@ -37,523 +45,439 @@
   background:
     linear-gradient(
       90deg,
-      #061d3b,
-      #082a52
+      #061c3b,
+      #082d5d,
+      #061d3e
     );
 
-  border-bottom: 5px solid #ef233c;
+  border-bottom: 5px solid #ed1b2f;
 
   box-shadow:
-    0 5px 18px rgba(0,0,0,.25);
+    0 5px 20px rgba(0, 0, 0, 0.25);
+
+  position: relative;
+  z-index: 10;
 }
 
-.flight-logo {
-  color: white;
 
-  font-size: 43px;
+/* =========================================================
+   TRANSOM BRAND
+   ========================================================= */
 
+.transom-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.transom-logo {
+  color: #ffffff;
+
+  font-size: 44px;
   font-weight: 900;
 
   letter-spacing: 4px;
-
-  line-height: .95;
-}
-
-.flight-tagline {
-  color: white;
-
-  font-size: 11px;
-
-  font-weight: 600;
-
-  letter-spacing: 4px;
-
-  margin-top: 7px;
-}
-
-.flight-header-actions {
-  display: flex;
-
-  align-items: center;
-
-  gap: 22px;
-
-  color: white;
-}
-
-.flight-user {
-  display: flex;
-
-  align-items: center;
-
-  gap: 9px;
-
-  font-size: 14px;
-
-  font-weight: 700;
-}
-
-.flight-user-icon {
-  width: 25px;
-  height: 25px;
-
-  display: flex;
-}
-
-.flight-user-icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-.flight-header-divider {
-  width: 1px;
-  height: 38px;
-
-  background:
-    rgba(255,255,255,.5);
-}
-
-.flight-logout {
-  border: none;
-
-  background: transparent;
-
-  color: white;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 9px;
-
-  font-weight: 800;
-
-  cursor: pointer;
-}
-
-.flight-logout svg {
-  width: 24px;
-  height: 24px;
-}
-
-.flight-logout:hover {
-  color: #ef233c;
-}
-
-
-/* HERO */
-
-.flight-hero {
-  min-height: 190px;
-
-  padding: 52px 50px 30px;
-
-  display: flex;
-  align-items: flex-start;
-}
-
-.flight-hero h1 {
-  margin: 0;
-
-  color: white;
-
-  font-size: 38px;
-
-  font-weight: 900;
+  line-height: 0.95;
 
   text-shadow:
-    0 2px 8px rgba(0,0,0,.3);
+    0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
-.flight-hero-line {
-  width: 88px;
-  height: 5px;
+.transom-tagline {
+  color: #ffffff;
 
-  margin-top: 15px;
-
-  background: #ef233c;
-}
-
-.flight-hero p {
-  margin: 14px 0 0;
-
-  color: white;
-
-  font-size: 15px;
-
+  font-size: 12px;
   font-weight: 700;
 
-  letter-spacing: 1.5px;
+  letter-spacing: 4px;
+
+  margin-top: 5px;
+
+  opacity: 0.92;
 }
 
 
-/* MAIN PANEL */
+/* =========================================================
+   HEADER USER
+   ========================================================= */
 
-.flight-main-panel {
-  width: calc(100% - 84px);
-
-  max-width: 1360px;
-
-  margin: -8px auto 0;
-
-  padding: 30px;
-
-  background:
-    rgba(255,255,255,.97);
-
-  border-radius: 13px;
-
-  box-shadow:
-    0 15px 45px rgba(0,0,0,.22);
-}
-
-
-/* PANEL TITLE */
-
-.flight-panel-title {
+.header-user-area {
   display: flex;
-
   align-items: center;
+  gap: 22px;
 
-  gap: 17px;
+  color: #ffffff;
 }
 
-.flight-panel-icon {
-  width: 48px;
-  height: 48px;
+.user-display {
+  display: flex;
+  align-items: center;
+  gap: 9px;
 
-  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.user-icon {
+  width: 27px;
+  height: 27px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background: #082b55;
-
-  color: white;
-
-  font-size: 25px;
 }
 
-.flight-panel-title h2 {
-  margin: 0;
-
-  color: #082b55;
-
-  font-size: 29px;
-
-  font-weight: 900;
+.user-icon svg {
+  width: 25px;
+  height: 25px;
 }
 
-.flight-panel-title p {
-  margin: 5px 0 0;
+.header-divider {
+  width: 1px;
+  height: 42px;
 
-  color: #718096;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.department-logout {
+  border: none;
+  background: transparent;
+
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  gap: 9px;
 
   font-size: 14px;
-}
-
-
-/* COLOR LINE */
-
-.flight-color-line {
-  height: 4px;
-
-  margin-top: 18px;
-
-  display: flex;
-
-  background: #d5dce5;
-}
-
-.flight-red-line {
-  width: 140px;
-
-  background: #ef233c;
-}
-
-.flight-blue-line {
-  width: 590px;
-
-  background: #1976c9;
-}
-
-.flight-navy-line {
-  flex: 1;
-
-  background: #082b55;
-}
-
-
-/* AVAILABLE FLIGHTS */
-
-.available-flights-header {
-  margin-top: 25px;
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-}
-
-.available-flights-header h3 {
-  margin: 0;
-
-  color: #082b55;
-
-  font-size: 21px;
-
-  font-weight: 900;
-}
-
-.available-flights-header p {
-  margin: 5px 0 0;
-
-  color: #718096;
-
-  font-size: 13px;
-}
-
-
-/* ADD BUTTON */
-
-.add-flight-button {
-  border: none;
-
-  background: #ef233c;
-
-  color: white;
-
-  padding: 12px 18px;
-
-  border-radius: 7px;
-
-  font-size: 12px;
-
-  font-weight: 900;
+  font-weight: 800;
 
   cursor: pointer;
 
-  display: flex;
+  padding: 10px 4px;
 
-  align-items: center;
-
-  gap: 8px;
-
-  box-shadow:
-    0 4px 10px rgba(239,35,60,.2);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
-.add-flight-button span {
-  font-size: 20px;
-
-  line-height: 12px;
+.department-logout svg {
+  width: 24px;
+  height: 24px;
 }
 
-.add-flight-button:hover {
-  background: #d91830;
-
+.department-logout:hover {
+  opacity: 0.75;
   transform: translateY(-1px);
 }
 
 
-/* ADD FLIGHT PANEL */
+/* =========================================================
+   HERO
+   ========================================================= */
 
-.add-flight-panel {
-  margin-top: 20px;
+.department-hero {
+  width: 100%;
 
-  padding: 23px;
+  padding:
+    60px
+    5%
+    42px;
 
-  background: #f5f8fb;
-
-  border: 1px solid #d5dee8;
-
-  border-left: 6px solid #ef233c;
-
-  border-radius: 9px;
+  color: #ffffff;
 }
 
-.add-flight-title {
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: flex-start;
-
-  margin-bottom: 20px;
+.hero-content {
+  max-width: 1300px;
+  margin: 0 auto;
 }
 
-.add-flight-title h3 {
+.hero-content h1 {
   margin: 0;
 
-  color: #082b55;
-
-  font-size: 19px;
+  font-size: clamp(30px, 4vw, 48px);
 
   font-weight: 900;
+
+  letter-spacing: -1px;
 }
 
-.add-flight-title p {
-  margin: 5px 0 0;
-
-  color: #718096;
-
-  font-size: 13px;
+.hero-content h1 span {
+  font-weight: 700;
 }
 
-.close-add-flight {
-  border: none;
+.hero-red-line {
+  width: 88px;
+  height: 5px;
 
-  background: transparent;
+  background: #ed1b2f;
 
-  color: #718096;
+  margin:
+    14px
+    0
+    16px;
 
-  font-size: 28px;
-
-  line-height: 20px;
-
-  cursor: pointer;
+  border-radius: 3px;
 }
 
-.close-add-flight:hover {
-  color: #ef233c;
+.hero-content p {
+  margin: 0;
+
+  font-size: 17px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
 }
 
-.add-flight-grid {
+
+/* =========================================================
+   MAIN WHITE PANEL
+   ========================================================= */
+
+.department-panel {
+  width: calc(100% - 80px);
+  max-width: 1320px;
+
+  margin:
+    0 auto
+    35px;
+
+  padding: 30px;
+
+  background:
+    rgba(255, 255, 255, 0.97);
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 18px 50px
+    rgba(0, 0, 0, 0.30);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.8);
+
+  position: relative;
+}
+
+
+/* =========================================================
+   PANEL HEADER
+   ========================================================= */
+
+.department-panel-header {
+  width: 100%;
+}
+
+.panel-title-row {
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+}
+
+.panel-title-row h2 {
+  margin: 0;
+
+  color: #071d35;
+
+  font-size: 29px;
+  font-weight: 900;
+
+  letter-spacing: -0.5px;
+}
+
+.panel-title-row p {
+  margin:
+    5px
+    0
+    0;
+
+  color: #68778a;
+
+  font-size: 15px;
+}
+
+
+/* =========================================================
+   3 x 3 PANEL ICON
+   ========================================================= */
+
+.panel-grid-icon {
+  width: 42px;
+  height: 42px;
+
   display: grid;
 
   grid-template-columns:
-    repeat(5, minmax(0, 1fr));
+    repeat(3, 1fr);
 
-  gap: 14px;
+  gap: 4px;
+
+  padding: 3px;
 }
 
-.flight-form-field {
+.panel-grid-icon span {
+  display: block;
+
+  border-radius: 2px;
+
+  background: #0b315d;
+}
+
+.panel-grid-icon span:nth-child(2),
+.panel-grid-icon span:nth-child(4),
+.panel-grid-icon span:nth-child(8) {
+  background: #ed1b2f;
+}
+
+
+/* =========================================================
+   RED / BLUE / NAVY LINE
+   ========================================================= */
+
+.department-panel-line {
+  width: 100%;
+  height: 5px;
+
   display: flex;
 
-  flex-direction: column;
-
-  gap: 7px;
-}
-
-.flight-form-field label {
-  color: #34495e;
-
-  font-size: 11px;
-
-  font-weight: 900;
-
-  letter-spacing: .6px;
-}
-
-.flight-form-field input,
-.flight-form-field select {
-  width: 100%;
-
-  height: 43px;
-
-  padding: 0 11px;
-
-  border: 1px solid #cbd5df;
-
-  border-radius: 6px;
-
-  background: white;
-
-  color: #152b45;
-
-  font-size: 13px;
-
-  outline: none;
-}
-
-.flight-form-field input:focus,
-.flight-form-field select:focus {
-  border-color: #1976c9;
-
-  box-shadow:
-    0 0 0 3px rgba(
-      25,
-      118,
-      201,
-      .10
-    );
-}
-
-.add-flight-actions {
   margin-top: 20px;
 
-  display: flex;
-
-  justify-content: flex-end;
-
-  gap: 10px;
-}
-
-.cancel-flight-button,
-.save-flight-button {
-  border: none;
-
-  padding: 11px 18px;
-
-  border-radius: 6px;
-
-  font-size: 11px;
-
-  font-weight: 900;
-
-  cursor: pointer;
-}
-
-.cancel-flight-button {
-  background: #e7ecf1;
-
-  color: #34495e;
-}
-
-.save-flight-button {
-  background: #082b55;
-
-  color: white;
-}
-
-.save-flight-button:hover {
-  background: #0d3b70;
-}
-
-
-/* FLIGHT LIST */
-
-.flight-list {
-  margin-top: 22px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 12px;
-}
-
-.flight-card {
-  position: relative;
-
-  background: white;
-
-  border: 1px solid #d7dfe8;
-
-  border-radius: 9px;
+  border-radius: 4px;
 
   overflow: hidden;
 
-  box-shadow:
-    0 3px 10px rgba(0,25,55,.05);
-
-  transition:
-    .2s ease;
+  background: #d8dee6;
 }
 
-.flight-card::before {
+.department-panel-line .red-line {
+  width: 12%;
+
+  background: #ed1b2f;
+}
+
+.department-panel-line .blue-line {
+  width: 47%;
+
+  background: #0875c9;
+}
+
+.department-panel-line .navy-line {
+  flex: 1;
+
+  background: #092c55;
+}
+
+
+/* =========================================================
+   LOGGED USER
+   ========================================================= */
+
+.logged-user {
+  margin:
+    24px
+    0
+    20px;
+
+  padding:
+    0
+    4px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.logged-user span {
+  color: #6a7888;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.logged-user strong {
+  color: #071d35;
+
+  font-size: 15px;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   DEPARTMENT GRID
+   ========================================================= */
+
+.department-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+
+  align-items: stretch;
+}
+
+
+/* =========================================================
+   DEPARTMENT CARD
+   ========================================================= */
+
+.department-card {
+  min-height: 195px;
+
+  position: relative;
+
+  border:
+    1px solid
+    #d7dee7;
+
+  border-radius: 9px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f7f9fc
+    );
+
+  color: #071d35;
+
+  text-align: left;
+
+  padding:
+    20px
+    18px
+    18px
+    24px;
+
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+
+  overflow: hidden;
+}
+
+
+/* LEFT COLOR LINE */
+
+.department-card::before {
   content: "";
 
   position: absolute;
@@ -562,370 +486,268 @@
   top: 0;
   bottom: 0;
 
-  width: 6px;
+  width: 7px;
 
-  background: #082b55;
+  background: #092c55;
 }
 
-.flight-card:hover {
-  transform: translateY(-2px);
+.department-card.red::before {
+  background: #ed1b2f;
+}
+
+.department-card.blue::before {
+  background: #0875c9;
+}
+
+.department-card.navy::before {
+  background: #092c55;
+}
+
+
+/* HOVER */
+
+.department-card:hover {
+  transform:
+    translateY(-5px);
 
   box-shadow:
-    0 8px 20px rgba(0,25,55,.10);
+    0 12px 28px
+    rgba(5, 29, 55, 0.18);
+
+  border-color:
+    #b9c6d5;
 }
 
-.flight-card-main {
-  min-height: 104px;
+.department-card:active {
+  transform:
+    translateY(-1px);
+}
 
-  padding:
-    17px 20px 17px 25px;
 
-  display: grid;
+/* =========================================================
+   DEPARTMENT ICON
+   ========================================================= */
 
-  grid-template-columns:
-    150px
-    1fr
-    180px
-    155px;
+.department-icon-wrapper {
+  width: 72px;
+  height: 72px;
 
-  gap: 20px;
+  border-radius: 50%;
 
+  display: flex;
   align-items: center;
-}
-
-
-/* FLIGHT NUMBER */
-
-.flight-number-block {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 5px;
-}
-
-.flight-number-block span,
-.flight-info span,
-.flight-status-block > span:first-child {
-  color: #8290a0;
-
-  font-size: 9px;
-
-  font-weight: 900;
-
-  letter-spacing: 1px;
-}
-
-.flight-number-block strong {
-  color: #082b55;
-
-  font-size: 22px;
-
-  font-weight: 900;
-}
-
-
-/* FLIGHT INFO */
-
-.flight-info {
-  display: grid;
-
-  grid-template-columns:
-    repeat(3, 1fr);
-
-  gap: 20px;
-}
-
-.flight-info > div {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 5px;
-}
-
-.flight-info strong {
-  color: #253b54;
-
-  font-size: 13px;
-
-  font-weight: 800;
-}
-
-
-/* STATUS */
-
-.flight-status-block {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 7px;
-
-  align-items: flex-start;
-}
-
-.flight-status {
-  display: inline-flex;
-
-  align-items: center;
-
   justify-content: center;
 
-  min-width: 105px;
+  margin-bottom: 15px;
 
-  padding: 6px 10px;
+  color: #ffffff;
 
-  border-radius: 20px;
+  background: #092c55;
 
-  font-size: 10px;
-
-  font-weight: 900;
-
-  border: 1px solid #d3dbe4;
+  flex-shrink: 0;
 }
 
-.open-status {
-  background: white;
-
-  color: #34495e;
+.department-card.red
+.department-icon-wrapper {
+  background: #ed1b2f;
 }
 
-.progress-status {
-  background: #082b55;
-
-  color: white;
-
-  border-color: #082b55;
+.department-card.blue
+.department-icon-wrapper {
+  background: #0875c9;
 }
 
-.no-delay-status {
-  background: #e8f7ed;
-
-  color: #19713a;
-
-  border-color: #a8d9b8;
+.department-card.navy
+.department-icon-wrapper {
+  background: #092c55;
 }
 
-.delay-status {
-  background: #fff0f1;
+.department-svg {
+  width: 48px;
+  height: 48px;
 
-  color: #d71935;
-
-  border-color: #f2a7b0;
+  color: #ffffff;
 }
 
 
-/* SELECT BUTTON */
+/* =========================================================
+   CARD CONTENT
+   ========================================================= */
 
-.select-flight-button {
-  height: 43px;
-
-  border: none;
-
-  border-radius: 6px;
-
-  background: #082b55;
-
-  color: white;
-
-  font-size: 11px;
-
-  font-weight: 900;
-
-  cursor: pointer;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  gap: 13px;
+.department-card-content {
+  padding-right: 42px;
 }
 
-.select-flight-button span {
-  font-size: 18px;
-}
-
-.select-flight-button:hover {
-  background: #ef233c;
-}
-
-
-/* EMPTY */
-
-.flight-empty-state {
-  margin-top: 22px;
-
-  min-height: 220px;
-
-  border: 1px dashed #cbd5df;
-
-  border-radius: 10px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  justify-content: center;
-
-  text-align: center;
-
-  background: #f9fbfd;
-}
-
-.empty-flight-icon,
-.loading-plane {
-  font-size: 42px;
-
-  color: #082b55;
-
-  margin-bottom: 10px;
-}
-
-.flight-empty-state h3 {
+.department-card-content h3 {
   margin: 0;
 
-  color: #253b54;
+  color: #071d35;
 
-  font-size: 17px;
+  font-size: 18px;
+
+  font-weight: 900;
+
+  line-height: 1.15;
 }
 
-.flight-empty-state p {
-  margin: 7px 0 0;
+.department-card-content p {
+  margin:
+    7px
+    0
+    0;
 
-  color: #718096;
+  color: #6a7888;
 
   font-size: 13px;
+
+  line-height: 1.4;
 }
 
 
-/* BACK */
+/* =========================================================
+   ARROW
+   ========================================================= */
 
-.flight-back-wrapper {
-  width: calc(100% - 84px);
+.department-arrow {
+  position: absolute;
 
-  max-width: 1360px;
+  right: 17px;
+  bottom: 17px;
 
-  margin: 18px auto 0;
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  background: #092c55;
+
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
-.back-department-button {
-  border: none;
-
-  background: rgba(255,255,255,.12);
-
-  color: white;
-
-  padding: 10px 15px;
-
-  border-radius: 6px;
-
-  font-size: 11px;
-
-  font-weight: 800;
-
-  cursor: pointer;
+.department-arrow svg {
+  width: 25px;
+  height: 25px;
 }
 
-.back-department-button:hover {
-  background: rgba(255,255,255,.2);
+.department-card:hover
+.department-arrow {
+  transform:
+    translateX(4px);
+
+  background: #ed1b2f;
 }
 
 
-/* FOOTER */
+/* =========================================================
+   CARGO — SECOND ROW
+   ========================================================= */
 
-.flight-footer {
+.department-card:last-child {
+  grid-column: span 1;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.department-footer {
+  width: 100%;
+
   margin-top: auto;
 
   padding:
-    28px 20px 22px;
+    20px
+    20px
+    28px;
 
   text-align: center;
 
-  color: white;
+  color: #ffffff;
 
-  font-size: 11px;
-
-  font-weight: 600;
-
-  text-shadow:
-    0 1px 5px rgba(0,0,0,.5);
+  font-size: 12px;
 }
 
-.flight-footer-line {
-  width: 40px;
+.department-footer > div:first-child {
+  font-weight: 700;
+
+  letter-spacing: 0.3px;
+}
+
+.footer-red-line {
+  width: 55px;
   height: 3px;
 
-  margin: 7px auto;
+  background: #ed1b2f;
 
-  background: #ef233c;
+  margin:
+    7px
+    auto;
 }
 
-.flight-footer span {
-  color: #d5deea;
-
-  font-size: 10px;
+.department-footer span {
+  opacity: 0.85;
 }
 
 
-/* LOADING SCREEN */
+/* =========================================================
+   LOADING
+   ========================================================= */
 
-.flight-loading-screen {
+.department-loading {
   min-height: 100vh;
 
   display: flex;
-
-  flex-direction: column;
-
   align-items: center;
-
   justify-content: center;
 
-  color: white;
+  color: #ffffff;
 
-  font-size: 18px;
-
+  font-size: 20px;
   font-weight: 700;
-
-  background:
-    linear-gradient(
-      rgba(4,24,53,.88),
-      rgba(4,24,53,.94)
-    ),
-    url("/transom-airport.jpg");
-
-  background-size: cover;
-
-  background-position: center;
 }
 
 
 /* =========================================================
    TABLET
-========================================================= */
+   ========================================================= */
 
 @media (max-width: 1100px) {
 
-  .flight-card-main {
-    grid-template-columns:
-      120px
-      1fr
-      150px;
-
-    gap: 15px;
+  .department-header {
+    padding:
+      17px
+      28px;
   }
 
-  .select-flight-button {
-    grid-column: 3;
+  .transom-logo {
+    font-size: 37px;
   }
 
-  .add-flight-grid {
+  .department-hero {
+    padding:
+      48px
+      28px
+      32px;
+  }
+
+  .department-panel {
+    width: calc(100% - 50px);
+
+    padding: 25px;
+  }
+
+  .department-grid {
     grid-template-columns:
-      repeat(2, 1fr);
+      repeat(2, minmax(0, 1fr));
   }
 
 }
@@ -933,124 +755,202 @@
 
 /* =========================================================
    MOBILE
-========================================================= */
+   ========================================================= */
 
 @media (max-width: 700px) {
 
-  .flight-header {
-    padding: 14px 16px;
-  }
-
-  .flight-logo {
-    font-size: 28px;
-
-    letter-spacing: 2px;
-  }
-
-  .flight-tagline {
-    font-size: 7px;
-
-    letter-spacing: 2px;
-  }
-
-  .flight-user {
-    display: none;
-  }
-
-  .flight-header-divider {
-    display: none;
-  }
-
-  .flight-logout {
-    font-size: 10px;
-  }
-
-  .flight-hero {
-    min-height: 150px;
+  .department-header {
+    min-height: auto;
 
     padding:
-      35px 20px 25px;
+      16px
+      18px;
+
+    align-items: flex-start;
   }
 
-  .flight-hero h1 {
-    font-size: 28px;
+  .transom-logo {
+    font-size: 29px;
+
+    letter-spacing: 3px;
   }
 
-  .flight-hero p {
+  .transom-tagline {
+    font-size: 8px;
+
+    letter-spacing: 2px;
+  }
+
+  .header-user-area {
+    gap: 8px;
+  }
+
+  .user-display span:last-child {
+    display: none;
+  }
+
+  .header-divider {
+    height: 30px;
+  }
+
+  .department-logout {
     font-size: 11px;
   }
 
-  .flight-main-panel {
+  .department-logout svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .department-hero {
+    padding:
+      35px
+      18px
+      25px;
+  }
+
+  .hero-content h1 {
+    font-size: 28px;
+  }
+
+  .hero-content p {
+    font-size: 13px;
+  }
+
+  .department-panel {
     width: calc(100% - 24px);
 
-    padding: 18px 14px;
+    margin-bottom: 20px;
+
+    padding: 18px;
+
+    border-radius: 9px;
   }
 
-  .flight-panel-title h2 {
-    font-size: 21px;
+  .panel-title-row {
+    align-items: flex-start;
+
+    gap: 12px;
   }
 
-  .flight-panel-title p {
+  .panel-grid-icon {
+    width: 32px;
+    height: 32px;
+
+    flex-shrink: 0;
+  }
+
+  .panel-title-row h2 {
+    font-size: 20px;
+  }
+
+  .panel-title-row p {
     font-size: 12px;
   }
 
-  .flight-red-line {
-    width: 65px;
-  }
-
-  .flight-blue-line {
-    width: 100px;
-  }
-
-  .available-flights-header {
-    align-items: flex-start;
-
-    flex-direction: column;
-
-    gap: 14px;
-  }
-
-  .add-flight-button {
-    width: 100%;
-
-    justify-content: center;
-  }
-
-  .add-flight-grid {
+  .department-grid {
     grid-template-columns: 1fr;
-  }
-
-  .flight-card-main {
-    grid-template-columns: 1fr;
-
-    gap: 14px;
-
-    padding: 18px;
-  }
-
-  .flight-info {
-    grid-template-columns:
-      repeat(2, 1fr);
 
     gap: 13px;
   }
 
-  .flight-status-block {
-    align-items: flex-start;
+  .department-card {
+    min-height: 165px;
+
+    padding:
+      18px
+      16px
+      18px
+      22px;
   }
 
-  .select-flight-button {
-    width: 100%;
+  .department-icon-wrapper {
+    width: 60px;
+    height: 60px;
 
-    grid-column: auto;
+    margin-bottom: 12px;
   }
 
-  .flight-back-wrapper {
-    width: calc(100% - 24px);
+  .department-svg {
+    width: 39px;
+    height: 39px;
   }
 
-  .back-department-button {
-    width: 100%;
+  .department-card-content h3 {
+    font-size: 16px;
+  }
+
+  .department-card-content p {
+    font-size: 12px;
+  }
+
+  .department-arrow {
+    width: 37px;
+    height: 37px;
+
+    right: 13px;
+    bottom: 13px;
+  }
+
+  .department-arrow svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .logged-user {
+    margin-top: 18px;
+  }
+
+  .department-footer {
+    padding-bottom: 20px;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+  .department-header {
+    padding:
+      13px
+      14px;
+  }
+
+  .transom-logo {
+    font-size: 25px;
+  }
+
+  .transom-tagline {
+    font-size: 7px;
+  }
+
+  .department-hero {
+    padding:
+      28px
+      15px
+      20px;
+  }
+
+  .hero-content h1 {
+    font-size: 24px;
+  }
+
+  .department-panel {
+    width: calc(100% - 16px);
+
+    padding: 15px;
+  }
+
+  .panel-title-row h2 {
+    font-size: 18px;
+  }
+
+  .department-card {
+    min-height: 150px;
   }
 
 }
