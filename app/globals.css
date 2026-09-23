@@ -1,708 +1,855 @@
 /* =========================================================
-   TRANSOM — DEPARTMENT SELECTION FINAL DESIGN
-   ========================================================= */
+   TRANSOM — GLOBAL STYLES
+   FLIGHT SERVICE CAPTURE
+========================================================= */
 
-.department-page {
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #eef3f8;
+  color: #10233f;
+}
+
+body {
   min-height: 100vh;
-  width: 100%;
-  color: #071d35;
+}
 
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::placeholder {
+  color: #9aa7b8;
+}
+
+/* =========================================================
+   LOGIN / COMMON BACKGROUND
+========================================================= */
+
+.login-page,
+.dashboard-page,
+.capture-page {
+  min-height: 100vh;
   background:
     linear-gradient(
-      rgba(3, 25, 55, 0.70),
-      rgba(3, 25, 55, 0.82)
+      rgba(5, 25, 54, 0.78),
+      rgba(5, 25, 54, 0.88)
     ),
     url("/transom-airport.jpg");
-
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+}
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+/* =========================================================
+   CAPTURE PAGE
+========================================================= */
+
+.capture-page {
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+/* =========================================================
+   CAPTURE HEADER
+========================================================= */
+
+.capture-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  min-height: 76px;
+  padding: 14px 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  background: rgba(4, 24, 53, 0.97);
+  border-bottom: 4px solid #d71920;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+}
+
+.capture-brand {
+  color: #ffffff;
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.capture-brand-subtitle {
+  margin-top: 5px;
+  color: #b9c7d8;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.7px;
+}
+
+.capture-header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.capture-user {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.capture-logout {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: transparent;
+  color: #ffffff;
+
+  padding: 9px 16px;
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+
+  transition: 0.2s ease;
+}
+
+.capture-logout:hover {
+  background: #d71920;
+  border-color: #d71920;
+}
+
+/* =========================================================
+   CAPTURE HERO
+========================================================= */
+
+.capture-hero {
+  width: min(1180px, calc(100% - 40px));
+  margin: 30px auto 18px;
+
+  padding: 28px 32px;
+
+  background: rgba(255, 255, 255, 0.97);
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.18);
+
+  border-left: 6px solid #d71920;
+}
+
+.capture-small-title {
+  color: #718096;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.capture-hero h1 {
+  margin: 0;
+
+  color: #10233f;
+
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.15;
+
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.capture-red-line {
+  width: 70px;
+  height: 4px;
+
+  margin-top: 15px;
+
+  background: #d71920;
+  border-radius: 10px;
+}
+
+.capture-hero p {
+  margin: 13px 0 0;
+
+  color: #718096;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   MAIN CAPTURE PANEL
+========================================================= */
+
+.capture-panel {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+
+  padding: 30px;
+
+  background: #ffffff;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 15px 45px rgba(0, 0, 0, 0.18);
+
+  border: 1px solid #dfe6ef;
+}
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+.capture-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  padding-bottom: 20px;
+
+  border-bottom: 1px solid #e3e8ef;
+}
+
+.capture-heading-icon {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  background: #0d315f;
+  color: #ffffff;
+
+  border-radius: 50%;
+
+  font-size: 22px;
+
+  box-shadow:
+    0 6px 15px rgba(13, 49, 95, 0.2);
+}
+
+.capture-section-heading h2 {
+  margin: 0;
+
+  color: #10233f;
+
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.capture-section-heading p {
+  margin: 5px 0 0;
+
+  color: #8290a3;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   FLIGHT INFORMATION
+========================================================= */
+
+.flight-information {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+
+  gap: 12px;
+
+  margin-top: 22px;
+}
+
+.flight-info-item {
+  min-height: 84px;
+
+  padding: 15px;
+
+  background: #f7f9fc;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
 
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
+.flight-info-item span {
+  color: #7d8a9d;
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+
+  margin-bottom: 7px;
+}
+
+.flight-info-item strong {
+  color: #122846;
+
+  font-size: 14px;
+  font-weight: 900;
+}
 
 /* =========================================================
-   HEADER
-   ========================================================= */
+   STATUS COLORS
+========================================================= */
 
-.department-header {
-  min-height: 105px;
-  width: 100%;
+.flight-status {
+  display: inline-flex;
+  align-items: center;
 
-  padding: 18px 42px;
+  width: fit-content;
+
+  padding: 6px 10px;
+
+  border-radius: 6px;
+
+  font-size: 10px !important;
+  font-weight: 900 !important;
+}
+
+.open-status {
+  background: #ffffff;
+  color: #1f2937 !important;
+  border: 1px solid #cbd5e1;
+}
+
+.progress-status {
+  background: #0b315f;
+  color: #ffffff !important;
+}
+
+.no-delay-status {
+  background: #16a34a;
+  color: #ffffff !important;
+}
+
+.delay-status {
+  background: #d71920;
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   FLIGHT STATUS CONTROL
+========================================================= */
+
+.capture-status-panel {
+  margin-top: 25px;
+
+  padding: 20px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  background:
-    linear-gradient(
-      90deg,
-      #061c3b,
-      #082d5d,
-      #061d3e
-    );
+  gap: 20px;
 
-  border-bottom: 5px solid #ed1b2f;
+  background: #f7f9fc;
 
-  box-shadow:
-    0 5px 20px rgba(0, 0, 0, 0.25);
-
-  position: relative;
-  z-index: 10;
+  border: 1px solid #dfe6ef;
+  border-radius: 11px;
 }
 
-
-/* =========================================================
-   TRANSOM BRAND
-   ========================================================= */
-
-.transom-brand {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+.capture-status-panel > div:first-child {
+  min-width: 180px;
 }
 
-.transom-logo {
-  color: #ffffff;
+.capture-status-panel span {
+  display: block;
 
-  font-size: 44px;
+  color: #152b49;
+
+  font-size: 11px;
   font-weight: 900;
-
-  letter-spacing: 4px;
-  line-height: 0.95;
-
-  text-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.25);
+  letter-spacing: 0.8px;
 }
 
-.transom-tagline {
-  color: #ffffff;
-
-  font-size: 12px;
-  font-weight: 700;
-
-  letter-spacing: 4px;
+.capture-status-panel small {
+  display: block;
 
   margin-top: 5px;
 
-  opacity: 0.92;
+  color: #8290a3;
+
+  font-size: 11px;
 }
 
-
-/* =========================================================
-   HEADER USER
-   ========================================================= */
-
-.header-user-area {
+.capture-status-actions {
   display: flex;
-  align-items: center;
-  gap: 22px;
-
-  color: #ffffff;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
-.user-display {
-  display: flex;
-  align-items: center;
-  gap: 9px;
+.capture-status-button {
+  padding: 10px 13px;
 
-  font-size: 15px;
-  font-weight: 700;
+  border: 1px solid #ccd5e0;
 
-  white-space: nowrap;
-}
+  background: #ffffff;
+  color: #31445f;
 
-.user-icon {
-  width: 27px;
-  height: 27px;
+  border-radius: 7px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-icon svg {
-  width: 25px;
-  height: 25px;
-}
-
-.header-divider {
-  width: 1px;
-  height: 42px;
-
-  background: rgba(255, 255, 255, 0.45);
-}
-
-.department-logout {
-  border: none;
-  background: transparent;
-
-  color: #ffffff;
-
-  display: flex;
-  align-items: center;
-  gap: 9px;
-
-  font-size: 14px;
-  font-weight: 800;
-
-  cursor: pointer;
-
-  padding: 10px 4px;
-
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-
-.department-logout svg {
-  width: 24px;
-  height: 24px;
-}
-
-.department-logout:hover {
-  opacity: 0.75;
-  transform: translateY(-1px);
-}
-
-
-/* =========================================================
-   HERO
-   ========================================================= */
-
-.department-hero {
-  width: 100%;
-
-  padding:
-    60px
-    5%
-    42px;
-
-  color: #ffffff;
-}
-
-.hero-content {
-  max-width: 1300px;
-  margin: 0 auto;
-}
-
-.hero-content h1 {
-  margin: 0;
-
-  font-size: clamp(30px, 4vw, 48px);
-
+  font-size: 10px;
   font-weight: 900;
 
-  letter-spacing: -1px;
+  transition: all 0.2s ease;
 }
 
-.hero-content h1 span {
-  font-weight: 700;
+.capture-status-button:hover {
+  border-color: #173b69;
+  color: #173b69;
 }
 
-.hero-red-line {
-  width: 88px;
-  height: 5px;
-
-  background: #ed1b2f;
-
-  margin:
-    14px
-    0
-    16px;
-
-  border-radius: 3px;
-}
-
-.hero-content p {
-  margin: 0;
-
-  font-size: 17px;
-
-  font-weight: 800;
-
-  letter-spacing: 2px;
-}
-
-
-/* =========================================================
-   MAIN WHITE PANEL
-   ========================================================= */
-
-.department-panel {
-  width: calc(100% - 80px);
-  max-width: 1320px;
-
-  margin:
-    0 auto
-    35px;
-
-  padding: 30px;
-
-  background:
-    rgba(255, 255, 255, 0.97);
-
-  border-radius: 12px;
-
-  box-shadow:
-    0 18px 50px
-    rgba(0, 0, 0, 0.30);
-
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.8);
-
-  position: relative;
-}
-
-
-/* =========================================================
-   PANEL HEADER
-   ========================================================= */
-
-.department-panel-header {
-  width: 100%;
-}
-
-.panel-title-row {
-  display: flex;
-  align-items: center;
-
-  gap: 18px;
-}
-
-.panel-title-row h2 {
-  margin: 0;
-
-  color: #071d35;
-
-  font-size: 29px;
-  font-weight: 900;
-
-  letter-spacing: -0.5px;
-}
-
-.panel-title-row p {
-  margin:
-    5px
-    0
-    0;
-
-  color: #68778a;
-
-  font-size: 15px;
-}
-
-
-/* =========================================================
-   3 x 3 PANEL ICON
-   ========================================================= */
-
-.panel-grid-icon {
-  width: 42px;
-  height: 42px;
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(3, 1fr);
-
-  gap: 4px;
-
-  padding: 3px;
-}
-
-.panel-grid-icon span {
-  display: block;
-
-  border-radius: 2px;
-
-  background: #0b315d;
-}
-
-.panel-grid-icon span:nth-child(2),
-.panel-grid-icon span:nth-child(4),
-.panel-grid-icon span:nth-child(8) {
-  background: #ed1b2f;
-}
-
-
-/* =========================================================
-   RED / BLUE / NAVY LINE
-   ========================================================= */
-
-.department-panel-line {
-  width: 100%;
-  height: 5px;
-
-  display: flex;
-
-  margin-top: 20px;
-
-  border-radius: 4px;
-
-  overflow: hidden;
-
-  background: #d8dee6;
-}
-
-.department-panel-line .red-line {
-  width: 12%;
-
-  background: #ed1b2f;
-}
-
-.department-panel-line .blue-line {
-  width: 47%;
-
-  background: #0875c9;
-}
-
-.department-panel-line .navy-line {
-  flex: 1;
-
-  background: #092c55;
-}
-
-
-/* =========================================================
-   LOGGED USER
-   ========================================================= */
-
-.logged-user {
-  margin:
-    24px
-    0
-    20px;
-
-  padding:
-    0
-    4px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.logged-user span {
-  color: #6a7888;
-
-  font-size: 13px;
-
-  font-weight: 600;
-}
-
-.logged-user strong {
-  color: #071d35;
-
-  font-size: 15px;
-
-  font-weight: 800;
-}
-
-
-/* =========================================================
-   DEPARTMENT GRID
-   ========================================================= */
-
-.department-grid {
-  width: 100%;
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
-
-  gap: 18px;
-
-  align-items: stretch;
-}
-
-
-/* =========================================================
-   DEPARTMENT CARD
-   ========================================================= */
-
-.department-card {
-  min-height: 195px;
-
-  position: relative;
-
-  border:
-    1px solid
-    #d7dee7;
-
-  border-radius: 9px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #f7f9fc
-    );
-
-  color: #071d35;
-
-  text-align: left;
-
-  padding:
-    20px
-    18px
-    18px
-    24px;
-
-  cursor: pointer;
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: flex-start;
-
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease,
-    border-color 0.22s ease;
-
-  overflow: hidden;
-}
-
-
-/* LEFT COLOR LINE */
-
-.department-card::before {
-  content: "";
-
-  position: absolute;
-
-  left: 0;
-  top: 0;
-  bottom: 0;
-
-  width: 7px;
-
-  background: #092c55;
-}
-
-.department-card.red::before {
-  background: #ed1b2f;
-}
-
-.department-card.blue::before {
-  background: #0875c9;
-}
-
-.department-card.navy::before {
-  background: #092c55;
-}
-
-
-/* HOVER */
-
-.department-card:hover {
-  transform:
-    translateY(-5px);
-
-  box-shadow:
-    0 12px 28px
-    rgba(5, 29, 55, 0.18);
-
-  border-color:
-    #b9c6d5;
-}
-
-.department-card:active {
-  transform:
-    translateY(-1px);
-}
-
-
-/* =========================================================
-   DEPARTMENT ICON
-   ========================================================= */
-
-.department-icon-wrapper {
-  width: 72px;
-  height: 72px;
-
-  border-radius: 50%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin-bottom: 15px;
-
+.capture-status-button.active {
+  background: #0c315d;
+  border-color: #0c315d;
   color: #ffffff;
+}
 
-  background: #092c55;
+/* =========================================================
+   DEPARTMENT TITLE
+========================================================= */
 
+.department-section-title {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  margin-top: 32px;
+  margin-bottom: 18px;
+
+  padding: 17px 18px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.section-color {
+  width: 5px;
+  height: 46px;
+
+  border-radius: 8px;
   flex-shrink: 0;
 }
 
-.department-card.red
-.department-icon-wrapper {
-  background: #ed1b2f;
+.section-color.red {
+  background: #d71920;
 }
 
-.department-card.blue
-.department-icon-wrapper {
-  background: #0875c9;
+.section-color.navy {
+  background: #183d69;
 }
 
-.department-card.navy
-.department-icon-wrapper {
-  background: #092c55;
+.section-color.blue {
+  background: #1694d3;
 }
 
-.department-svg {
-  width: 48px;
-  height: 48px;
-
-  color: #ffffff;
-}
-
-
-/* =========================================================
-   CARD CONTENT
-   ========================================================= */
-
-.department-card-content {
-  padding-right: 42px;
-}
-
-.department-card-content h3 {
+.department-section-title h2 {
   margin: 0;
 
-  color: #071d35;
+  color: #132946;
 
-  font-size: 18px;
-
+  font-size: 17px;
   font-weight: 900;
-
-  line-height: 1.15;
 }
 
-.department-card-content p {
-  margin:
-    7px
-    0
-    0;
+.department-section-title p {
+  margin: 5px 0 0;
 
-  color: #6a7888;
+  color: #8290a3;
 
-  font-size: 13px;
-
-  line-height: 1.4;
+  font-size: 11px;
 }
-
 
 /* =========================================================
-   ARROW
-   ========================================================= */
+   SERVICE CARDS
+========================================================= */
 
-.department-arrow {
-  position: absolute;
+.service-grid {
+  display: grid;
 
-  right: 17px;
-  bottom: 17px;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
 
-  width: 42px;
-  height: 42px;
+  gap: 15px;
 
-  border-radius: 50%;
+  margin-top: 16px;
+}
 
-  background: #092c55;
+.service-card {
+  padding: 18px;
 
-  color: #ffffff;
+  background: #ffffff;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid #dce4ed;
+
+  border-radius: 11px;
+
+  box-shadow:
+    0 3px 12px rgba(15, 35, 60, 0.06);
 
   transition:
     transform 0.2s ease,
-    background 0.2s ease;
+    box-shadow 0.2s ease;
 }
 
-.department-arrow svg {
-  width: 25px;
-  height: 25px;
+.service-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 7px 18px rgba(15, 35, 60, 0.1);
 }
 
-.department-card:hover
-.department-arrow {
-  transform:
-    translateX(4px);
+.service-card-title {
+  margin-bottom: 15px;
 
-  background: #ed1b2f;
+  color: #17365f;
+
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+
+  padding-bottom: 10px;
+
+  border-bottom: 1px solid #e8edf3;
 }
 
+.service-time-row {
+  display: grid;
 
-/* =========================================================
-   CARGO — SECOND ROW
-   ========================================================= */
+  grid-template-columns: 1fr 1fr;
 
-.department-card:last-child {
-  grid-column: span 1;
+  gap: 12px;
 }
 
+.service-time-row label {
+  display: block;
 
-/* =========================================================
-   FOOTER
-   ========================================================= */
+  margin-bottom: 6px;
 
-.department-footer {
+  color: #7b899c;
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+.service-time-row input {
   width: 100%;
 
-  margin-top: auto;
+  height: 42px;
 
-  padding:
-    20px
-    20px
-    28px;
+  padding: 0 11px;
 
-  text-align: center;
+  border: 1px solid #d6dee8;
+  border-radius: 7px;
 
-  color: #ffffff;
+  background: #f9fbfd;
+
+  color: #152b49;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  outline: none;
+}
+
+.service-time-row input:focus {
+  border-color: #1a5a91;
+
+  box-shadow:
+    0 0 0 3px rgba(26, 90, 145, 0.08);
+}
+
+.service-duration {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 12px;
+
+  padding: 10px 12px;
+
+  background: #f1f5f9;
+
+  border-radius: 7px;
+}
+
+.service-duration span {
+  color: #7c8999;
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+}
+
+.service-duration strong {
+  color: #12335b;
+
+  font-size: 13px;
+  font-weight: 900;
+
+  letter-spacing: 1px;
+}
+
+/* =========================================================
+   FORM FIELDS
+========================================================= */
+
+.capture-fields-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 15px;
+
+  margin-top: 18px;
+}
+
+.capture-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.capture-field label {
+  margin-bottom: 7px;
+
+  color: #65758a;
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+.capture-field input,
+.capture-field select,
+.capture-field textarea {
+  width: 100%;
+
+  border: 1px solid #d6dee8;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #152b49;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.capture-field input,
+.capture-field select {
+  height: 43px;
+
+  padding: 0 12px;
 
   font-size: 12px;
 }
 
-.department-footer > div:first-child {
-  font-weight: 700;
+.capture-field input:focus,
+.capture-field select:focus,
+.capture-field textarea:focus {
+  border-color: #1b5b91;
 
-  letter-spacing: 0.3px;
+  box-shadow:
+    0 0 0 3px rgba(27, 91, 145, 0.08);
 }
 
-.footer-red-line {
-  width: 55px;
-  height: 3px;
-
-  background: #ed1b2f;
-
-  margin:
-    7px
-    auto;
+.capture-textarea {
+  margin-top: 18px;
 }
 
-.department-footer span {
-  opacity: 0.85;
+.capture-field textarea {
+  min-height: 110px;
+
+  padding: 12px;
+
+  resize: vertical;
+
+  font-size: 12px;
+
+  line-height: 1.5;
 }
 
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.capture-message {
+  margin-top: 22px;
+
+  padding: 14px 16px;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.capture-message.success {
+  background: #e9f8ef;
+  color: #15733a;
+  border: 1px solid #b9e4c9;
+}
+
+.capture-message.error {
+  background: #fff0f0;
+  color: #b4232b;
+  border: 1px solid #f0b9bd;
+}
+
+/* =========================================================
+   SAVE AREA
+========================================================= */
+
+.capture-save-area {
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin-top: 25px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid #e2e8f0;
+}
+
+.save-capture-button {
+  min-width: 260px;
+
+  min-height: 48px;
+
+  padding: 0 22px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #d71920;
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  letter-spacing: 0.8px;
+
+  box-shadow:
+    0 5px 14px rgba(215, 25, 32, 0.2);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.save-capture-button:hover {
+  background: #b9141a;
+
+  transform: translateY(-1px);
+}
+
+.save-capture-button:disabled {
+  transform: none;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.capture-footer {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+
+  margin-top: 30px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid #e2e8f0;
+
+  color: #8290a3;
+
+  font-size: 10px;
+}
+
+.capture-back-button {
+  padding: 10px 15px;
+
+  border: 1px solid #cdd7e3;
+
+  background: #ffffff;
+
+  color: #25415f;
+
+  border-radius: 7px;
+
+  font-size: 10px;
+  font-weight: 900;
+
+  transition: 0.2s ease;
+}
+
+.capture-back-button:hover {
+  background: #102f55;
+  border-color: #102f55;
+  color: #ffffff;
+}
 
 /* =========================================================
    LOADING
-   ========================================================= */
+========================================================= */
 
-.department-loading {
+.capture-loading {
   min-height: 100vh;
 
   display: flex;
@@ -711,246 +858,309 @@
 
   color: #ffffff;
 
-  font-size: 20px;
+  font-size: 14px;
+  font-weight: 900;
+
+  letter-spacing: 1px;
+}
+
+/* =========================================================
+   DASHBOARD / FLIGHTS PAGE
+========================================================= */
+
+.dashboard-page {
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+.dashboard-header {
+  min-height: 76px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 34px;
+
+  background: rgba(4, 24, 53, 0.97);
+
+  border-bottom: 4px solid #d71920;
+
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.25);
+}
+
+.dashboard-logo {
+  color: #ffffff;
+
+  font-size: 23px;
+  font-weight: 900;
+
+  letter-spacing: 2px;
+}
+
+.dashboard-subtitle {
+  color: #b8c5d6;
+
+  font-size: 10px;
   font-weight: 700;
+
+  letter-spacing: 1.5px;
 }
 
+.dashboard-content {
+  width: min(1180px, calc(100% - 40px));
+
+  margin: 30px auto;
+
+  padding: 30px;
+
+  background: #ffffff;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 15px 45px rgba(0, 0, 0, 0.18);
+}
+
+.welcome-section {
+  margin-bottom: 25px;
+}
+
+.welcome-section h1 {
+  margin: 0;
+
+  color: #10233f;
+
+  font-size: 27px;
+  font-weight: 900;
+}
+
+.welcome-section p {
+  color: #718096;
+
+  font-size: 13px;
+}
+
+.flights-section {
+  margin-top: 20px;
+}
 
 /* =========================================================
-   TABLET
-   ========================================================= */
+   NEW FLIGHT BUTTON
+========================================================= */
 
-@media (max-width: 1100px) {
+.new-flight-button {
+  border: none;
 
-  .department-header {
-    padding:
-      17px
-      28px;
-  }
+  padding: 11px 18px;
 
-  .transom-logo {
-    font-size: 37px;
-  }
+  background: #d71920;
 
-  .department-hero {
-    padding:
-      48px
-      28px
-      32px;
-  }
+  color: #ffffff;
 
-  .department-panel {
-    width: calc(100% - 50px);
+  border-radius: 7px;
 
-    padding: 25px;
-  }
+  font-size: 10px;
+  font-weight: 900;
 
-  .department-grid {
+  letter-spacing: 0.5px;
+
+  transition: 0.2s ease;
+}
+
+.new-flight-button:hover {
+  background: #b9141a;
+}
+
+/* =========================================================
+   ACTION BUTTON
+========================================================= */
+
+.action-button {
+  border: none;
+
+  border-radius: 6px;
+
+  padding: 9px 13px;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.action-button.view {
+  background: #173d6b;
+  color: #ffffff;
+}
+
+.action-button.view:hover {
+  background: #0d2d52;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+  padding: 45px 20px;
+
+  text-align: center;
+
+  border: 1px dashed #ccd6e2;
+
+  border-radius: 10px;
+
+  color: #718096;
+
+  background: #f8fafc;
+}
+
+/* =========================================================
+   DASHBOARD FOOTER
+========================================================= */
+
+.dashboard-footer {
+  width: min(1180px, calc(100% - 40px));
+
+  margin: 20px auto;
+
+  text-align: center;
+
+  color: #d8e0ea;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .flight-information {
     grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+      repeat(3, 1fr);
   }
 
-}
+  .capture-fields-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
 
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-  .department-header {
-    min-height: auto;
-
-    padding:
-      16px
-      18px;
-
+  .capture-status-panel {
+    flex-direction: column;
     align-items: flex-start;
   }
 
-  .transom-logo {
-    font-size: 29px;
+  .capture-status-actions {
+    justify-content: flex-start;
+  }
+}
 
-    letter-spacing: 3px;
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+  .capture-header,
+  .dashboard-header {
+    padding: 12px 18px;
   }
 
-  .transom-tagline {
-    font-size: 8px;
-
-    letter-spacing: 2px;
-  }
-
-  .header-user-area {
+  .capture-header-right {
     gap: 8px;
   }
 
-  .user-display span:last-child {
+  .capture-user {
     display: none;
   }
 
-  .header-divider {
-    height: 30px;
+  .capture-hero,
+  .capture-panel,
+  .dashboard-content {
+    width: calc(100% - 20px);
   }
 
-  .department-logout {
-    font-size: 11px;
+  .capture-hero {
+    margin-top: 15px;
+
+    padding: 22px 18px;
   }
 
-  .department-logout svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .department-hero {
-    padding:
-      35px
-      18px
-      25px;
-  }
-
-  .hero-content h1 {
-    font-size: 28px;
-  }
-
-  .hero-content p {
-    font-size: 13px;
-  }
-
-  .department-panel {
-    width: calc(100% - 24px);
-
-    margin-bottom: 20px;
-
+  .capture-panel,
+  .dashboard-content {
     padding: 18px;
-
-    border-radius: 9px;
   }
 
-  .panel-title-row {
-    align-items: flex-start;
-
-    gap: 12px;
-  }
-
-  .panel-grid-icon {
-    width: 32px;
-    height: 32px;
-
-    flex-shrink: 0;
-  }
-
-  .panel-title-row h2 {
-    font-size: 20px;
-  }
-
-  .panel-title-row p {
-    font-size: 12px;
-  }
-
-  .department-grid {
-    grid-template-columns: 1fr;
-
-    gap: 13px;
-  }
-
-  .department-card {
-    min-height: 165px;
-
-    padding:
-      18px
-      16px
-      18px
-      22px;
-  }
-
-  .department-icon-wrapper {
-    width: 60px;
-    height: 60px;
-
-    margin-bottom: 12px;
-  }
-
-  .department-svg {
-    width: 39px;
-    height: 39px;
-  }
-
-  .department-card-content h3 {
-    font-size: 16px;
-  }
-
-  .department-card-content p {
-    font-size: 12px;
-  }
-
-  .department-arrow {
-    width: 37px;
-    height: 37px;
-
-    right: 13px;
-    bottom: 13px;
-  }
-
-  .department-arrow svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .logged-user {
-    margin-top: 18px;
-  }
-
-  .department-footer {
-    padding-bottom: 20px;
-  }
-
-}
-
-
-/* =========================================================
-   SMALL PHONES
-   ========================================================= */
-
-@media (max-width: 420px) {
-
-  .department-header {
-    padding:
-      13px
-      14px;
-  }
-
-  .transom-logo {
-    font-size: 25px;
-  }
-
-  .transom-tagline {
-    font-size: 7px;
-  }
-
-  .department-hero {
-    padding:
-      28px
-      15px
-      20px;
-  }
-
-  .hero-content h1 {
+  .capture-hero h1 {
     font-size: 24px;
   }
 
-  .department-panel {
-    width: calc(100% - 16px);
-
-    padding: 15px;
+  .flight-information {
+    grid-template-columns: 1fr 1fr;
   }
 
-  .panel-title-row h2 {
-    font-size: 18px;
+  .service-grid {
+    grid-template-columns: 1fr;
   }
 
-  .department-card {
-    min-height: 150px;
+  .capture-fields-grid {
+    grid-template-columns: 1fr;
   }
 
+  .capture-status-actions {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .capture-status-button {
+    width: 100%;
+  }
+
+  .save-capture-button {
+    width: 100%;
+  }
+
+  .capture-save-area {
+    display: block;
+  }
+
+  .capture-footer {
+    flex-direction: column;
+    align-items: stretch;
+
+    text-align: center;
+  }
+
+  .capture-back-button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+  .flight-information {
+    grid-template-columns: 1fr;
+  }
+
+  .capture-status-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .service-time-row {
+    grid-template-columns: 1fr;
+  }
+
+  .capture-brand {
+    font-size: 19px;
+  }
+
+  .capture-brand-subtitle {
+    font-size: 8px;
+  }
 }
