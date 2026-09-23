@@ -1,6 +1,6 @@
 /* =========================================================
-   TRANSOM — GLOBAL STYLES
-   FLIGHT SERVICE CAPTURE
+   TRANSOM — FLIGHT SERVICE CAPTURE
+   GLOBAL STYLES
 ========================================================= */
 
 * {
@@ -13,7 +13,7 @@ body {
   padding: 0;
   min-height: 100%;
   font-family: Arial, Helvetica, sans-serif;
-  background: #eef3f8;
+  background: #eef2f7;
   color: #10233f;
 }
 
@@ -25,95 +25,79 @@ button,
 input,
 textarea,
 select {
-  font-family: inherit;
+  font: inherit;
 }
 
 button {
   cursor: pointer;
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
+input,
+textarea,
+select {
+  outline: none;
 }
 
 /* =========================================================
-   GENERAL
+   MAIN CAPTURE PAGE
 ========================================================= */
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-::placeholder {
-  color: #9aa7b8;
-}
-
-/* =========================================================
-   LOGIN / COMMON BACKGROUND
-========================================================= */
-
-.login-page,
-.dashboard-page,
 .capture-page {
   min-height: 100vh;
+
   background:
     linear-gradient(
-      rgba(5, 25, 54, 0.78),
-      rgba(5, 25, 54, 0.88)
+      rgba(5, 25, 52, 0.86),
+      rgba(5, 25, 52, 0.92)
     ),
     url("/transom-airport.jpg");
+
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-}
 
-/* =========================================================
-   CAPTURE PAGE
-========================================================= */
-
-.capture-page {
-  min-height: 100vh;
   padding-bottom: 50px;
 }
 
 /* =========================================================
-   CAPTURE HEADER
+   HEADER
 ========================================================= */
 
 .capture-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  width: 100%;
+  min-height: 82px;
 
-  min-height: 76px;
-  padding: 14px 34px;
+  background: #071d36;
+
+  border-bottom: 4px solid #e31e2f;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
 
-  background: rgba(4, 24, 53, 0.97);
-  border-bottom: 4px solid #d71920;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  padding: 16px 42px;
+
+  color: white;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .capture-brand {
-  color: #ffffff;
-  font-size: 23px;
+  font-size: 27px;
   font-weight: 900;
   letter-spacing: 2px;
-  line-height: 1;
 }
 
 .capture-brand-subtitle {
-  margin-top: 5px;
-  color: #b9c7d8;
-  font-size: 10px;
+  margin-top: 3px;
+
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1.7px;
+  letter-spacing: 2px;
+
+  color: #c8d4e3;
 }
 
 .capture-header-right {
@@ -123,107 +107,108 @@ a {
 }
 
 .capture-user {
-  color: #ffffff;
-  font-size: 13px;
+  color: #e7edf5;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .capture-logout {
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
   background: transparent;
-  color: #ffffff;
+  color: white;
 
   padding: 9px 16px;
+
   border-radius: 7px;
 
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.7px;
 
-  transition: 0.2s ease;
+  transition: 0.2s;
 }
 
 .capture-logout:hover {
-  background: #d71920;
-  border-color: #d71920;
+  background: #e31e2f;
+  border-color: #e31e2f;
 }
 
 /* =========================================================
-   CAPTURE HERO
+   HERO
 ========================================================= */
 
 .capture-hero {
-  width: min(1180px, calc(100% - 40px));
-  margin: 30px auto 18px;
+  max-width: 1180px;
+  margin: 0 auto;
 
-  padding: 28px 32px;
+  padding: 42px 28px 28px;
 
-  background: rgba(255, 255, 255, 0.97);
-
-  border-radius: 14px;
-
-  box-shadow:
-    0 12px 35px rgba(0, 0, 0, 0.18);
-
-  border-left: 6px solid #d71920;
+  color: white;
 }
 
 .capture-small-title {
-  color: #718096;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: 1.5px;
-  margin-bottom: 8px;
+
+  letter-spacing: 2px;
+
+  color: #9fb0c5;
+
+  margin-bottom: 10px;
 }
 
 .capture-hero h1 {
   margin: 0;
 
-  color: #10233f;
-
-  font-size: clamp(24px, 3vw, 36px);
+  font-size: 34px;
   line-height: 1.15;
 
   font-weight: 900;
-  letter-spacing: 0.5px;
+
+  letter-spacing: 0.4px;
 }
 
 .capture-red-line {
   width: 70px;
   height: 4px;
 
-  margin-top: 15px;
+  background: #e31e2f;
 
-  background: #d71920;
-  border-radius: 10px;
+  margin-top: 16px;
+  margin-bottom: 14px;
+
+  border-radius: 4px;
 }
 
 .capture-hero p {
-  margin: 13px 0 0;
+  margin: 0;
 
-  color: #718096;
+  color: #d4deea;
 
-  font-size: 13px;
+  font-size: 14px;
 }
 
 /* =========================================================
-   MAIN CAPTURE PANEL
+   MAIN WHITE PANEL
 ========================================================= */
 
 .capture-panel {
-  width: min(1180px, calc(100% - 40px));
-  margin: 0 auto;
+  width: calc(100% - 48px);
+  max-width: 1180px;
 
-  padding: 30px;
+  margin: 0 auto;
 
   background: #ffffff;
 
-  border-radius: 14px;
+  border-radius: 16px;
 
   box-shadow:
-    0 15px 45px rgba(0, 0, 0, 0.18);
+    0 20px 55px rgba(0, 0, 0, 0.25);
 
-  border: 1px solid #dfe6ef;
+  overflow: hidden;
+
+  padding: 30px;
 }
 
 /* =========================================================
@@ -233,50 +218,50 @@ a {
 .capture-section-heading {
   display: flex;
   align-items: center;
-  gap: 15px;
 
-  padding-bottom: 20px;
+  gap: 16px;
 
-  border-bottom: 1px solid #e3e8ef;
+  padding-bottom: 22px;
+
+  border-bottom: 1px solid #e5eaf0;
 }
 
 .capture-heading-icon {
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  flex-shrink: 0;
-
-  background: #0d315f;
-  color: #ffffff;
-
   border-radius: 50%;
 
-  font-size: 22px;
+  background: #0b315b;
 
-  box-shadow:
-    0 6px 15px rgba(13, 49, 95, 0.2);
+  color: white;
+
+  font-size: 23px;
+
+  flex-shrink: 0;
 }
 
 .capture-section-heading h2 {
   margin: 0;
 
+  font-size: 20px;
+  font-weight: 900;
+
   color: #10233f;
 
-  font-size: 18px;
-  font-weight: 900;
   letter-spacing: 0.5px;
 }
 
 .capture-section-heading p {
   margin: 5px 0 0;
 
-  color: #8290a3;
+  color: #7b8798;
 
-  font-size: 12px;
+  font-size: 13px;
 }
 
 /* =========================================================
@@ -285,7 +270,9 @@ a {
 
 .flight-information {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
 
   gap: 12px;
 
@@ -293,43 +280,47 @@ a {
 }
 
 .flight-info-item {
-  min-height: 84px;
+  background: #f6f8fb;
+
+  border: 1px solid #e1e7ef;
+
+  border-radius: 10px;
 
   padding: 15px;
-
-  background: #f7f9fc;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 9px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .flight-info-item span {
-  color: #7d8a9d;
+  display: block;
 
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 1px;
+  font-size: 10px;
+  font-weight: 800;
+
+  color: #7c899a;
+
+  letter-spacing: 0.8px;
 
   margin-bottom: 7px;
 }
 
 .flight-info-item strong {
-  color: #122846;
+  display: block;
 
-  font-size: 14px;
+  font-size: 15px;
+
+  color: #10233f;
+
   font-weight: 900;
+
+  word-break: break-word;
 }
 
 /* =========================================================
-   STATUS COLORS
+   FLIGHT STATUS
 ========================================================= */
 
 .flight-status {
-  display: inline-flex;
+  display: inline-flex !important;
+
   align-items: center;
 
   width: fit-content;
@@ -338,64 +329,67 @@ a {
 
   border-radius: 6px;
 
-  font-size: 10px !important;
-  font-weight: 900 !important;
+  font-size: 11px !important;
+
+  letter-spacing: 0.4px;
 }
 
 .open-status {
   background: #ffffff;
-  color: #1f2937 !important;
-  border: 1px solid #cbd5e1;
+  color: #15243a;
+
+  border: 1px solid #cbd4df;
 }
 
 .progress-status {
-  background: #0b315f;
-  color: #ffffff !important;
+  background: #0b315b;
+  color: white;
 }
 
 .no-delay-status {
-  background: #16a34a;
-  color: #ffffff !important;
+  background: #16834b;
+  color: white;
 }
 
 .delay-status {
-  background: #d71920;
-  color: #ffffff !important;
+  background: #d92332;
+  color: white;
 }
 
 /* =========================================================
-   FLIGHT STATUS CONTROL
+   STATUS CONTROL
 ========================================================= */
 
 .capture-status-panel {
-  margin-top: 25px;
+  margin-top: 24px;
 
-  padding: 20px;
+  padding: 18px;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 20px;
+  border-radius: 12px;
 
   background: #f7f9fc;
 
-  border: 1px solid #dfe6ef;
-  border-radius: 11px;
+  border: 1px solid #e1e7ef;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
 }
 
-.capture-status-panel > div:first-child {
-  min-width: 180px;
-}
-
-.capture-status-panel span {
+.capture-status-panel > div:first-child span {
   display: block;
 
-  color: #152b49;
+  font-size: 12px;
 
-  font-size: 11px;
   font-weight: 900;
-  letter-spacing: 0.8px;
+
+  letter-spacing: 0.7px;
+
+  color: #10233f;
 }
 
 .capture-status-panel small {
@@ -403,101 +397,113 @@ a {
 
   margin-top: 5px;
 
-  color: #8290a3;
+  color: #7d8998;
 
   font-size: 11px;
 }
 
 .capture-status-actions {
   display: flex;
+
   flex-wrap: wrap;
-  justify-content: flex-end;
+
   gap: 8px;
+
+  justify-content: flex-end;
 }
 
 .capture-status-button {
-  padding: 10px 13px;
+  border: 1px solid #cbd5e1;
 
-  border: 1px solid #ccd5e0;
+  background: white;
 
-  background: #ffffff;
-  color: #31445f;
+  color: #233750;
 
   border-radius: 7px;
 
+  padding: 10px 13px;
+
   font-size: 10px;
+
   font-weight: 900;
 
-  transition: all 0.2s ease;
+  letter-spacing: 0.4px;
+
+  transition: 0.2s;
 }
 
 .capture-status-button:hover {
-  border-color: #173b69;
-  color: #173b69;
+  border-color: #0b315b;
+
+  color: #0b315b;
 }
 
 .capture-status-button.active {
-  background: #0c315d;
-  border-color: #0c315d;
-  color: #ffffff;
+  background: #0b315b;
+
+  border-color: #0b315b;
+
+  color: white;
 }
 
 /* =========================================================
-   DEPARTMENT TITLE
+   DEPARTMENT SECTION
 ========================================================= */
 
 .department-section-title {
   display: flex;
+
   align-items: center;
 
   gap: 13px;
 
-  margin-top: 32px;
-  margin-bottom: 18px;
+  margin-top: 34px;
 
-  padding: 17px 18px;
+  padding-bottom: 15px;
 
-  background: #f8fafc;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border-bottom: 1px solid #e5eaf0;
 }
 
 .section-color {
   width: 5px;
-  height: 46px;
 
-  border-radius: 8px;
+  height: 48px;
+
+  border-radius: 5px;
+
   flex-shrink: 0;
 }
 
 .section-color.red {
-  background: #d71920;
+  background: #e31e2f;
 }
 
 .section-color.navy {
-  background: #183d69;
+  background: #173b68;
 }
 
 .section-color.blue {
-  background: #1694d3;
+  background: #168bd0;
 }
 
 .department-section-title h2 {
   margin: 0;
 
-  color: #132946;
+  color: #10233f;
 
-  font-size: 17px;
+  font-size: 19px;
+
   font-weight: 900;
+
+  letter-spacing: 0.3px;
 }
 
 .department-section-title p {
-  margin: 5px 0 0;
+  margin: 4px 0 0;
 
-  color: #8290a3;
+  color: #7b8798;
 
-  font-size: 11px;
+  font-size: 12px;
 }
 
 /* =========================================================
@@ -510,53 +516,59 @@ a {
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
-  gap: 15px;
+  gap: 18px;
 
-  margin-top: 16px;
+  margin-top: 22px;
 }
 
 .service-card {
-  padding: 18px;
-
-  background: #ffffff;
+  background: white;
 
   border: 1px solid #dce4ed;
 
-  border-radius: 11px;
+  border-radius: 12px;
+
+  padding: 18px;
 
   box-shadow:
-    0 3px 12px rgba(15, 35, 60, 0.06);
+    0 4px 14px rgba(14, 35, 60, 0.06);
 
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 
 .service-card:hover {
   transform: translateY(-2px);
 
+  border-color: #b9c8da;
+
   box-shadow:
-    0 7px 18px rgba(15, 35, 60, 0.1);
+    0 8px 20px rgba(14, 35, 60, 0.1);
 }
 
 .service-card-title {
-  margin-bottom: 15px;
+  color: #10233f;
 
-  color: #17365f;
+  font-size: 13px;
 
-  font-size: 12px;
   font-weight: 900;
-  letter-spacing: 0.8px;
+
+  letter-spacing: 0.7px;
+
+  margin-bottom: 15px;
 
   padding-bottom: 10px;
 
-  border-bottom: 1px solid #e8edf3;
+  border-bottom: 1px solid #edf0f4;
 }
 
 .service-time-row {
   display: grid;
 
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns:
+    1fr 1fr;
 
   gap: 12px;
 }
@@ -566,11 +578,13 @@ a {
 
   margin-bottom: 6px;
 
-  color: #7b899c;
+  color: #778599;
 
   font-size: 9px;
+
   font-weight: 900;
-  letter-spacing: 0.8px;
+
+  letter-spacing: 0.7px;
 }
 
 .service-time-row input {
@@ -578,62 +592,60 @@ a {
 
   height: 42px;
 
-  padding: 0 11px;
+  border: 1px solid #ccd6e2;
 
-  border: 1px solid #d6dee8;
   border-radius: 7px;
 
-  background: #f9fbfd;
+  padding: 0 10px;
 
-  color: #152b49;
+  color: #10233f;
 
-  font-size: 13px;
-  font-weight: 700;
-
-  outline: none;
+  background: #fafbfd;
 }
 
 .service-time-row input:focus {
-  border-color: #1a5a91;
+  border-color: #0b5da7;
 
   box-shadow:
-    0 0 0 3px rgba(26, 90, 145, 0.08);
+    0 0 0 3px rgba(11, 93, 167, 0.1);
 }
 
 .service-duration {
+  margin-top: 14px;
+
   display: flex;
 
   align-items: center;
+
   justify-content: space-between;
-
-  margin-top: 12px;
-
-  padding: 10px 12px;
 
   background: #f1f5f9;
 
   border-radius: 7px;
+
+  padding: 10px 12px;
 }
 
 .service-duration span {
-  color: #7c8999;
-
   font-size: 9px;
+
   font-weight: 900;
+
   letter-spacing: 0.6px;
+
+  color: #778599;
 }
 
 .service-duration strong {
-  color: #12335b;
+  font-size: 14px;
 
-  font-size: 13px;
+  color: #10233f;
+
   font-weight: 900;
-
-  letter-spacing: 1px;
 }
 
 /* =========================================================
-   FORM FIELDS
+   GENERAL CAPTURE FIELDS
 ========================================================= */
 
 .capture-fields-grid {
@@ -642,78 +654,96 @@ a {
   grid-template-columns:
     repeat(3, minmax(0, 1fr));
 
-  gap: 15px;
+  gap: 16px;
 
-  margin-top: 18px;
+  margin-top: 22px;
 }
 
 .capture-field {
   display: flex;
+
   flex-direction: column;
+
+  gap: 7px;
 }
 
 .capture-field label {
-  margin-bottom: 7px;
+  color: #66758a;
 
-  color: #65758a;
+  font-size: 10px;
 
-  font-size: 9px;
   font-weight: 900;
-  letter-spacing: 0.8px;
+
+  letter-spacing: 0.7px;
 }
 
 .capture-field input,
-.capture-field select,
-.capture-field textarea {
+.capture-field select {
   width: 100%;
 
-  border: 1px solid #d6dee8;
+  min-height: 43px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #ccd6e2;
 
   border-radius: 7px;
 
   background: #ffffff;
 
-  color: #152b49;
+  color: #142943;
 
-  outline: none;
+  font-size: 13px;
 
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.capture-field input,
-.capture-field select {
-  height: 43px;
-
-  padding: 0 12px;
-
-  font-size: 12px;
+  transition: 0.2s;
 }
 
 .capture-field input:focus,
-.capture-field select:focus,
-.capture-field textarea:focus {
-  border-color: #1b5b91;
+.capture-field select:focus {
+  border-color: #0b5da7;
 
   box-shadow:
-    0 0 0 3px rgba(27, 91, 145, 0.08);
+    0 0 0 3px rgba(11, 93, 167, 0.09);
 }
+
+.capture-field input::placeholder,
+.capture-field textarea::placeholder {
+  color: #a2adba;
+}
+
+/* =========================================================
+   TEXT AREA
+========================================================= */
 
 .capture-textarea {
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
-.capture-field textarea {
-  min-height: 110px;
+.capture-textarea textarea {
+  width: 100%;
 
-  padding: 12px;
+  min-height: 105px;
 
   resize: vertical;
 
-  font-size: 12px;
+  padding: 12px;
 
-  line-height: 1.5;
+  border: 1px solid #ccd6e2;
+
+  border-radius: 8px;
+
+  background: white;
+
+  color: #142943;
+
+  font-size: 13px;
+}
+
+.capture-textarea textarea:focus {
+  border-color: #0b5da7;
+
+  box-shadow:
+    0 0 0 3px rgba(11, 93, 167, 0.09);
 }
 
 /* =========================================================
@@ -728,72 +758,80 @@ a {
   border-radius: 8px;
 
   font-size: 12px;
+
   font-weight: 800;
+
+  border: 1px solid;
 }
 
 .capture-message.success {
-  background: #e9f8ef;
-  color: #15733a;
-  border: 1px solid #b9e4c9;
+  color: #116b3d;
+
+  background: #ecf8f1;
+
+  border-color: #b7e2ca;
 }
 
 .capture-message.error {
-  background: #fff0f0;
-  color: #b4232b;
-  border: 1px solid #f0b9bd;
+  color: #a51624;
+
+  background: #fff0f1;
+
+  border-color: #f2bdc3;
 }
 
 /* =========================================================
-   SAVE AREA
+   SAVE
 ========================================================= */
 
 .capture-save-area {
+  margin-top: 28px;
+
+  padding-top: 22px;
+
+  border-top: 1px solid #e4e9ef;
+
   display: flex;
 
   justify-content: flex-end;
-
-  margin-top: 25px;
-
-  padding-top: 20px;
-
-  border-top: 1px solid #e2e8f0;
 }
 
 .save-capture-button {
-  min-width: 260px;
-
-  min-height: 48px;
-
-  padding: 0 22px;
+  min-width: 240px;
 
   border: none;
 
+  background: #e31e2f;
+
+  color: white;
+
   border-radius: 8px;
 
-  background: #d71920;
+  padding: 14px 22px;
 
-  color: #ffffff;
+  font-size: 12px;
 
-  font-size: 11px;
   font-weight: 900;
 
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
 
   box-shadow:
-    0 5px 14px rgba(215, 25, 32, 0.2);
+    0 6px 15px rgba(227, 30, 47, 0.2);
 
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
+  transition: 0.2s;
 }
 
 .save-capture-button:hover {
-  background: #b9141a;
+  background: #c81727;
 
   transform: translateY(-1px);
 }
 
 .save-capture-button:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+
   transform: none;
 }
 
@@ -802,47 +840,51 @@ a {
 ========================================================= */
 
 .capture-footer {
+  margin-top: 30px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #e5e9ef;
+
   display: flex;
 
   align-items: center;
+
   justify-content: space-between;
 
-  flex-wrap: wrap;
+  gap: 15px;
 
-  gap: 12px;
-
-  margin-top: 30px;
-
-  padding-top: 20px;
-
-  border-top: 1px solid #e2e8f0;
-
-  color: #8290a3;
+  color: #8491a1;
 
   font-size: 10px;
 }
 
 .capture-back-button {
+  border: 1px solid #ccd5df;
+
+  background: white;
+
+  color: #19314e;
+
   padding: 10px 15px;
-
-  border: 1px solid #cdd7e3;
-
-  background: #ffffff;
-
-  color: #25415f;
 
   border-radius: 7px;
 
   font-size: 10px;
+
   font-weight: 900;
 
-  transition: 0.2s ease;
+  letter-spacing: 0.4px;
+
+  transition: 0.2s;
 }
 
 .capture-back-button:hover {
-  background: #102f55;
-  border-color: #102f55;
-  color: #ffffff;
+  background: #0b315b;
+
+  color: white;
+
+  border-color: #0b315b;
 }
 
 /* =========================================================
@@ -853,78 +895,300 @@ a {
   min-height: 100vh;
 
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
-  color: #ffffff;
+  color: white;
 
-  font-size: 14px;
+  font-size: 16px;
+
   font-weight: 900;
 
   letter-spacing: 1px;
 }
 
 /* =========================================================
-   DASHBOARD / FLIGHTS PAGE
+   DEPARTMENT SELECTION
+   Kwa page ya SELECT DEPARTMENT
+========================================================= */
+
+.department-page {
+  min-height: 100vh;
+
+  background:
+    linear-gradient(
+      rgba(7, 29, 54, 0.82),
+      rgba(7, 29, 54, 0.9)
+    ),
+    url("/transom-airport.jpg");
+
+  background-size: cover;
+
+  background-position: center;
+
+  padding-bottom: 50px;
+}
+
+.department-container {
+  width: calc(100% - 40px);
+
+  max-width: 1250px;
+
+  margin: 0 auto;
+
+  padding-top: 35px;
+}
+
+.department-header {
+  background: white;
+
+  border-radius: 14px 14px 0 0;
+
+  padding: 26px 30px 20px;
+
+  border-bottom: 4px solid #e31e2f;
+}
+
+.department-header h1 {
+  margin: 0;
+
+  color: #10233f;
+
+  font-size: 27px;
+
+  font-weight: 900;
+}
+
+.department-header p {
+  margin: 7px 0 0;
+
+  color: #7a8797;
+
+  font-size: 13px;
+}
+
+.department-cards {
+  background: white;
+
+  padding: 30px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 15px;
+
+  border-radius: 0 0 14px 14px;
+}
+
+.department-card {
+  min-height: 250px;
+
+  background: white;
+
+  border: 1px solid #dce3eb;
+
+  border-radius: 12px;
+
+  padding: 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: space-between;
+
+  box-shadow:
+    0 5px 15px rgba(13, 36, 60, 0.08);
+
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.department-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 12px 28px rgba(13, 36, 60, 0.15);
+}
+
+.department-card-icon {
+  width: 62px;
+  height: 62px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: #e9f0f7;
+
+  color: #16395f;
+
+  font-size: 28px;
+
+  margin-bottom: 18px;
+}
+
+.department-card h2 {
+  margin: 0;
+
+  color: #142b47;
+
+  font-size: 16px;
+
+  font-weight: 900;
+}
+
+.department-card p {
+  margin: 7px 0 0;
+
+  color: #7b8797;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+}
+
+.department-arrow {
+  width: 44px;
+  height: 44px;
+
+  border-radius: 50%;
+
+  background: #0b315b;
+
+  color: white;
+
+  border: none;
+
+  font-size: 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  align-self: flex-end;
+
+  transition: 0.2s;
+}
+
+.department-card:hover .department-arrow {
+  background: #e31e2f;
+
+  transform: translateX(3px);
+}
+
+/* =========================================================
+   FLIGHTS PAGE
 ========================================================= */
 
 .dashboard-page {
   min-height: 100vh;
-  padding-bottom: 50px;
+
+  background:
+    linear-gradient(
+      rgba(5, 25, 52, 0.84),
+      rgba(5, 25, 52, 0.92)
+    ),
+    url("/transom-airport.jpg");
+
+  background-size: cover;
+
+  background-position: center;
+
+  background-attachment: fixed;
 }
 
 .dashboard-header {
-  min-height: 76px;
+  min-height: 80px;
+
+  background: #071d36;
+
+  border-bottom: 4px solid #e31e2f;
 
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
-  padding: 14px 34px;
+  padding: 15px 35px;
 
-  background: rgba(4, 24, 53, 0.97);
-
-  border-bottom: 4px solid #d71920;
-
-  box-shadow:
-    0 4px 18px rgba(0, 0, 0, 0.25);
+  color: white;
 }
 
 .dashboard-logo {
-  color: #ffffff;
+  font-size: 25px;
 
-  font-size: 23px;
   font-weight: 900;
 
   letter-spacing: 2px;
 }
 
 .dashboard-subtitle {
-  color: #b8c5d6;
-
   font-size: 10px;
-  font-weight: 700;
+
+  color: #b9c8d8;
 
   letter-spacing: 1.5px;
+
+  margin-top: 3px;
+}
+
+.logout-button {
+  background: transparent;
+
+  color: white;
+
+  border: 1px solid rgba(255,255,255,0.35);
+
+  border-radius: 7px;
+
+  padding: 9px 15px;
+
+  font-size: 11px;
+
+  font-weight: 800;
+}
+
+.logout-button:hover {
+  background: #e31e2f;
+
+  border-color: #e31e2f;
 }
 
 .dashboard-content {
-  width: min(1180px, calc(100% - 40px));
+  max-width: 1180px;
 
-  margin: 30px auto;
+  width: calc(100% - 40px);
 
-  padding: 30px;
+  margin: 0 auto;
 
-  background: #ffffff;
+  padding: 35px 0 50px;
+}
+
+.welcome-section,
+.flights-section {
+  background: white;
 
   border-radius: 14px;
 
-  box-shadow:
-    0 15px 45px rgba(0, 0, 0, 0.18);
-}
+  padding: 25px;
 
-.welcome-section {
-  margin-bottom: 25px;
+  box-shadow:
+    0 15px 45px rgba(0,0,0,0.2);
+
+  margin-bottom: 20px;
 }
 
 .welcome-section h1 {
@@ -932,18 +1196,27 @@ a {
 
   color: #10233f;
 
-  font-size: 27px;
-  font-weight: 900;
+  font-size: 25px;
 }
 
 .welcome-section p {
-  color: #718096;
+  color: #778599;
 
   font-size: 13px;
 }
 
-.flights-section {
-  margin-top: 20px;
+.flights-section h2 {
+  margin: 0;
+
+  color: #10233f;
+
+  font-size: 20px;
+}
+
+.flights-section p {
+  color: #7b8798;
+
+  font-size: 13px;
 }
 
 /* =========================================================
@@ -951,152 +1224,81 @@ a {
 ========================================================= */
 
 .new-flight-button {
+  background: #e31e2f;
+
+  color: white;
+
   border: none;
 
-  padding: 11px 18px;
+  border-radius: 8px;
 
-  background: #d71920;
+  padding: 12px 18px;
 
-  color: #ffffff;
+  font-size: 11px;
 
-  border-radius: 7px;
-
-  font-size: 10px;
   font-weight: 900;
 
   letter-spacing: 0.5px;
 
-  transition: 0.2s ease;
+  transition: 0.2s;
 }
 
 .new-flight-button:hover {
-  background: #b9141a;
+  background: #c81727;
+
+  transform: translateY(-1px);
 }
 
 /* =========================================================
-   ACTION BUTTON
+   RESPONSIVE
 ========================================================= */
 
-.action-button {
-  border: none;
-
-  border-radius: 6px;
-
-  padding: 9px 13px;
-
-  font-size: 10px;
-  font-weight: 900;
-}
-
-.action-button.view {
-  background: #173d6b;
-  color: #ffffff;
-}
-
-.action-button.view:hover {
-  background: #0d2d52;
-}
-
-/* =========================================================
-   EMPTY STATE
-========================================================= */
-
-.empty-state {
-  padding: 45px 20px;
-
-  text-align: center;
-
-  border: 1px dashed #ccd6e2;
-
-  border-radius: 10px;
-
-  color: #718096;
-
-  background: #f8fafc;
-}
-
-/* =========================================================
-   DASHBOARD FOOTER
-========================================================= */
-
-.dashboard-footer {
-  width: min(1180px, calc(100% - 40px));
-
-  margin: 20px auto;
-
-  text-align: center;
-
-  color: #d8e0ea;
-
-  font-size: 10px;
-}
-
-/* =========================================================
-   RESPONSIVE — TABLET
-========================================================= */
-
-@media (max-width: 900px) {
+@media (max-width: 1050px) {
   .flight-information {
     grid-template-columns:
-      repeat(3, 1fr);
+      repeat(3, minmax(0, 1fr));
   }
 
-  .capture-fields-grid {
+  .department-cards {
     grid-template-columns:
-      repeat(2, 1fr);
-  }
-
-  .capture-status-panel {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .capture-status-actions {
-    justify-content: flex-start;
+      repeat(3, minmax(0, 1fr));
   }
 }
 
-/* =========================================================
-   RESPONSIVE — MOBILE
-========================================================= */
-
-@media (max-width: 650px) {
-  .capture-header,
-  .dashboard-header {
-    padding: 12px 18px;
-  }
-
-  .capture-header-right {
-    gap: 8px;
+@media (max-width: 800px) {
+  .capture-header {
+    padding: 14px 20px;
   }
 
   .capture-user {
     display: none;
   }
 
-  .capture-hero,
-  .capture-panel,
-  .dashboard-content {
-    width: calc(100% - 20px);
-  }
-
   .capture-hero {
-    margin-top: 15px;
-
-    padding: 22px 18px;
+    padding: 30px 20px 22px;
   }
 
-  .capture-panel,
-  .dashboard-content {
-    padding: 18px;
-  }
+  .capture-panel {
+    width: calc(100% - 24px);
 
-  .capture-hero h1 {
-    font-size: 24px;
+    padding: 20px;
+
+    border-radius: 12px;
   }
 
   .flight-information {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .capture-status-panel {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .capture-status-actions {
+    justify-content: flex-start;
   }
 
   .service-grid {
@@ -1104,51 +1306,46 @@ a {
   }
 
   .capture-fields-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 
-  .capture-status-actions {
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .capture-status-button {
-    width: 100%;
-  }
-
-  .save-capture-button {
-    width: 100%;
-  }
-
-  .capture-save-area {
-    display: block;
-  }
-
-  .capture-footer {
-    flex-direction: column;
-    align-items: stretch;
-
-    text-align: center;
-  }
-
-  .capture-back-button {
-    width: 100%;
+  .department-cards {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 }
 
-/* =========================================================
-   SMALL MOBILE
-========================================================= */
+@media (max-width: 560px) {
+  .capture-header {
+    min-height: 70px;
 
-@media (max-width: 420px) {
+    padding: 12px 15px;
+  }
+
+  .capture-brand {
+    font-size: 21px;
+  }
+
+  .capture-brand-subtitle {
+    font-size: 8px;
+  }
+
+  .capture-hero h1 {
+    font-size: 25px;
+  }
+
+  .capture-panel {
+    width: calc(100% - 16px);
+
+    padding: 16px;
+  }
+
   .flight-information {
     grid-template-columns: 1fr;
   }
 
-  .capture-status-actions {
+  .capture-fields-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1156,11 +1353,41 @@ a {
     grid-template-columns: 1fr;
   }
 
-  .capture-brand {
-    font-size: 19px;
+  .capture-status-actions {
+    width: 100%;
+
+    flex-direction: column;
   }
 
-  .capture-brand-subtitle {
-    font-size: 8px;
+  .capture-status-button {
+    width: 100%;
+  }
+
+  .capture-save-area {
+    justify-content: stretch;
+  }
+
+  .save-capture-button {
+    width: 100%;
+  }
+
+  .capture-footer {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .department-container {
+    width: calc(100% - 16px);
+  }
+
+  .department-cards {
+    grid-template-columns: 1fr;
+
+    padding: 18px;
+  }
+
+  .department-card {
+    min-height: 210px;
   }
 }
