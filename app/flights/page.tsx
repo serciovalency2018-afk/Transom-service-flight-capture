@@ -1,502 +1,795 @@
-"use client";
+/* =========================================================
+   TRANSOM DEPARTMENT PAGE
+========================================================= */
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabase";
+.department-page {
+  min-height: 100vh;
 
-type Department = {
-  key: string;
-  name: string;
-  description: string;
-  color: "red" | "blue" | "navy";
-  icon: "ramp" | "sorting" | "load" | "passenger" | "cargo";
-};
+  background:
+    linear-gradient(
+      rgba(3, 25, 55, 0.78),
+      rgba(3, 25, 55, 0.88)
+    ),
+    url("/transom-airport.jpg");
 
-const departments: Department[] = [
-  {
-    key: "ramp",
-    name: "RAMP",
-    description: "Ramp & Ground Services",
-    color: "red",
-    icon: "ramp",
-  },
-  {
-    key: "sorting",
-    name: "SORTING",
-    description: "Baggage & ULD Sorting",
-    color: "navy",
-    icon: "sorting",
-  },
-  {
-    key: "load_control_ops",
-    name: "LOAD CONTROL / OPS",
-    description: "Load Control & Operations",
-    color: "blue",
-    icon: "load",
-  },
-  {
-    key: "passenger_services",
-    name: "PASSENGER SERVICES",
-    description: "Passenger & Gate Services",
-    color: "red",
-    icon: "passenger",
-  },
-  {
-    key: "cargo",
-    name: "CARGO",
-    description: "Cargo Operations",
-    color: "navy",
-    icon: "cargo",
-  },
-];
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 
-function DepartmentIcon({
-  type,
-}: {
-  type: Department["icon"];
-}) {
-  if (type === "ramp") {
-    return (
-      <svg
-        viewBox="0 0 64 64"
-        className="department-svg"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M11 44h42" />
-        <path d="M16 44l5-12h18l7 12" />
-        <circle cx="20" cy="48" r="5" />
-        <circle cx="45" cy="48" r="5" />
-        <path d="M25 32l8-13 8 13" />
-        <path d="M30 25h9" />
-        <path d="M34 19l5-5" />
-      </svg>
+  display: flex;
+  flex-direction: column;
+
+  color: #071d35;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.department-header {
+  min-height: 106px;
+
+  padding: 17px 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background:
+    linear-gradient(
+      90deg,
+      #061d3b,
+      #082a52
     );
-  }
 
-  if (type === "sorting") {
-    return (
-      <svg
-        viewBox="0 0 64 64"
-        className="department-svg"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <rect x="8" y="32" width="48" height="10" rx="2" />
-        <circle cx="17" cy="48" r="4" />
-        <circle cx="31" cy="48" r="4" />
-        <circle cx="45" cy="48" r="4" />
-        <rect x="17" y="17" width="15" height="12" rx="2" />
-        <path d="M40 17h10" />
-        <path d="M45 12v10" />
-      </svg>
-    );
-  }
+  border-bottom: 5px solid #ef233c;
 
-  if (type === "load") {
-    return (
-      <svg
-        viewBox="0 0 64 64"
-        className="department-svg"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <rect
-          x="13"
-          y="9"
-          width="38"
-          height="46"
-          rx="4"
-        />
-        <path d="M22 20h20" />
-        <path d="M22 29h8" />
-        <path d="M22 39h8" />
-        <path d="M35 34l4 4 8-9" />
-        <path d="M43 47h8" />
-        <path d="M47 43v8" />
-      </svg>
-    );
-  }
+  box-shadow:
+    0 5px 18px rgba(0, 0, 0, 0.25);
 
-  if (type === "passenger") {
-    return (
-      <svg
-        viewBox="0 0 64 64"
-        className="department-svg"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="20" cy="18" r="5" />
-        <path d="M20 23v15" />
-        <path d="M13 31h14" />
-        <path d="M15 46l5-8 5 8" />
+  position: relative;
+  z-index: 5;
+}
 
-        <rect
-          x="33"
-          y="16"
-          width="19"
-          height="30"
-          rx="2"
-        />
+.transom-logo {
+  color: #ffffff;
 
-        <path d="M37 24h11" />
-        <path d="M37 31h11" />
-        <path d="M37 38h7" />
-      </svg>
-    );
-  }
+  font-size: 43px;
+  line-height: 0.95;
 
-  return (
-    <svg
-      viewBox="0 0 64 64"
-      className="department-svg"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8 45h48" />
-      <path d="M13 45V31h20v14" />
-      <path d="M33 35h18v10" />
-      <path d="M17 31l8-13 8 13" />
-      <rect
-        x="39"
-        y="21"
-        width="12"
-        height="10"
-      />
-      <path d="M43 21v-5" />
-      <path d="M47 21v-5" />
-    </svg>
+  font-weight: 900;
+
+  letter-spacing: 4px;
+}
+
+.transom-tagline {
+  margin-top: 7px;
+
+  color: #ffffff;
+
+  font-size: 11px;
+
+  letter-spacing: 4px;
+
+  font-weight: 600;
+}
+
+.header-user-area {
+  display: flex;
+
+  align-items: center;
+
+  gap: 24px;
+
+  color: #ffffff;
+}
+
+.user-display {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+.user-icon {
+  width: 25px;
+  height: 25px;
+
+  display: flex;
+}
+
+.user-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.header-divider {
+  width: 1px;
+  height: 38px;
+
+  background: rgba(
+    255,
+    255,
+    255,
+    0.5
   );
 }
 
-export default function DepartmentsPage() {
-  const router = useRouter();
+.department-logout {
+  display: flex;
 
-  const [fullName, setFullName] =
-    useState("Authorized User");
+  align-items: center;
 
-  const [loading, setLoading] =
-    useState(true);
+  gap: 10px;
 
-  useEffect(() => {
-    const loadProfile = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  border: none;
 
-      if (!user) {
-        router.push("/");
-        return;
-      }
+  background: transparent;
 
-      const { data: profile } =
-        await supabase
-          .from("profiles")
-          .select("full_name")
-          .eq("id", user.id)
-          .single();
+  color: #ffffff;
 
-      if (profile?.full_name) {
-        setFullName(profile.full_name);
-      } else if (user.email) {
-        setFullName(user.email);
-      }
+  font-size: 13px;
 
-      setLoading(false);
-    };
+  font-weight: 800;
 
-    loadProfile();
-  }, [router]);
+  cursor: pointer;
+}
 
-  const handleDepartmentSelect = (
-    department: string
-  ) => {
-    router.push(
-      `/flights?department=${department}`
+.department-logout svg {
+  width: 24px;
+  height: 24px;
+}
+
+.department-logout:hover {
+  color: #ef233c;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.department-hero {
+  min-height: 195px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  padding:
+    58px 50px 35px;
+
+  background:
+    linear-gradient(
+      rgba(4, 32, 67, 0.18),
+      rgba(4, 32, 67, 0.28)
     );
-  };
+}
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
-  };
+.hero-content h1 {
+  margin: 0;
 
-  if (loading) {
-    return (
-      <main className="department-page">
-        <div className="department-loading">
-          Loading...
-        </div>
-      </main>
+  color: #ffffff;
+
+  font-size: 38px;
+
+  font-weight: 800;
+
+  letter-spacing: -0.5px;
+
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.hero-content h1 span {
+  font-weight: 700;
+}
+
+.hero-red-line {
+  width: 88px;
+  height: 5px;
+
+  margin-top: 15px;
+
+  background: #ef233c;
+}
+
+.hero-content p {
+  margin: 15px 0 0;
+
+  color: #ffffff;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   MAIN PANEL
+========================================================= */
+
+.department-panel {
+  width: calc(100% - 84px);
+
+  max-width: 1360px;
+
+  margin:
+    -8px auto 0;
+
+  padding: 30px;
+
+  background:
+    rgba(255, 255, 255, 0.97);
+
+  border-radius: 13px;
+
+  box-shadow:
+    0 15px 45px rgba(0, 0, 0, 0.22);
+
+  position: relative;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   PANEL HEADER
+========================================================= */
+
+.panel-title-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 20px;
+}
+
+.panel-grid-icon {
+  width: 40px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 8px);
+
+  gap: 5px;
+}
+
+.panel-grid-icon span {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 2px;
+
+  background: #082b55;
+}
+
+.panel-grid-icon span:nth-child(2),
+.panel-grid-icon span:nth-child(5),
+.panel-grid-icon span:nth-child(8) {
+  background: #ef233c;
+}
+
+.panel-title-row h2 {
+  margin: 0;
+
+  color: #082b55;
+
+  font-size: 29px;
+
+  font-weight: 900;
+}
+
+.panel-title-row p {
+  margin: 5px 0 0;
+
+  color: #718096;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   COLOR LINE
+========================================================= */
+
+.department-panel-line {
+  display: flex;
+
+  width: 100%;
+
+  height: 4px;
+
+  margin-top: 18px;
+
+  background: #d8dee7;
+}
+
+.department-panel-line .red-line {
+  width: 140px;
+
+  background: #ef233c;
+}
+
+.department-panel-line .blue-line {
+  width: 590px;
+
+  background: #1976c9;
+}
+
+.department-panel-line .navy-line {
+  flex: 1;
+
+  background: #cfd6df;
+}
+
+
+/* =========================================================
+   LOGGED USER
+========================================================= */
+
+.logged-user {
+  margin:
+    22px 20px 27px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.logged-user span {
+  color: #718096;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.logged-user strong {
+  color: #24354d;
+
+  font-size: 15px;
+}
+
+
+/* =========================================================
+   DEPARTMENT GRID
+========================================================= */
+
+.department-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+
+/* =========================================================
+   DEPARTMENT CARD
+========================================================= */
+
+.department-card {
+  min-height: 195px;
+
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  justify-content: flex-start;
+
+  padding: 18px 22px;
+
+  text-align: left;
+
+  background: #ffffff;
+
+  border: 1px solid #d9e0e8;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 3px 8px rgba(0, 25, 55, 0.04);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.department-card::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 7px;
+
+  background: #082b55;
+}
+
+.department-card.red::before {
+  background: #ef233c;
+}
+
+.department-card.blue::before {
+  background: #1976c9;
+}
+
+.department-card.navy::before {
+  background: #082b55;
+}
+
+.department-card:hover {
+  transform: translateY(-3px);
+
+  border-color: #aebdcd;
+
+  box-shadow:
+    0 10px 25px rgba(
+      0,
+      25,
+      55,
+      0.12
     );
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.department-icon-wrapper {
+  width: 82px;
+  height: 82px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 14px;
+
+  background: #082b55;
+
+  color: #ffffff;
+}
+
+.department-card.red
+.department-icon-wrapper {
+  background: #ef233c;
+}
+
+.department-card.blue
+.department-icon-wrapper {
+  background: #1976c9;
+}
+
+.department-card.navy
+.department-icon-wrapper {
+  background: #082b55;
+}
+
+.department-svg {
+  width: 46px;
+  height: 46px;
+}
+
+
+/* =========================================================
+   CARD TEXT
+========================================================= */
+
+.department-card-content {
+  padding-right: 42px;
+}
+
+.department-card-content h3 {
+  margin: 0;
+
+  color: #082b55;
+
+  font-size: 19px;
+
+  font-weight: 900;
+
+  line-height: 1.2;
+}
+
+.department-card-content p {
+  margin: 7px 0 0;
+
+  color: #718096;
+
+  font-size: 13px;
+
+  line-height: 1.35;
+}
+
+
+/* =========================================================
+   ARROW
+========================================================= */
+
+.department-arrow {
+  position: absolute;
+
+  right: 16px;
+  bottom: 20px;
+
+  width: 43px;
+  height: 43px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #082b55;
+
+  color: #ffffff;
+}
+
+.department-arrow svg {
+  width: 22px;
+  height: 22px;
+}
+
+.department-card:hover .department-arrow {
+  background: #ef233c;
+}
+
+
+/* =========================================================
+   CARGO — SECOND ROW
+========================================================= */
+
+.department-card:nth-child(5) {
+  grid-column: 1;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.department-footer {
+  margin-top: auto;
+
+  padding:
+    28px 20px 22px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #ffffff;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  text-align: center;
+
+  text-shadow:
+    0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.footer-red-line {
+  width: 40px;
+  height: 3px;
+
+  margin: 7px 0;
+
+  background: #ef233c;
+}
+
+.department-footer span {
+  font-size: 10px;
+
+  color: #d5deea;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.department-loading {
+  min-height: 100vh;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #ffffff;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  background:
+    linear-gradient(
+      rgba(4, 24, 53, 0.86),
+      rgba(4, 24, 53, 0.92)
+    ),
+    url("/transom-airport.jpg");
+
+  background-size: cover;
+
+  background-position: center;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+  .department-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 
-  return (
-    <main className="department-page">
+  .department-card:nth-child(5) {
+    grid-column: auto;
+  }
 
-      {/* =====================================
-          HEADER
-      ====================================== */}
+  .department-header {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
 
-      <header className="department-header">
+  .department-panel {
+    width: calc(100% - 40px);
+  }
 
-        <div className="transom-brand">
+}
 
-          <div className="transom-logo">
-            TRANSOM
-          </div>
 
-          <div className="transom-tagline">
-            FLIGHT SERVICE CAPTURE
-          </div>
+/* =========================================================
+   MOBILE
+========================================================= */
 
-        </div>
+@media (max-width: 650px) {
 
-        <div className="header-user-area">
+  .department-header {
+    min-height: auto;
 
-          <div className="user-display">
+    padding: 15px;
 
-            <span className="user-icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
-              </svg>
-            </span>
+    align-items: flex-start;
+  }
 
-            <span>
-              {fullName}
-            </span>
+  .transom-logo {
+    font-size: 28px;
 
-          </div>
+    letter-spacing: 2px;
+  }
 
-          <div className="header-divider" />
+  .transom-tagline {
+    font-size: 7px;
 
-          <button
-            className="department-logout"
-            onClick={handleLogout}
-          >
+    letter-spacing: 2px;
+  }
 
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M10 17l5-5-5-5" />
-              <path d="M15 12H3" />
-              <path d="M21 3v18" />
-            </svg>
+  .header-user-area {
+    gap: 8px;
+  }
 
-            LOGOUT
+  .user-display span:not(.user-icon) {
+    display: none;
+  }
 
-          </button>
+  .header-divider {
+    height: 28px;
+  }
 
-        </div>
+  .department-logout {
+    font-size: 10px;
+  }
 
-      </header>
+  .department-logout svg {
+    width: 19px;
+    height: 19px;
+  }
 
+  .department-hero {
+    min-height: 155px;
 
-      {/* =====================================
-          HERO
-      ====================================== */}
+    padding:
+      35px 20px 25px;
+  }
 
-      <section className="department-hero">
+  .hero-content h1 {
+    font-size: 27px;
+  }
 
-        <div className="hero-content">
+  .hero-content p {
+    font-size: 12px;
+  }
 
-          <h1>
-            WELCOME,{" "}
-            <span>{fullName}</span>
-          </h1>
+  .department-panel {
+    width: calc(100% - 24px);
 
-          <div className="hero-red-line" />
+    padding: 20px 15px;
 
-          <p>
-            SELECT DEPARTMENT
-          </p>
+    margin-top: -5px;
+  }
 
-        </div>
+  .panel-title-row {
+    align-items: flex-start;
 
-      </section>
+    gap: 12px;
+  }
 
+  .panel-title-row h2 {
+    font-size: 21px;
+  }
 
-      {/* =====================================
-          DEPARTMENT PANEL
-      ====================================== */}
+  .panel-title-row p {
+    font-size: 12px;
+  }
 
-      <section className="department-panel">
+  .department-panel-line .red-line {
+    width: 70px;
+  }
 
-        <div className="department-panel-header">
+  .department-panel-line .blue-line {
+    width: 120px;
+  }
 
-          <div className="panel-title-row">
+  .logged-user {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
 
-            <div className="panel-grid-icon">
+  .department-grid {
+    grid-template-columns: 1fr;
 
-              <span />
-              <span />
-              <span />
+    gap: 14px;
+  }
 
-              <span />
-              <span />
-              <span />
+  .department-card {
+    min-height: 160px;
+  }
 
-              <span />
-              <span />
-              <span />
+  .department-footer {
+    padding-top: 22px;
+  }
 
-            </div>
-
-            <div>
-
-              <h2>
-                SELECT DEPARTMENT
-              </h2>
-
-              <p>
-                Choose the department you
-                want to access.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <div className="department-panel-line">
-
-            <span className="red-line" />
-
-            <span className="blue-line" />
-
-            <span className="navy-line" />
-
-          </div>
-
-        </div>
-
-
-        {/* =================================
-            USER
-        ================================== */}
-
-        <div className="logged-user">
-
-          <span>
-            Logged in as:
-          </span>
-
-          <strong>
-            {fullName}
-          </strong>
-
-        </div>
-
-
-        {/* =================================
-            DEPARTMENT CARDS
-        ================================== */}
-
-        <div className="department-grid">
-
-          {departments.map(
-            (department) => (
-
-              <button
-                key={department.key}
-                className={`department-card ${department.color}`}
-                onClick={() =>
-                  handleDepartmentSelect(
-                    department.key
-                  )
-                }
-              >
-
-                <div className="department-icon-wrapper">
-
-                  <DepartmentIcon
-                    type={department.icon}
-                  />
-
-                </div>
-
-
-                <div className="department-card-content">
-
-                  <h3>
-                    {department.name}
-                  </h3>
-
-                  <p>
-                    {department.description}
-                  </p>
-
-                </div>
-
-
-                <div className="department-arrow">
-
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M5 12h13" />
-                    <path d="M13 6l6 6-6 6" />
-                  </svg>
-
-                </div>
-
-              </button>
-
-            )
-          )}
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================
-          FOOTER
-      ====================================== */}
-
-      <footer className="department-footer">
-
-        <div>
-          TRANSOM Flight Service Capture
-        </div>
-
-        <div className="footer-red-line" />
-
-        <span>
-          Authorized Personnel Only
-        </span>
-
-      </footer>
-
-    </main>
-  );
 }
